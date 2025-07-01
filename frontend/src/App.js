@@ -6,12 +6,7 @@ const App = () => {
 
   useEffect(() => {
   axios.get('/api/initial').then(({ data }) => {
-
-    if (Array.isArray(data.data)) {
       setText(data.data);
-    } else {
-      setText([]);
-    }
   });
 }, []);
 
@@ -19,7 +14,7 @@ const App = () => {
   <div>
     {texts.map((text, i) => (
       <div key={text.id || i}>
-        <h4>ID:</h4> {text.id} — <h3><em>{text.any_text}</em></h3>
+        <h3>{JSON.stringify(text)}</h3>
       </div>
     ))}
   </div>
