@@ -11,6 +11,7 @@ psycopg = "^3.2.9"
 djangorestframework = "^3.16.0"
 django-filter = "^25.1"
 pillow = "^11.2.1"
+django-cors-headers = "^4.7.0"
 
 
 [tool.poetry.group.dev.dependencies]
