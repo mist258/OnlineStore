@@ -18,8 +18,25 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
+from rest_framework.permissions import AllowAny
+
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Online store",
+        default_version='v1',
+        description="Online coffee store",
+        contact=openapi.Contact(email="admin@gmai.com"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=[AllowAny]
+)
 urlpatterns = [
-    path('initial', include('apps.initial.urls')),
+    path('api/initial', include('apps.initial.urls')),
+    path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
 
 ]
 

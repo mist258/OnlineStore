@@ -10,8 +10,9 @@ python = "^3.12"
 psycopg = "^3.2.9"
 djangorestframework = "^3.16.0"
 django-filter = "^25.1"
-pillow = "^11.2.1"
+pillow = "^11.3.0"
 django-cors-headers = "^4.7.0"
+drf-yasg = "^1.21.10"
 
 
 [tool.poetry.group.dev.dependencies]
