@@ -1,7 +1,30 @@
 # Coffee shop
-**Python version** - 3.12.
+**Python version** - 3.12
+
+**Database** - PostgreSQL
 
 App **'initial'** - is test app, during development will be deleted.
+
+
+## Already added to the project
+ 
+✔️ poetry (instead of .venv & .requirements.txt)
+
+✔️ docker
+
+✔️ nginx (for proxying requests but can be removed)
+
+✔️ isort (for managing and sorting imports)
+
+✔️ ruff (linter)
+
+✔️ pillow (photo managing)
+  
+✔️ django-filter (filtering requests)
+
+✔️ joined pagination (DEFAULT_PAGINATION_CLASS)
+  
+✔️ joined filters (DEFAULT_FILTER_BACKENDS)
 
 ## Installation
 
