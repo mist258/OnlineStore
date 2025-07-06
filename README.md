@@ -1,6 +1,7 @@
 # Coffee shop
-**Python version** - 3.12
- App **'initial'** - is test app, during development will be deleted.
+**Python version** - 3.12.
+
+App **'initial'** - is test app, during development will be deleted.
 
 ## Installation
 
