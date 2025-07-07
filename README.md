@@ -28,6 +28,9 @@ App **'initial'** - is test app, during development will be deleted.
 
 ✔️ cloudinary (photo storage)
 
+✔️ added gunicorn (for deploying on render)
+
+
 
 ## Installation
 
