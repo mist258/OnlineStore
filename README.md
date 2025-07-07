@@ -26,6 +26,9 @@ App **'initial'** - is test app, during development will be deleted.
   
 ✔️ joined filters (DEFAULT_FILTER_BACKENDS)
 
+✔️ cloudinary (photo storage)
+
+
 ## Installation
 
 Install project 
