@@ -1,6 +1,8 @@
 from django.http import JsonResponse
+from django.views import View
 
 
-def healthcheck(request):
-    return JsonResponse({'status': 'Deployment is ready & API is working!'})
+class HealthcheckView(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({'status': 'Deployment is running'})
 
