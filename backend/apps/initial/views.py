@@ -13,4 +13,3 @@ class InitialAddPhotoView(generics.UpdateAPIView):
     queryset = InitialTest.objects.all()
     serializer_class = InitialPhotoSerializer
     http_method_names = ('put',)
-
