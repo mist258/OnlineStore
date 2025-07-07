@@ -33,3 +33,5 @@ COPY pyproject.toml /app/
 RUN poetry config virtualenvs.create false
 RUN poetry lock
 RUN poetry install
+
+CMD ["poetry", "run", "gunicorn", "configs.wsgi:application", "--bind", "0.0.0.0:8000"]
