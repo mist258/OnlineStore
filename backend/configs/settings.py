@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     # my apps
     'core',
     'apps.initial',
-    'apps.check_deployment',
 
 ]
 
