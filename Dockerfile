@@ -1,4 +1,3 @@
-# базовий образ
 FROM python:3.13-alpine
 MAINTAINER Python dev
 

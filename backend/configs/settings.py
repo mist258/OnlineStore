@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+import cloudinary_storage
+
 from .extra_conf import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'django_filters',
+    'cloudinary_storage',
+    'cloudinary',
     'corsheaders',
     'drf_yasg',
 
@@ -92,7 +96,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -130,8 +133,10 @@ USE_TZ = True
 STATIC_URL = '/drf-static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'storage')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'storage')
 MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

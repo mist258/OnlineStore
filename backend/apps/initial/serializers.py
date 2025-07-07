@@ -9,7 +9,15 @@ class InitialTestSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'any_text',
+            'photo',
         )
         read_only_fields = (
             'id',
+        )
+
+class InitialPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InitialTest
+        fields = (
+            'photo',
         )

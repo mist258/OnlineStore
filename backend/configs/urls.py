@@ -39,5 +39,3 @@ urlpatterns = [
     path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
 
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
