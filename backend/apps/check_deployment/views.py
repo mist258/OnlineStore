@@ -4,4 +4,4 @@ from django.views import View
 
 class CheckDeploymentView(View):
     def get(self, request):
-        return JsonResponse({'status': 'API is running'})
+        return JsonResponse({"status": "API is running"})

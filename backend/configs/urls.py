@@ -25,17 +25,20 @@ from drf_yasg.views import get_schema_view
 schema_view = get_schema_view(
     openapi.Info(
         title="Online store",
-        default_version='v1',
+        default_version="v1",
         description="Online coffee store",
         contact=openapi.Contact(email="admin@gmai.com"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,
-    permission_classes=[AllowAny]
+    permission_classes=[AllowAny],
 )
 urlpatterns = [
-    path('api/initial', include('apps.initial.urls')),
-    path('', include('apps.check_deployment.urls')),
-    path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
-
+    path("/api/users", include("apps.users.urls")),
+    path("", include("apps.check_deployment.urls")),
+    path(
+        "api/doc",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger",
+    ),
 ]
