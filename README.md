@@ -3,8 +3,6 @@
 
 **Database** - PostgreSQL
 
-App **'initial'** - is test app, during development will be deleted.
-
 
 ## Already added to the project
  
