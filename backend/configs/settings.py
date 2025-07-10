@@ -47,12 +47,17 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
+
     # installed modules
     "django_filters",
     "cloudinary_storage",
     "cloudinary",
     "corsheaders",
     "drf_yasg",
+    "django_countries",
+    "django_extensions",
+
+
     # my apps
     "core",
     "apps.check_deployment",
@@ -133,7 +138,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "/drf-static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'storage')
