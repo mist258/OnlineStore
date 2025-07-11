@@ -17,6 +17,8 @@ drf-yasg = "^1.21.10"
 cloudinary = "^1.44.1"
 django-cloudinary-storage = "^0.3.0"
 gunicorn = "^23.0.0"
+django-countries = "^7.6.1"
+djangorestframework-simplejwt = "^5.5.0"
 
 
 [tool.poetry.group.dev.dependencies]

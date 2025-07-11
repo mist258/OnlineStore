@@ -56,12 +56,15 @@ INSTALLED_APPS = [
     "drf_yasg",
     "django_countries",
     "django_extensions",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
 
 
     # my apps
     "core",
     "apps.check_deployment",
     "apps.users",
+    "apps.auth",
 ]
 
 MIDDLEWARE = [
