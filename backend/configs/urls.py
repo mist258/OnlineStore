@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.urls import include, path
+from django.contrib import admin
 
 from rest_framework.permissions import AllowAny
 
@@ -37,5 +38,7 @@ urlpatterns = [
     path('api/initial', include('apps.initial.urls')),
     path('/', include('apps.check_deployment.urls')),
     path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
+    path('admin/', admin.site.urls),
+
 
 ]
