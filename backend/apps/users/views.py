@@ -11,24 +11,34 @@ from .serializers import UserSerializer
 
 UserModel = get_user_model()
 
-@method_decorator(name='post', decorator=swagger_auto_schema(operation_id='create_user',
-                                                             responses={200: UserSerializer()}))
 
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        operation_id="create_user", responses={200: UserSerializer()}
+    ),
+)
 class CreateUserView(generics.CreateAPIView):
-    '''
-        register new user
-    '''
+    """
+    register new user
+    """
+
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
     permission_classes = (AllowAny,)
 
 
-@method_decorator(name='get', decorator=swagger_auto_schema(operation_id='get_own_info',
-                                                            responses={200: UserSerializer()}))
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_id="get_own_info", responses={200: UserSerializer()}
+    ),
+)
 class GetMyInfoView(generics.GenericAPIView):
-    '''
-        get own info
-    '''
+    """
+    get own info
+    """
+
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
@@ -37,5 +47,3 @@ class GetMyInfoView(generics.GenericAPIView):
         user = self.request.user
         serializer = UserSerializer(user)
         return Response(serializer.data, status.HTTP_200_OK)
-
-

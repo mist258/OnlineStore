@@ -34,8 +34,8 @@ schema_view = get_schema_view(
     permission_classes=[AllowAny],
 )
 urlpatterns = [
-    path("api/users", include('apps.users.urls')),
-    path("api/auth", include('apps.auth.urls')),
+    path("api/users", include("apps.users.urls")),
+    path("api/auth", include("apps.auth.urls")),
     path("", include("apps.check_deployment.urls")),
     path(
         "api/doc",
