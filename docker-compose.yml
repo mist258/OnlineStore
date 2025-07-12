@@ -22,6 +22,19 @@ services:
       - "5433:5432"
     restart: on-failure
 
+  test:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app/backend
+    depends_on:
+      - db
+    command: poetry run pytest --disable-warnings -v
+
+
 #  web:
 #    image: nginx:alpine
 #    ports:
