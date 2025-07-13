@@ -1,7 +1,10 @@
+import re
+
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from .models import UserProfileModel
 
@@ -43,7 +46,12 @@ class UserSerializer(serializers.ModelSerializer):
             "profile",
         )
 
-        extra_kwargs = {"password": {"write_only": True}}
+        extra_kwargs = {
+            "password":
+                {
+                    "write_only": True
+                }
+        }
 
         read_only_fields = (
             "id",
@@ -60,8 +68,13 @@ class UserSerializer(serializers.ModelSerializer):
         UserProfileModel.objects.create(**profile, user=user)
         return user
 
-    # def validate_email(self, value): #todo
-    #     pass
+    def validate(self, attrs):
+        password = attrs.get("password")
 
-    # def validate_password(self, value): #todo
-    #     pass
+        pattern = r"^[A-Za-z\d@$!%*?&]{8,}$"
+
+        if not re.fullmatch(pattern, password):
+            raise ValidationError('Password must contain at least 8 characters, '
+                                  '1 special symbol, 1 letter, 1 number')
+        return attrs
+

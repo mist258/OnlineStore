@@ -21,6 +21,7 @@ UserModel = get_user_model()
 class CreateUserView(generics.CreateAPIView):
     """
     register new user
+    (allow any users)
     """
 
     serializer_class = UserSerializer
@@ -37,6 +38,7 @@ class CreateUserView(generics.CreateAPIView):
 class GetMyInfoView(generics.GenericAPIView):
     """
     get own info
+    (allow authenticated users)
     """
 
     queryset = UserModel.objects.all()
@@ -47,3 +49,5 @@ class GetMyInfoView(generics.GenericAPIView):
         user = self.request.user
         serializer = UserSerializer(user)
         return Response(serializer.data, status.HTTP_200_OK)
+
+
