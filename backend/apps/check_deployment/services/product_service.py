@@ -9,11 +9,17 @@ from apps.check_deployment.models import FlavorProfile, Product
 def create_product(data: dict) -> Product:
     # check required fields
     name = data.get("name")
-    caffeine_type = data.get("caffeine_type")
+    brend = data.get("brend")
+    sort = data.get("sort")
+    roast=data.get("roast")
     if not name:
         raise ValidationError("Product 'name' field is required.")
-    if not caffeine_type:
-        raise ValidationError("Product 'caffeine_type' field is required.")
+    if not brend:
+        raise ValidationError("Product 'brend' field is required.")
+    if not sort:
+        raise ValidationError("Product 'sort' field is required.")
+    if not roast:
+        raise ValidationError("Product 'roast' field is required.")
     
     # process flavor profiles
     flavor_names = data.get("flavor_profiles", [])
@@ -25,8 +31,10 @@ def create_product(data: dict) -> Product:
     try:
         product = Product.objects.create(
             name=name,
-            roast=data["roast"],
-            caffeine_type=caffeine_type,
+            brend=brend,
+            caffeine_type=data.get("caffeine_type"),
+            sort=sort,
+            roast=roast,
             description=data.get("description")
         )
         product.flavor_profiles.set(flavors)
@@ -47,8 +55,10 @@ def update_product(product_id: int, data: dict) -> Product:
     product = get_object_or_error(Product, product_id)
     
     product.name = data.get("name", product.name)
-    product.roast = data.get("roast", product.roast)
+    product.brend = data.get("brend", product.brend)
     product.caffeine_type = data.get("caffeine_type", product.caffeine_type)
+    product.sort = data.get("sort", product.sort)
+    product.roast = data.get("roast", product.roast)
     product.description = data.get("description", product.description)
     product.save()
 

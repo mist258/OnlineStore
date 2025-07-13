@@ -16,7 +16,7 @@ def create_supply(data: dict) -> Supply:
     try:
         supply = Supply.objects.create(
             product=product,
-            grind=data.get("grind"),
+            serving_type=data.get("serving_type"),
             price=data.get("price", 0.00),
             weight=data.get("weight"),
             quantity=data.get("quantity", 0),
@@ -37,7 +37,7 @@ def get_supply_by_id(supply_id: int) -> Supply:
 def update_supply(supply_id: int, data: dict) -> Supply:
     supply = get_object_or_error(Supply, supply_id)
 
-    supply.grind = data.get("grind", supply.grind)
+    supply.serving_type = data.get("serving_type", supply.serving_type)
     supply.price = data.get("price", supply.price)
     supply.weight = data.get("weight", supply.weight)
     supply.quantity = data.get("quantity", supply.quantity)

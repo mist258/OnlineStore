@@ -11,14 +11,19 @@ from apps.check_deployment.services.product_service import (
 def test_create_product():
     data = {
         "name": "Espresso",
+        "brend": "Jacobs",
         "roast": "Dark",
-        "caffeine_type": "decaf",
+        "caffeine_type": "Decaf",
+        "sort": "Arabica",
         "flavor_profiles": ["Bold", "Smoky"],
     }
     product = create_product(data)
 
     assert product.name == "Espresso"
+    assert product.brend == "Jacobs"
     assert product.roast == "Dark"
+    assert product.caffeine_type == "Decaf"
+    assert product.sort == "Arabica"
     assert product.flavor_profiles.count() == 2
 
 
@@ -33,16 +38,31 @@ def test_get_product_by_id():
 
 @pytest.mark.django_db
 def test_update_product():
-    product = Product.objects.create(name="Latte", roast="Medium")
+    product = Product.objects.create(
+        name="Latte",
+        brend="Jacobs",
+        caffeine_type="Decaf",
+        sort="Robusta",
+        roast="Medium",
+        description="Very good coffee!"
+    )
     update_data = {
         "name": "Updated Latte",
-        "roast": "Light",
+        "brend": "Nescafe",
+        "caffeine_type": "Regular",
+        "sort": "Arabica",
+        "roast": "Light", 
+        "description": "So-so",
         "flavor_profiles": ["Mild"]
     }
     updated = update_product(product.id, update_data)
 
     assert updated.name == "Updated Latte"
+    assert updated.brend == "Nescafe"
+    assert updated.caffeine_type == "Regular"
+    assert updated.sort == "Arabica"
     assert updated.roast == "Light"
+    assert updated.description == "So-so"
     assert updated.flavor_profiles.count() == 1
 
 

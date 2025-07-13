@@ -15,8 +15,10 @@ class FlavorProfile(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=False)
+    brend = models.CharField(max_length=255, null=False)
     caffeine_type = models.CharField(max_length=25, blank=True, null=True)
+    sort = models.CharField(max_length=25, null=False, blank=True)
     roast = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
 
@@ -27,14 +29,14 @@ class Product(models.Model):
 
 
 class Supply(models.Model):
-    grind = models.CharField(max_length=50, blank=True, null=True)
+    serving_type = models.CharField(max_length=50, blank=True, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00, null=True)
     weight = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='supplies')
 
     def __str__(self):
-        return f"{self.product.name} - {self.grind or 'No Grind Info'}"
+        return f"{self.product.name} - {self.serving_type or 'No Serving-Type Info'}"
 
 
 class Photo(models.Model):
