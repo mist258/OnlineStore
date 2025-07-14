@@ -7,11 +7,14 @@ from django.template.loader import get_template
 from core.exceptions.template_exception import TemplateException
 from core.services.jwt_services import JWTService, RecoveryToken
 
+from configs.celery import app
+
 UserModel = get_user_model()
 
 class EmailService:
 
     @staticmethod
+    @app.task
     def __send_email(to: str, template_name: str, context: dict, subject: '') -> None:
         template = get_template(template_name)
         html_comtent = template.render(context)
@@ -26,7 +29,7 @@ class EmailService:
         url = f"http://localhost:3000/recovery_password/{token}"
 
         try:
-            cls.__send_email(user.email,
+            cls.__send_email.delay(user.email,
                              "recovery.html",
                              {
                                  "first_name": user.profile.first_name,
