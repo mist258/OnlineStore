@@ -15,12 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
 from rest_framework.permissions import AllowAny
 
-from django_filters.conf import settings
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
