@@ -7,6 +7,7 @@ from django.template.loader import get_template
 from core.exceptions.template_exception import TemplateException
 from core.services.jwt_services import JWTService, RecoveryToken
 
+from configs import settings
 from configs.celery import app
 
 UserModel = get_user_model()
@@ -26,7 +27,7 @@ class EmailService:
     def send_recovery_email(cls, user: UserModel):
 
         token = JWTService.create_token(user, RecoveryToken)
-        url = f"http://localhost:3000/recovery_password/{token}"
+        url = f"{settings.FRONTEND_BASE_URL}/recovery_password/{token}"
 
         try:
             cls.__send_email.delay(user.email,
