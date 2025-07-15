@@ -44,7 +44,9 @@ class LogOutUserView(APIView):
 
 
 @method_decorator(
-    name="post", decorator=swagger_auto_schema(operation_id="request_recovery_password")
+    name="post", decorator=swagger_auto_schema(
+        security=[],
+        operation_id="request_recovery_password")
 )
 class RequestRecoveryPasswordView(generics.GenericAPIView):
     """
@@ -65,7 +67,9 @@ class RequestRecoveryPasswordView(generics.GenericAPIView):
 
 
 @method_decorator(
-    name="post", decorator=swagger_auto_schema(operation_id="change_password")
+    name="post", decorator=swagger_auto_schema(
+        security=[],
+        operation_id="change_password")
 )
 class ChangePasswordView(generics.GenericAPIView):
     """

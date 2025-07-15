@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import ChangePasswordView, LogOutUserView, RequestRecoveryPasswordView
 
 urlpatterns = [
-    path("",
+    path("/login",
          TokenObtainPairView.as_view(), name="token_obtain_pair"
          ),  # login user
     path(

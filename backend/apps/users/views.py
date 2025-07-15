@@ -15,7 +15,8 @@ UserModel = get_user_model()
 @method_decorator(
     name="post",
     decorator=swagger_auto_schema(
-        operation_id="create_user", responses={200: UserSerializer()}
+        security=[],
+        operation_id="register_new_user", responses={200: UserSerializer()}
     ),
 )
 class CreateUserView(generics.CreateAPIView):
