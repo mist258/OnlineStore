@@ -36,24 +36,6 @@ ALLOWED_HOSTS = [
 ]
 AUTH_USER_MODEL = "users.UserModel"
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "https://coffe-shop-frontend-six.vercel.app",
-    "https://coffeshop-develop.netlify.app",
-]
-
-FRONTEND_BASE_URL = (
-    os.getenv("FRONTEND_DEV") or
-    os.getenv("FRONTEND_VERCEL") or
-    os.getenv("FRONTEND_NETLIFY") or
-    "http://localhost:3000"
-)
-
-if FRONTEND_BASE_URL not in CORS_ALLOWED_ORIGINS:
-    FRONTEND_BASE_URL = "http://localhost:3000"
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -79,12 +61,6 @@ INSTALLED_APPS = [
     "apps.auth",
 ]
 
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-]
-
 ROOT_URLCONF = "configs.urls"
 
 TEMPLATES = [
@@ -103,21 +79,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "configs.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("POSTGRES_HOST"),
-        "PORT": os.environ.get("POSTGRES_PORT"),
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -156,6 +117,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# whitenoise settings
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "storage")
 MEDIA_URL = "/media/"
