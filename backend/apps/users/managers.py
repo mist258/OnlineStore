@@ -3,6 +3,11 @@ from django.contrib.auth.models import UserManager as Manager
 
 class UserManager(Manager):
     def create_user(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("subscription_updates_new", False)
+
+        if extra_fields["subscription_updates_new"] is not False:
+            raise ValueError("Cannot create user with subscription_updates_new=True")
+
         if not email:
             raise ValueError("Email required")
 
