@@ -41,3 +41,5 @@ class SupplyAdmin(ImportExportModelAdmin):
 @admin.register(Photo)
 class PhotoAdmin(ImportExportModelAdmin):
     resource_class = PhotoResource
+    def generate_log_entries(self, *args, **kwargs):
+        pass
