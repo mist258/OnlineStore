@@ -1,15 +1,9 @@
 from django.contrib.auth.models import UserManager as Manager
 
-from core.exceptions.user_subscription_exception import UserSubscriptionException
-
 
 class UserManager(Manager):
+
     def create_user(self, email=None, password=None, **extra_fields):
-
-        extra_fields.setdefault("subscription_updates_news", False)
-
-        if extra_fields["subscription_updates_news"] is not False:
-            raise UserSubscriptionException
 
         if not email:
             raise ValueError("Email required")

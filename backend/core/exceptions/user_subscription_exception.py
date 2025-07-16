@@ -1,2 +1,0 @@
-class UserSubscriptionException(Exception):
-    pass

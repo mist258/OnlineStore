@@ -56,6 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "is_superuser",
+            "subscription_updates_news",
             "last_login",
             "created_at",
             "updated_at",

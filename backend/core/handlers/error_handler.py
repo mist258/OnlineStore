@@ -7,7 +7,6 @@ def error_handler(exc: Exception, context:dict) -> Response:
     handlers = {
         "JWTException": _jwt_validation_exception_handler,
         "TemplateException": _template_validation_exception_handler,
-        "UserSubscriptionException": _user_subscription_exception_handler,
 
     }
 
@@ -29,8 +28,4 @@ def _template_validation_exception_handler(exc: Exception, context:dict) -> Resp
         {"Detail": "Template is invalid or doesn't exist"},
             status.HTTP_422_UNPROCESSABLE_ENTITY,)
 
-def _user_subscription_exception_handler(exc: Exception, context:dict) -> Response:
-    return Response(
-        {"Detail": "User subscription during registration must be False"},
-        status.HTTP_400_BAD_REQUEST,
-    )
+
