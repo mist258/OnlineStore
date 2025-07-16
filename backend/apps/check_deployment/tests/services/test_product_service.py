@@ -10,20 +10,24 @@ from apps.check_deployment.services.product_service import (
 @pytest.mark.django_db
 def test_create_product():
     data = {
+        "sku": "espresso_228",
         "name": "Espresso",
         "brend": "Jacobs",
         "roast": "Dark",
         "caffeine_type": "Decaf",
         "sort": "Arabica",
+        "description": "Very good coffee!",
         "flavor_profiles": ["Bold", "Smoky"],
     }
     product = create_product(data)
 
+    assert product.sku == "espresso_228"
     assert product.name == "Espresso"
     assert product.brend == "Jacobs"
     assert product.roast == "Dark"
     assert product.caffeine_type == "Decaf"
     assert product.sort == "Arabica"
+    assert product.description == "Very good coffee!"
     assert product.flavor_profiles.count() == 2
 
 
@@ -39,6 +43,7 @@ def test_get_product_by_id():
 @pytest.mark.django_db
 def test_update_product():
     product = Product.objects.create(
+        sku="espresso_228",
         name="Latte",
         brend="Jacobs",
         caffeine_type="Decaf",
@@ -47,6 +52,7 @@ def test_update_product():
         description="Very good coffee!"
     )
     update_data = {
+        "sku": "espresso_420",
         "name": "Updated Latte",
         "brend": "Nescafe",
         "caffeine_type": "Regular",
@@ -57,6 +63,7 @@ def test_update_product():
     }
     updated = update_product(product.id, update_data)
 
+    assert updated.sku == "espresso_420"
     assert updated.name == "Updated Latte"
     assert updated.brend == "Nescafe"
     assert updated.caffeine_type == "Regular"

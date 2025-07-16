@@ -8,10 +8,13 @@ from apps.check_deployment.models import FlavorProfile, Product
 @transaction.atomic
 def create_product(data: dict) -> Product:
     # check required fields
+    sku = data.get("sku")
     name = data.get("name")
     brend = data.get("brend")
     sort = data.get("sort")
-    roast=data.get("roast")
+    roast = data.get("roast")
+    if not sku:
+        raise ValidationError("Product 'sku' field is required.")
     if not name:
         raise ValidationError("Product 'name' field is required.")
     if not brend:
@@ -30,6 +33,7 @@ def create_product(data: dict) -> Product:
 
     try:
         product = Product.objects.create(
+            sku=sku,
             name=name,
             brend=brend,
             caffeine_type=data.get("caffeine_type"),
@@ -54,6 +58,7 @@ def get_product_by_id(product_id: int) -> Product:
 def update_product(product_id: int, data: dict) -> Product:
     product = get_object_or_error(Product, product_id)
     
+    product.sku = data.get("sku", product.sku)
     product.name = data.get("name", product.name)
     product.brend = data.get("brend", product.brend)
     product.caffeine_type = data.get("caffeine_type", product.caffeine_type)
@@ -82,4 +87,3 @@ def delete_product(product_id: int) -> None:
         raise ValueError(f"Product with id {product_id} not found.")
     except IntegrityError as e:
         raise ValueError(f"Cannot delete product {product_id}: {str(e)}")
-

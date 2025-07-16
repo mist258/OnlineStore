@@ -12,13 +12,32 @@ from apps.check_deployment.models import (
     BillingDetails
 )
 
-admin.site.register(Product)
+from .resources import ProductResource, SupplyResource, PhotoResource
+from import_export.admin import ImportExportModelAdmin
+
+
+#admin.site.register(Product)
 admin.site.register(FlavorProfile)
-admin.site.register(Supply)
-admin.site.register(Photo)
+#admin.site.register(Supply)
+#admin.site.register(Photo)
 admin.site.register(Review)
 admin.site.register(Order)
 admin.site.register(OrderPosition)
 admin.site.register(Customer)
 admin.site.register(BillingDetails)
 admin.site.register(Subscription)
+
+
+@admin.register(Product)
+class ProductAdmin(ImportExportModelAdmin):
+    resource_class = ProductResource
+
+
+@admin.register(Supply)
+class SupplyAdmin(ImportExportModelAdmin):
+    resource_class = SupplyResource
+
+
+@admin.register(Photo)
+class PhotoAdmin(ImportExportModelAdmin):
+    resource_class = PhotoResource

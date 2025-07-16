@@ -11,7 +11,12 @@ from apps.check_deployment.services.photo_service import (
 
 @pytest.mark.django_db
 def test_create_photo_success():
-    product = Product.objects.create(name="Latte", roast="Light", caffeine_type="regular")
+    product = Product.objects.create(
+        sku="latte_228",
+        name="Latte", 
+        roast="Light", 
+        caffeine_type="regular"
+    )
     data = {
         "product_id": product.id,
         "filename": "latte_1.jpg",
@@ -33,13 +38,21 @@ def test_create_photo_without_product_raises():
         "position": 0
     }
 
-    with pytest.raises(ValidationError, match=f"Product with id {data.get('product_id')} not found."):
+    with pytest.raises(
+        ValidationError, 
+        match=f"Product with id {data.get('product_id')} not found."
+    ):
         create_photo(data)
 
 
 @pytest.mark.django_db
 def test_update_photo_fields():
-    product = Product.objects.create(name="Espresso", roast="Dark", caffeine_type="regular")
+    product = Product.objects.create(
+        sku="latte_228",
+        name="Espresso", 
+        roast="Dark", 
+        caffeine_type="regular"
+    )
     photo = Photo.objects.create(product=product, filename="old.jpg", position=0)
 
     new_data = {
@@ -55,9 +68,23 @@ def test_update_photo_fields():
 
 @pytest.mark.django_db
 def test_update_photo_product():
-    product1 = Product.objects.create(name="Arabica", roast="Light", caffeine_type="decaf")
-    product2 = Product.objects.create(name="Robusta", roast="Dark", caffeine_type="regular")
-    photo = Photo.objects.create(product=product1, filename="product1.jpg", position=0)
+    product1 = Product.objects.create(
+        sku="latte_228",
+        name="Arabica", 
+        roast="Light", 
+        caffeine_type="decaf"
+    )
+    product2 = Product.objects.create(
+        sku="latte_229",
+        name="Robusta", 
+        roast="Dark", 
+        caffeine_type="regular"
+    )
+    photo = Photo.objects.create(
+        product=product1, 
+        filename="product1.jpg", 
+        position=0
+    )
 
     updated = update_photo(photo.id, {"product_id": product2.id})
 
@@ -66,7 +93,12 @@ def test_update_photo_product():
 
 @pytest.mark.django_db
 def test_delete_photo():
-    product = Product.objects.create(name="Test", roast="Medium", caffeine_type="regular")
+    product = Product.objects.create(
+        sku="latte_228",
+        name="Test", 
+        roast="Medium", 
+        caffeine_type="regular"
+    )
     photo = Photo.objects.create(product=product, filename="to_delete.jpg", position=0)
 
     delete_photo(photo.id)
@@ -77,7 +109,12 @@ def test_delete_photo():
 
 @pytest.mark.django_db
 def test_get_photo_by_id():
-    product = Product.objects.create(name="Flat White", roast="Medium", caffeine_type="regular")
+    product = Product.objects.create(
+        sku="latte_228",
+        name="Flat White", 
+        roast="Medium", 
+        caffeine_type="regular"
+    )
     photo = Photo.objects.create(product=product, filename="flat.jpg", position=3)
 
     result = get_photo_by_id(photo.id)

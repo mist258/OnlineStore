@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'corsheaders',
     'drf_yasg',
+    'import_export',
 
     # my apps
     'core',
