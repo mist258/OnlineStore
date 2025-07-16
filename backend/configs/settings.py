@@ -45,7 +45,6 @@ INSTALLED_APPS = [
 
     # installed modules
     "django_filters",
-    "cloudinary_storage",
     "corsheaders",
     "drf_yasg",
     "django_countries",
