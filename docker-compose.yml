@@ -12,16 +12,6 @@ services:
     command: >
       sh -c "python manage.py && python manage.py && python manage.py runserver 0.0.0.0:8000"
 
-#  db:
-#    image: postgres:14-alpine
-#    env_file:
-#      - .env
-#    volumes:
-#      - ./postgresql_db:/var/lib/postgresql/data
-#    ports:
-#      - "5433:5432"
-#    restart: on-failure
-
   redis:
     image: redis:alpine
 
@@ -35,5 +25,3 @@ services:
     restart: on-failure
     command: >
       sh -c "celery -A configs worker -l info"
-
-#wait_db
