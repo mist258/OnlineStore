@@ -7,7 +7,7 @@ from apps.check_deployment.db_utils import get_object_or_error
 @transaction.atomic
 def create_photo(data: dict) -> Photo:
     product_id = data.get("product_id")
-    filename = data.get("filename")
+    url = data.get("url")
     position = data.get("position", 0)
 
     if not product_id:
@@ -18,7 +18,7 @@ def create_photo(data: dict) -> Photo:
     try:
         photo = Photo.objects.create(
             product=product,
-            filename=filename,
+            url=url,
             position=position
         )
     except IntegrityError as e:
@@ -31,8 +31,8 @@ def create_photo(data: dict) -> Photo:
 def update_photo(photo_id: int, data: dict) -> Photo:
     photo = get_object_or_error(Photo, photo_id)
 
-    if "filename" in data:
-        photo.filename = data["filename"]
+    if "url" in data:
+        photo.url = data["url"]
     if "position" in data:
         photo.position = data["position"]
     if "product_id" in data:

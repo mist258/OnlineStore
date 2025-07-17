@@ -19,13 +19,13 @@ def test_create_photo_success():
     )
     data = {
         "product_id": product.id,
-        "filename": "latte_1.jpg",
+        "url": "latte_1.jpg",
         "position": 1
     }
 
     photo = create_photo(data)
 
-    assert photo.filename == "latte_1.jpg"
+    assert photo.url == "latte_1.jpg"
     assert photo.position == 1
     assert photo.product.id == product.id
 
@@ -34,7 +34,7 @@ def test_create_photo_success():
 def test_create_photo_without_product_raises():
     data = {
         "product_id": 9999,
-        "filename": "ghost.jpg",
+        "url": "ghost.jpg",
         "position": 0
     }
 
@@ -53,16 +53,16 @@ def test_update_photo_fields():
         roast="Dark", 
         caffeine_type="regular"
     )
-    photo = Photo.objects.create(product=product, filename="old.jpg", position=0)
+    photo = Photo.objects.create(product=product, url="old.jpg", position=0)
 
     new_data = {
-        "filename": "updated.jpg",
+        "url": "updated.jpg",
         "position": 2
     }
 
     updated = update_photo(photo.id, new_data)
 
-    assert updated.filename == "updated.jpg"
+    assert updated.url == "updated.jpg"
     assert updated.position == 2
 
 
@@ -82,7 +82,7 @@ def test_update_photo_product():
     )
     photo = Photo.objects.create(
         product=product1, 
-        filename="product1.jpg", 
+        url="product1.jpg", 
         position=0
     )
 
@@ -99,7 +99,7 @@ def test_delete_photo():
         roast="Medium", 
         caffeine_type="regular"
     )
-    photo = Photo.objects.create(product=product, filename="to_delete.jpg", position=0)
+    photo = Photo.objects.create(product=product, url="to_delete.jpg", position=0)
 
     delete_photo(photo.id)
 
@@ -115,9 +115,9 @@ def test_get_photo_by_id():
         roast="Medium", 
         caffeine_type="regular"
     )
-    photo = Photo.objects.create(product=product, filename="flat.jpg", position=3)
+    photo = Photo.objects.create(product=product, url="flat.jpg", position=3)
 
     result = get_photo_by_id(photo.id)
 
     assert result.id == photo.id
-    assert result.filename == "flat.jpg"
+    assert result.url == "flat.jpg"

@@ -54,6 +54,10 @@ def get_product_by_id(product_id: int) -> Product:
     return get_object_or_error(Product, product_id)
 
 
+def get_product_all() -> tuple:
+    return Product.objects.prefetch_related('photos', 'supplies').all()
+
+
 @transaction.atomic
 def update_product(product_id: int, data: dict) -> Product:
     product = get_object_or_error(Product, product_id)

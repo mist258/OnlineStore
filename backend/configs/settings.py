@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'import_export',
+    'rest_framework',
 
     # my apps
     'core',

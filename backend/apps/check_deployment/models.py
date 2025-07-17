@@ -58,9 +58,9 @@ class Supply(models.Model):
 
 
 class Photo(models.Model):
-    filename = models.CharField(
+    url = models.CharField(
         max_length=255, 
-        null=True, 
+        null=True,
         default=get_timenow
     )
     position = models.IntegerField(default=0)
@@ -71,7 +71,7 @@ class Photo(models.Model):
     )
 
     def __str__(self):
-        return f"{self.filename} (Product: {self.product.name})"
+        return f"{self.url} (Product: {self.product.name})"
 
 
 class Subscription(models.Model):
