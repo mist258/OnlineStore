@@ -52,11 +52,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "django_celery_results",
 
-
     # my apps
     "core",
     "apps.users",
     "apps.auth",
+    "apps.oauth_google",
 ]
 
 ROOT_URLCONF = "configs.urls"
