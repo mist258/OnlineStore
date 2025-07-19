@@ -1,6 +1,6 @@
 import pytest
-from apps.check_deployment.models import Customer, Subscription
-from apps.check_deployment.services.customer_service import (
+from apps.database_products.models import Customer, Subscription
+from apps.database_products.services.customer_service import (
     create_customer,
     get_customer_by_id,
     update_customer,

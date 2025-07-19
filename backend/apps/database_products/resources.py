@@ -1,5 +1,5 @@
 from import_export import resources, fields, widgets
-from apps.check_deployment.models import Product, Supply, Photo
+from apps.database_products.models import Product, Supply, Photo
 from import_export.results import RowResult
 from uuid import uuid4
 

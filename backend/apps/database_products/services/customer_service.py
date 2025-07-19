@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.check_deployment.db_utils import get_object_or_error
-from apps.check_deployment.models import Customer, Subscription
+from apps.database_products.db_utils import get_object_or_error
+from apps.database_products.models import Customer, Subscription
 
 
 @transaction.atomic

@@ -1,8 +1,8 @@
 import pytest
 from datetime import date
 
-from apps.check_deployment.models import Review, Customer, Product
-from apps.check_deployment.services.review_service import (
+from apps.database_products.models import Review, Customer, Product
+from apps.database_products.services.review_service import (
     create_review,
     get_review_by_id,
     update_review,

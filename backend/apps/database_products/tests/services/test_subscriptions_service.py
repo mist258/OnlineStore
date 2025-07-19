@@ -1,6 +1,6 @@
 import pytest
-from apps.check_deployment.models import Subscription
-from apps.check_deployment.services.subscription_service import (
+from apps.database_products.models import Subscription
+from apps.database_products.services.subscription_service import (
     create_subscription,
     get_subscription_by_id,
     update_subscription,

@@ -1,6 +1,6 @@
 import pytest
-from apps.check_deployment.models import Order, Customer
-from apps.check_deployment.services.order_service import (
+from apps.database_products.models import Order, Customer
+from apps.database_products.services.order_service import (
     create_order,
     get_order_by_id,
     update_order,

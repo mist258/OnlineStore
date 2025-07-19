@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
-from apps.check_deployment.models import Product, Photo
-from apps.check_deployment.services.photo_service import (
+from apps.database_products.models import Product, Photo
+from apps.database_products.services.photo_service import (
     create_photo,
     update_photo,
     delete_photo,

@@ -1,7 +1,7 @@
 from django.db import transaction, IntegrityError
 from django.core.exceptions import ValidationError
-from apps.check_deployment.models import Photo, Product
-from apps.check_deployment.db_utils import get_object_or_error
+from apps.database_products.models import Photo, Product
+from apps.database_products.db_utils import get_object_or_error
 
 
 @transaction.atomic

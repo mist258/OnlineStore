@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.check_deployment.models import (
+from apps.database_products.models import (
     Product, 
     FlavorProfile, 
     Supply, 

@@ -1,6 +1,6 @@
 import pytest
-from apps.check_deployment.models import Product, Supply
-from apps.check_deployment.services.supply_service import (
+from apps.database_products.models import Product, Supply
+from apps.database_products.services.supply_service import (
     create_supply,
     get_supply_by_id,
     update_supply,

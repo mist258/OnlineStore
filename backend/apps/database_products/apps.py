@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CheckDeploymentConfig(AppConfig):
+class DatabaseProductsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.check_deployment'
+    name = 'apps.database_products'

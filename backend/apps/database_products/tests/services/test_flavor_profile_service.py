@@ -1,6 +1,6 @@
 import pytest
-from apps.check_deployment.models import FlavorProfile
-from apps.check_deployment.services.flavor_profile_service import (
+from apps.database_products.models import FlavorProfile
+from apps.database_products.services.flavor_profile_service import (
     create_flavor_profile,
     get_flavor_profile_by_id,
     update_flavor_profile,

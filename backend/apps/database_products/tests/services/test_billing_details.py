@@ -1,6 +1,6 @@
 import pytest
-from apps.check_deployment.models import BillingDetails, Customer, Order
-from apps.check_deployment.services.billing_details_service import (
+from apps.database_products.models import BillingDetails, Customer, Order
+from apps.database_products.services.billing_details_service import (
     create_billing_details,
     get_billing_details_by_id,
     update_billing_details,

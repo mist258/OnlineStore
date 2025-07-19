@@ -1,6 +1,6 @@
 import pytest
-from apps.check_deployment.models import Product
-from apps.check_deployment.services.product_service import (
+from apps.database_products.models import Product
+from apps.database_products.services.product_service import (
     create_product,
     delete_product,
     get_product_by_id,

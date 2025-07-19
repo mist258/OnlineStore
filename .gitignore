@@ -1,0 +1,6 @@
+.idea
+postgresql_db
+.env
+backend/apps/initial/migrations/*
+backend/apps/database_products/migrations/*
+__pycache__/

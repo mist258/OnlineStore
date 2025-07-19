@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.check_deployment.db_utils import get_object_or_error
-from apps.check_deployment.models import FlavorProfile
+from apps.database_products.db_utils import get_object_or_error
+from apps.database_products.models import FlavorProfile
 
 
 def get_flavor_profile_by_id(flavor_profile_id: int) -> FlavorProfile:
