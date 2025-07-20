@@ -41,6 +41,22 @@ class EmailService:
         except Exception:
             raise TemplateException
 
+    @classmethod
+    def greeting_registration_email(cls, user: UserModel):
+
+        try:
+            cls.__send_email.delay(user.email,
+                                   "registration_greeting.html",
+                                   {
+                                       "first_name": user.profile.first_name,
+
+                                   },
+                                   "Registration greeting"
+                                   )
+        except Exception:
+            raise TemplateException
+
+
         
 
 

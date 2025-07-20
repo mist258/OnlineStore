@@ -1,13 +1,19 @@
-from django.urls import path
+from django.urls import include, path
 
-from .views import CreateUserView, GetMyInfoView
+from rest_framework.routers import DefaultRouter
 
+from .views import CreateUserView, GetMyInfoView, ListAllUsersView
+
+router = DefaultRouter()
+router.register(r"list", ListAllUsersView, basename="users_list")
 urlpatterns = [
-    path("",
+    path("/", include(router.urls)),
+    path("/registration",
          CreateUserView.as_view(), name="register_user"
          ), # register new user
     path(
         "/info", GetMyInfoView.as_view(), name="get_own_info"
     ), # get own info
+
 
 ]
