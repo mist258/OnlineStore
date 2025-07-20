@@ -46,11 +46,11 @@ class UserProfileModel(BaseModel):
         ],
     )
     company_name = models.CharField(max_length=25, null=True, blank=True)
-    country = CountryField(blank_label=_("Enter your country's name"))
-    state = models.CharField(max_length=25)
-    region = models.CharField(max_length=25)
-    street_address = models.TextField(max_length=30)
-    apartment_address = models.TextField(max_length=30)
+    country = models.CharField(max_length=25, null=True, blank=True)
+    state = models.CharField(max_length=25, null=True, blank=True)
+    region = models.CharField(max_length=25, null=True, blank=True)
+    street_name = models.TextField(max_length=30, null=True, blank=True)
+    apartment_number = models.TextField(max_length=30, null=True, blank=True)
     zip_code = models.CharField(
         max_length=15,
         validators=[
@@ -58,6 +58,7 @@ class UserProfileModel(BaseModel):
                 UserValidationRegex.ZIP_CODE.pattern, UserValidationRegex.ZIP_CODE.msg
             )
         ],
+        null=True, blank=True,
     )
     phone_number = models.CharField(
         max_length=15,
@@ -66,7 +67,7 @@ class UserProfileModel(BaseModel):
                 UserValidationRegex.PHONE.pattern, UserValidationRegex.PHONE.msg
             )
         ],
-        unique=True,
+        unique=True, null=True, blank=True,
     )
     user = models.OneToOneField(
         UserModel, on_delete=models.CASCADE, related_name="profile"

@@ -52,3 +52,6 @@ class GetMyInfoView(generics.GenericAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
+class ListAllUsersView(generics.ListAPIView):
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer

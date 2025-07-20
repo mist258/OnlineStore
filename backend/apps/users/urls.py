@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import CreateUserView, GetMyInfoView
+from .views import CreateUserView, GetMyInfoView, ListAllUsersView
 
 urlpatterns = [
     path("",
@@ -9,5 +9,6 @@ urlpatterns = [
     path(
         "/info", GetMyInfoView.as_view(), name="get_own_info"
     ), # get own info
+    path("/users_list", ListAllUsersView.as_view(), name="users_list")
 
 ]
