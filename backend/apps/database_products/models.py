@@ -49,8 +49,8 @@ class Supply(models.Model):
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(
         Product, 
-        on_delete=models.CASCADE, 
-        related_name='supplies'
+        related_name='supplies',
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -66,8 +66,8 @@ class Photo(models.Model):
     position = models.IntegerField(default=0)
     product = models.ForeignKey(
         Product, 
-        on_delete=models.CASCADE,   
-        related_name='photos'
+        related_name='photos',
+        on_delete=models.CASCADE   
     )
 
     def __str__(self):
@@ -103,7 +103,7 @@ class Review(models.Model):
     comment = models.TextField(blank=True, null=True)
     customer = models.ForeignKey(
         Customer, 
-        on_delete=models.CASCADE, 
+        on_delete=models.CASCADE,
         related_name='reviews'
     )
     product = models.ForeignKey(
@@ -130,9 +130,24 @@ class Order(models.Model):
 
 class OrderPosition(models.Model):
     quantity = models.IntegerField(default=1)
+    total_price = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=0.00
+    )
+    date = models.DateField(default=get_timenow)
+
+    product_sku = models.CharField(max_length=50, null=False)
+    product_name = models.CharField(max_length=255, null=False)
+    product_brend = models.CharField(max_length=255, null=False)
+    product_caffeine_type = models.CharField(max_length=25, blank=True, null=False)
+    product_sort = models.CharField(max_length=25, null=False, blank=True)
+    product_roast = models.CharField(max_length=50)
     product = models.ForeignKey(
         Product, 
-        on_delete=models.CASCADE, 
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
         related_name='order_positions'
     )
     order = models.ForeignKey(
@@ -140,6 +155,9 @@ class OrderPosition(models.Model):
         on_delete=models.CASCADE, 
         related_name='positions'
     )
+
+
+
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name} in Order #{self.order.id}"
