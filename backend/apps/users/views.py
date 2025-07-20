@@ -52,3 +52,4 @@ class GetMyInfoView(generics.GenericAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
+
