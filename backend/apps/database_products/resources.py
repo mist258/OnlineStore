@@ -57,11 +57,16 @@ class SupplyResource(resources.ModelResource):
         attribute='price',
         column_name='Price'
     )
+    quantity = fields.Field(
+        attribute='quantity',
+        column_name='Quantity',
+        default=0
+    )
 
     class Meta:
         model = Supply
         import_id_fields = ('product', 'serving_type', 'price')
-        fields = ('product', 'serving_type', 'price',)
+        fields = ('product', 'serving_type', 'price', 'quantity')
 
 
 class PhotoResource(resources.ModelResource):

@@ -9,7 +9,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 class SupplySerializer(serializers.ModelSerializer):
     class Meta:
         model = Supply
-        fields = ['id', 'serving_type', 'price']
+        fields = ['id', 'serving_type', 'price', 'quantity']
 
 class ProductSerializer(serializers.ModelSerializer):
     photos = PhotoSerializer(many=True, read_only=True)
