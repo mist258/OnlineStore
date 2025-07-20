@@ -5,8 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from core.models import BaseModel
 
-from django_countries.fields import CountryField
-
 from .managers import UserManager
 from .regex.user_validation_regex import UserValidationRegex
 
