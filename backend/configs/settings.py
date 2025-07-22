@@ -36,6 +36,10 @@ ALLOWED_HOSTS = [
 ]
 AUTH_USER_MODEL = "users.UserModel"
 
+
+GOOGLE_OAUTH_CLIENT_ID=os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
+GOOGLE_OAUTH_CLIENT_SECRET=os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
+
 # Application definition
 
 INSTALLED_APPS = [

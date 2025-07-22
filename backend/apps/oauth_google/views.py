@@ -1,11 +1,14 @@
 from django.utils.decorators import method_decorator
 
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from core.services.oAuth_service import GoogleOAuthService
 
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import OauthGoogleSerializer
+from .serializers import GoogleOAuthSerializer
 
 
 @method_decorator(name='post',
@@ -13,17 +16,19 @@ from .serializers import OauthGoogleSerializer
                       security=[],
                       operation_id='login_via_google',
                   ))
-class OauthGoogleView(generics.GenericAPIView): # todo
+class OauthGoogleView(generics.GenericAPIView):
     """
         auth via Google
         (allow any users)
     """
 
-    serializer_class = OauthGoogleSerializer
+    serializer_class = GoogleOAuthSerializer
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
         data = request.data
-        google_data = OauthGoogleSerializer(data=data)
+        google_data = GoogleOAuthSerializer(data=data)
         google_data.is_valid(raise_exception=True)
+        token = GoogleOAuthService.check_google_auth(google_data.validated_data)
+        return Response(token, status=status.HTTP_200_OK)
 
