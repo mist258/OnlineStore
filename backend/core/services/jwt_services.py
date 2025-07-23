@@ -23,11 +23,31 @@ class RecoveryToken(ActionToken):
     lifetime = ActionTokenEnum.RECOVERY.lifetime
 
 
+class AccessToken(ActionToken):
+    token_type = ActionTokenEnum.ACCESS.token_type
+    lifetime = ActionTokenEnum.ACCESS.lifetime
+
+
+class RefreshToken(ActionToken):
+    token_type = ActionTokenEnum.REFRESH.token_type
+    lifetime = ActionTokenEnum.REFRESH.lifetime
+
+
 class JWTService:
 
     @staticmethod
     def create_token(user, token_class: ActionTokenClassType) -> Token:
         return token_class.for_user(user)
+
+    @staticmethod
+    def create_pair_token(user) -> dict:
+        access_token = AccessToken.for_user(user)
+        refresh_token = RefreshToken.for_user(user)
+
+        return {
+            "access": str(access_token),
+            "refresh": str(refresh_token),
+        }
 
     @staticmethod
     def validate_token(token, token_class: ActionTokenClassType) -> Token:
@@ -40,6 +60,4 @@ class JWTService:
         token_res.blacklist()
         user_id = token_res.payload.get('user_id')
         return get_object_or_404(UserModel, pk=user_id)
-
-
 

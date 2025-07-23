@@ -30,5 +30,10 @@ class OauthGoogleView(generics.GenericAPIView):
         google_data = GoogleOAuthSerializer(data=data)
         google_data.is_valid(raise_exception=True)
         token = GoogleOAuthService.check_google_auth(google_data.validated_data)
-        return Response(token, status=status.HTTP_200_OK)
+        refresh = token['refresh']
+        access = token['access']
+        return Response({
+            'access': access,
+            'refresh': refresh,
+        }, status=status.HTTP_200_OK)
 

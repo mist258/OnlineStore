@@ -5,4 +5,5 @@ class GoogleOAuthSerializer(serializers.Serializer):
     """
         serialize received data from Google
     """
+    email = serializers.EmailField()
     token = serializers.CharField()
