@@ -57,7 +57,7 @@ this needed to display the documentation on 'Render')
 
 ## oauth_google
 
-**/api/oauth_google** - auth useer from Google
+**/api/oauth_google** - auth user from Google
 
 
 ## users
