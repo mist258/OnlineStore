@@ -38,6 +38,8 @@ this needed to display the documentation on 'Render')
 
 ✔️ *psycopg2-binary* (need to connect supabase with drf)
 
+✔️ *google-auth* (need for oAuth)
+
 # ENDPOINTS
 
 ## auth
@@ -50,7 +52,13 @@ this needed to display the documentation on 'Render')
 
 **/api/auth/recovery_request** - send request to change password
 
-**/api/auth/recovery_password/<str:token>** - changing password
+**/api/auth/recovery_password/<str:token>** - changing password 
+
+
+## oauth_google
+
+**/api/oauth_google** - auth useer from Google
+
 
 ## users
 
