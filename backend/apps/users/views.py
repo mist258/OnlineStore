@@ -22,7 +22,7 @@ UserModel = get_user_model()
 class CreateUserView(generics.CreateAPIView):
     """
     register new user
-    (allow any users)
+    (allow for any users)
     """
 
     serializer_class = UserSerializer
@@ -39,7 +39,7 @@ class CreateUserView(generics.CreateAPIView):
 class GetMyInfoView(generics.GenericAPIView):
     """
     get own info
-    (allow authenticated users)
+    (allow for authenticated users)
     """
 
     queryset = UserModel.objects.all()
@@ -52,11 +52,13 @@ class GetMyInfoView(generics.GenericAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-@method_decorator(name="list",
-                  decorator=swagger_auto_schema(operation_id="get_users_info", responses={200: UserSerializer()}
-                                                ),
-                  )
-class ListAllUsersView(viewsets.ReadOnlyModelViewSet):
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(
+        operation_id="get_users_info", responses={200: UserSerializer()}
+    ),
+)
+class ListUsersView(viewsets.ReadOnlyModelViewSet):
     """
         /api/users/list/ - list all users
         /api/users/list/<int:pk>/ - list user by id
@@ -65,3 +67,4 @@ class ListAllUsersView(viewsets.ReadOnlyModelViewSet):
 
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
+

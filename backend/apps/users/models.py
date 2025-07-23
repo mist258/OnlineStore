@@ -14,8 +14,10 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         db_table = "auth_user"
         ordering = ("id",)
 
-    email = models.EmailField(_("Enter your email"), max_length=30, unique=True)
+    email = models.EmailField(_("Enter your email"), max_length=50, unique=True, db_index=True)
     is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     subscription_updates_news = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"

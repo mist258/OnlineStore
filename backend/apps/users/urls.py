@@ -2,10 +2,10 @@ from django.urls import include, path
 
 from rest_framework.routers import DefaultRouter
 
-from .views import CreateUserView, GetMyInfoView, ListAllUsersView
+from .views import CreateUserView, GetMyInfoView, ListUsersView
 
 router = DefaultRouter()
-router.register(r"list", ListAllUsersView, basename="users_list")
+router.register(r"list", ListUsersView, basename="users_list")
 urlpatterns = [
     path("/", include(router.urls)),
     path("/registration",
@@ -14,6 +14,7 @@ urlpatterns = [
     path(
         "/info", GetMyInfoView.as_view(), name="get_own_info"
     ), # get own info
+
 
 
 ]
