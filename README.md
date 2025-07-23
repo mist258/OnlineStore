@@ -66,6 +66,10 @@ this needed to display the documentation on 'Render')
 
 **/api/users/info** - authenticated user can get own info
 
+**/api/users/list/** - superuser/admin can list all users
+
+**/api/users/list/<int:pk>** - superuser/admin can retrieve user
+
 
 ## Installation
 
