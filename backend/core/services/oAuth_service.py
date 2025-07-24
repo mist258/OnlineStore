@@ -17,16 +17,16 @@ class GoogleOAuthService:
     @staticmethod
     def check_google_auth(google_user):
         try:
-
+            google_request = requests.Request()
             id_info = id_token.verify_oauth2_token(google_user['token'],
-                                         requests.Request(),
+                                         google_request,
                                          settings.GOOGLE_OAUTH_CLIENT_ID)
             email = id_info["email"]
 
             if not email:
                 raise AuthenticationFailed(code=status.HTTP_401_UNAUTHORIZED,
                                            detail="Email not found")
-        except ValueError as e:
+        except ValueError:
             raise AuthenticationFailed( code=status.HTTP_401_UNAUTHORIZED ,
                                         detail="Invalid token")
 
