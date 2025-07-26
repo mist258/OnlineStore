@@ -29,8 +29,6 @@
 
 ✔️ *drf-yasg* (documentation)
 
-✔️ *django_countries* (provides fixed list of countries)
-
 ✔️ *whitenoise* (serving static files without using a separate web server (Nginx),
 this needed to display the documentation on 'Render')
 
