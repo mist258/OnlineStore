@@ -56,6 +56,48 @@ class EmailService:
         except Exception:
             raise TemplateException
 
+    @classmethod
+    def order_created_notification_email(cls, user: UserModel):
+
+        try:
+            cls.__send_email.delay(user.email,
+                                   "order_created.html",
+                                   {
+                                       "first_name": user.profile.first_name,
+                                   },
+                                   "Order created"
+                                   )
+        except Exception:
+            raise TemplateException
+
+
+    @classmethod
+    def subscription_notification_email(cls, user: UserModel):
+
+        try:
+            cls.__send_email.delay(user.email,
+                                   "subscribed_for_newsletters.html",
+                                   {
+                                       "first_name": user.profile.first_name,
+                                   },
+                                   "Subscription notification"
+                                   )
+        except Exception:
+            raise TemplateException
+
+    @classmethod
+    def order_status_notification_email(cls, user: UserModel):
+
+        try:
+            cls.__send_email.delay(user.email,
+                                   "inform_order_status.html",
+                                   {
+                                       "first_name": user.profile.first_name,
+                                   },
+                                   "Order status notification")
+        except Exception:
+            raise TemplateException
+
 
         
 
