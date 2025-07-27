@@ -24,7 +24,6 @@ admin.site.register(Review)
 admin.site.register(Order)
 admin.site.register(OrderPosition)
 admin.site.register(Customer)
-admin.site.register(BillingDetails)
 admin.site.register(Subscription)
 
 

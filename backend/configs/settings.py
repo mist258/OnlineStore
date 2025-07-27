@@ -61,7 +61,15 @@ INSTALLED_APPS = [
     # my apps
     'core',
     'apps.initial',
-    'apps.database_products',
+
+    # DB apps
+    'apps.product',
+    'apps.supply',
+    'apps.subscription',
+    'apps.customer',
+    'apps.review',
+    'apps.order',
+    'apps.billing_details',
 
 ]
 

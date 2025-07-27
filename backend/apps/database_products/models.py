@@ -161,7 +161,7 @@ class OrderPosition(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name} in Order #{self.order.id}"
-    
+
 
 class BillingDetails(models.Model):
     first_name = models.CharField(max_length=100)
