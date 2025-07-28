@@ -1,4 +1,4 @@
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.throttling import AnonRateThrottle
 
 
 # long-term restrictions for anonymous
