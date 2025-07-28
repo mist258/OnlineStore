@@ -1,0 +1,31 @@
+from uuid import uuid4
+
+from import_export import fields, resources, widgets
+
+from apps.supply.models import Product, Supply
+
+
+class SupplyResource(resources.ModelResource):
+    product = fields.Field(
+        attribute='product',  
+        column_name='SKU',
+        widget=widgets.ForeignKeyWidget(Product, field='sku') 
+    )
+    serving_type = fields.Field(
+        attribute='serving_type',
+        column_name='Type'
+    )
+    price = fields.Field(
+        attribute='price',
+        column_name='Price'
+    )
+    quantity = fields.Field(
+        attribute='quantity',
+        column_name='Quantity',
+        default=0
+    )
+
+    class Meta:
+        model = Supply
+        import_id_fields = ('product', 'serving_type', 'price')
+        fields = ('product', 'serving_type', 'price', 'quantity')

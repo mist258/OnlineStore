@@ -1,7 +1,8 @@
 from rest_framework import generics
 
 from apps.initial.models import InitialTest
-from apps.initial.serializers import InitialPhotoSerializer, InitialTestSerializer
+from apps.initial.serializers import (InitialPhotoSerializer,
+                                      InitialTestSerializer)
 
 
 class InitialTestView(generics.ListCreateAPIView):

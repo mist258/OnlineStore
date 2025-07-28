@@ -57,11 +57,20 @@ INSTALLED_APPS = [
     'drf_yasg',
     'import_export',
     'rest_framework',
+    
+    # DB apps
+    'apps.product',
+    'apps.supply',
+    'apps.subscription',
+    'apps.customer',
+    'apps.review',
+    'apps.order',
+    'apps.billing_details',
 
     # my apps
     'core',
     'apps.initial',
-    'apps.database_products',
+
 
 ]
 
