@@ -21,17 +21,14 @@ REST_FRAMEWORK = {
 
     "DEFAULT_THROTTLE_CLASSES": [
         "core.throttles.superuser_bypass_throttle.SuperuserBypassThrottle",
-        "core.throttles.sustained_burst_throttle.UserSustainedRateThrottle",
-        "core.throttles.sustained_burst_throttle.UserBurstRateThrottle",
         "core.throttles.sustained_burst_throttle.AnonSustainedRateThrottle",
         "core.throttles.sustained_burst_throttle.AnonBurstRateThrottle",
     ],
 
     "DEFAULT_THROTTLE_RATES": {
-        "user_sustained": "1000/day",
-        "user_burst": "70/min",
         "anon_sustained": "700/day",
-        "anon_burst": "40/min",
+        "anon_burst": "30/min",
+        "user": "30/min",
     }
 }
 
