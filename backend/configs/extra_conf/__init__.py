@@ -1,3 +1,4 @@
+from .cache_conf import *
 from .celery_conf import *
 from .cors_conf import *
 from .database_conf import *

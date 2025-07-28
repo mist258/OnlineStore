@@ -67,4 +67,5 @@ class ListUsersView(viewsets.ReadOnlyModelViewSet):
 
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
 
