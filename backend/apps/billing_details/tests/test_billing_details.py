@@ -1,10 +1,14 @@
+from apps.billing_details.models import BillingDetails
+from apps.customer.models import Customer
+from apps.order.models import Order
+
 import pytest
-from apps.database_products.models import BillingDetails, Customer, Order
+
 from backend.apps.billing_details.services.billing_details_service import (
     create_billing_details,
+    delete_billing_details,
     get_billing_details_by_id,
     update_billing_details,
-    delete_billing_details
 )
 
 

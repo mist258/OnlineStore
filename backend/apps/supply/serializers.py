@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..database_products.models import Supply
+from apps.supply.models import Supply
 
 
 class SupplySerializer(serializers.ModelSerializer):

@@ -1,8 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
+from apps.subscription.models import Subscription
+
 from backend.apps.db_utils import get_object_or_error
-from apps.database_products.models import Subscription
 
 
 @transaction.atomic
@@ -21,7 +22,7 @@ def create_subscription(data: dict) -> Subscription:
             letter=letter
         )
     except IntegrityError as e:
-        raise ValidationError(f"Database error during subscription creation: {str(e)}")
+        raise ValidationError(f"Database error during services creation: {str(e)}")
     except Exception as e:
         raise ValidationError(f"Unexpected error: {str(e)}")
 
@@ -54,4 +55,4 @@ def delete_subscription(subscription_id: int) -> None:
     except Subscription.DoesNotExist:
         raise ValueError(f"Subscription with id {subscription_id} not found.")
     except IntegrityError as e:
-        raise ValueError(f"Cannot delete subscription {subscription_id}: {str(e)}")
+        raise ValueError(f"Cannot delete services {subscription_id}: {str(e)}")

@@ -1,10 +1,12 @@
+from apps.subscription.models import Subscription
+
 import pytest
-from apps.database_products.models import Subscription
-from backend.apps.subscription.subscription.subscription_service import (
+
+from backend.apps.subscription.services.subscription_service import (
     create_subscription,
+    delete_subscription,
     get_subscription_by_id,
     update_subscription,
-    delete_subscription
 )
 
 

@@ -1,8 +1,7 @@
 from rest_framework import serializers
 
+from apps.products.models import Photo, Product
 from apps.supply.serializers import SupplySerializer
-
-from ..database_products.models import Photo, Product
 
 
 class PhotoSerializer(serializers.ModelSerializer):

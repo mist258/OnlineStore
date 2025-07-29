@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.database_products.models import Supply
+from apps.supply.models import Supply
 
 from import_export.admin import ImportExportModelAdmin
 

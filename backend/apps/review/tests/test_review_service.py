@@ -1,13 +1,12 @@
-import pytest
 from datetime import date
 
-from apps.database_products.models import Review, Customer, Product
-from backend.apps.review.services.review_service import (
-    create_review,
-    get_review_by_id,
-    update_review,
-    delete_review
-)
+from apps.customer.models import Customer
+from apps.products.models import Product
+from apps.review.models import Review
+
+import pytest
+
+from backend.apps.review.services.review_service import create_review, delete_review, get_review_by_id, update_review
 
 
 @pytest.mark.django_db

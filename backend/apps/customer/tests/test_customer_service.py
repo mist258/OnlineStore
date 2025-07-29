@@ -1,10 +1,13 @@
+from apps.customer.models import Customer
+from apps.subscription.models import Subscription
+
 import pytest
-from apps.database_products.models import Customer, Subscription
+
 from backend.apps.customer.services.customer_service import (
     create_customer,
+    delete_customer,
     get_customer_by_id,
     update_customer,
-    delete_customer
 )
 
 

@@ -1,6 +1,5 @@
-from uuid import uuid4
-
-from apps.database_products.models import Product, Supply
+from apps.products.models import Product
+from apps.supply.models import Supply
 
 from import_export import fields, resources, widgets
 

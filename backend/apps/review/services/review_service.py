@@ -1,9 +1,13 @@
 from datetime import date
+
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
+from apps.customer.models import Customer
+from apps.products.models import Product
+from apps.review.models import Review
+
 from backend.apps.db_utils import get_object_or_error
-from apps.database_products.models import Review, Customer, Product
 
 
 @transaction.atomic

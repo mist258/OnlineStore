@@ -1,8 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
+from apps.products.models import Product
+from apps.supply.models import Supply
+
 from backend.apps.db_utils import get_object_or_error
-from apps.database_products.models import Supply, Product
 
 
 @transaction.atomic

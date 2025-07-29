@@ -1,11 +1,9 @@
+from apps.products.models import Product
+from apps.supply.models import Supply
+
 import pytest
-from apps.database_products.models import Product, Supply
-from backend.apps.supply.services.supply_service import (
-    create_supply,
-    get_supply_by_id,
-    update_supply,
-    delete_supply,
-)
+
+from backend.apps.supply.services.supply_service import create_supply, delete_supply, get_supply_by_id, update_supply
 
 
 @pytest.mark.django_db

@@ -1,11 +1,14 @@
+from apps.products.models import FlavorProfile
+
 import pytest
-from apps.database_products.models import FlavorProfile
+
 from backend.apps.products.services.flavor_profile_service import (
     create_flavor_profile,
+    delete_flavor_profile,
     get_flavor_profile_by_id,
     update_flavor_profile,
-    delete_flavor_profile
 )
+
 
 @pytest.mark.django_db
 def test_create_flavor_profile():

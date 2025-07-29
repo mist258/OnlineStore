@@ -1,6 +1,8 @@
-from django.db import transaction, IntegrityError
 from django.core.exceptions import ValidationError
-from apps.database_products.models import Photo, Product
+from django.db import IntegrityError, transaction
+
+from apps.products.models import Photo, Product
+
 from backend.apps.db_utils import get_object_or_error
 
 
