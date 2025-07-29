@@ -8,13 +8,17 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-psycopg = "^3.2.9"
 djangorestframework = "^3.16.0"
 django-filter = "^25.1"
 pillow = "^11.3.0"
 django-cors-headers = "^4.7.0"
 drf-yasg = "^1.21.10"
 gunicorn = "^23.0.0"
+psycopg = "^3.2.9"
+pytest = "^7.4.0"
+pytest-django = "^4.5.2"
+django-import-export-extensions = "^1.8.0"
+django-import-export = "^4.3.9"
 djangorestframework-simplejwt = "^5.5.1"
 celery = "^5.5.3"
 redis = "^6.2.0"
@@ -33,3 +37,7 @@ ruff = "^0.12.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "configs.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]

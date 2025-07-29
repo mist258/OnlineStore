@@ -1,5 +1,5 @@
 FROM python:3.13-alpine
-MAINTAINER Python dev
+LABEL Python dev
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -10,8 +10,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_NO_INTERACTION=1 \
     COLUMNS=80
 
-RUN apk update
-RUN apk add --no-cache  \
+RUN apk update && apk add --no-cache  \
     gcc  \
     musl-dev  \
     postgresql-dev \
@@ -19,19 +18,19 @@ RUN apk add --no-cache  \
     curl \
     jpeg-dev \
     zlib-dev \
-    libjpeg
+    libjpeg \
+    && mkdir /app
 
-RUN mkdir /app
 WORKDIR /app
-
+    
 ENV POETRY_HOME=/usr/local/poetry
-RUN  curl -sSL https://install.python-poetry.org | python3 -
+RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH=$POETRY_HOME/bin:$PATH
 
 COPY pyproject.toml /app/
 
-RUN poetry config virtualenvs.create false
-RUN poetry lock
-RUN poetry install
+RUN poetry config virtualenvs.create false \
+    && poetry lock \
+    && poetry install
 
 CMD ["poetry", "run", "gunicorn", "configs.wsgi:application", "--bind", "0.0.0.0:8000"]

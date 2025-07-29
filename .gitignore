@@ -1,3 +1,6 @@
 .idea
 postgresql_db
 .env
+
+__pycache__/
+

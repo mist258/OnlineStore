@@ -43,24 +43,39 @@ GOOGLE_OAUTH_CLIENT_SECRET=os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.staticfiles",
-
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.staticfiles',
+    
+  
     # installed modules
     "django_filters",
     "corsheaders",
     "drf_yasg",
+    "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "django_celery_results",
+    "import_export",
+
 
     # my apps
-    "core",
+    "core',
     "apps.users",
     "apps.auth",
     "apps.oauth_google",
+    "apps.products",
+    "apps.supply",
+    "apps.subscription',
+    "apps.customer',
+    "apps.review",
+    "apps.order",
+    "apps.billing_details",
+  
+
 ]
+
 
 ROOT_URLCONF = "configs.urls"
 

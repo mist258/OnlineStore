@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
@@ -36,6 +37,13 @@ schema_view = get_schema_view(
     permission_classes=[AllowAny],
 )
 urlpatterns = [
+    path("/api/products", include("apps.products.urls")),
+    path("/api/reviev", include("apps.review.urls")),
+    path("/api/supply", include("apps.supply.urls")),
+    path("/api/services", include("apps.subscription.urls")),
+    path("/api/order", include("apps.order.urls")),
+    path("/api/billing_details", include("apps.billing_details.urls")),
+    path("admin/", admin.site.urls),
     path("api/users", include("apps.users.urls")),
     path("api/auth", include("apps.auth.urls")),
     path("api/auth_google", include("apps.oauth_google.urls")),
