@@ -1,7 +1,9 @@
-from import_export import resources, fields, widgets
-from apps.product.models import Product, Photo
-from import_export.results import RowResult
 from uuid import uuid4
+
+from apps.products.models import Photo, Product
+
+from import_export import fields, resources, widgets
+from import_export.results import RowResult
 
 
 class ProductResource(resources.ModelResource):
@@ -45,7 +47,7 @@ class ProductResource(resources.ModelResource):
 
 class PhotoResource(resources.ModelResource):
     product = fields.Field(
-        attribute='product',
+        attribute='products',
         column_name='Name',
         widget=widgets.ForeignKeyWidget(Product, 'name')
     )
@@ -56,8 +58,8 @@ class PhotoResource(resources.ModelResource):
 
     class Meta:
         model = Photo
-        import_id_fields = ('photos', 'product')
-        fields = ('photos', 'position', 'product')
+        import_id_fields = ('photos', 'products')
+        fields = ('photos', 'position', 'products')
 
     def import_row(self, row, instance_loader, **kwargs):
         result = RowResult()
@@ -69,8 +71,8 @@ class PhotoResource(resources.ModelResource):
         product = Product.objects.filter(name=product_name).first()
         if not product:
             result.import_type = RowResult.IMPORT_TYPE_SKIP
-            result.object_repr = f"Skipped – No product: {product_name}"
-            result.diff = [("product", product_name)]
+            result.object_repr = f"Skipped – No products: {product_name}"
+            result.diff = [("products", product_name)]
             
             dummy_photo = Photo(url=f"dummy_{uuid4()}.jpg")
             result.object = dummy_photo
@@ -90,7 +92,7 @@ class PhotoResource(resources.ModelResource):
             diff_list.extend([
                 ("url", url),
                 ("position", idx),
-                ("product", product.name)
+                ("products", product.name)
             ])
 
         result.object_repr = f"{len(photo_urls)} photos for '{product.name}'"

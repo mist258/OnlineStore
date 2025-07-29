@@ -1,7 +1,14 @@
 from django.db import models
-from apps.product.models import Product
+
+from apps.products.models import Product
+
 
 class Supply(models.Model):
+
+    class Meta:
+        db_table = "supply"
+        ordering = ("id",)
+
     serving_type = models.CharField(max_length=50, blank=True, null=False)
     price = models.DecimalField(
         max_digits=8, 

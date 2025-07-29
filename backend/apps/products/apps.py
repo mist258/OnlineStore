@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TestConfig(AppConfig):
+class DatabaseProductsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.initial'
+    name = 'apps.products'

@@ -1,5 +1,6 @@
+from typing import Optional, Type, TypeVar
+
 from django.core.exceptions import ValidationError
-from typing import Type, TypeVar, Optional
 
 T = TypeVar('T')
 

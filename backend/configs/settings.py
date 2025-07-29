@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'django_filters',
-    'cloudinary_storage',
-    'cloudinary',
     'corsheaders',
     'drf_yasg',
     'import_export',
@@ -60,10 +58,7 @@ INSTALLED_APPS = [
 
     # my apps
     'core',
-    'apps.initial',
-
-    # DB apps
-    'apps.product',
+    'apps.products',
     'apps.supply',
     'apps.subscription',
     'apps.customer',

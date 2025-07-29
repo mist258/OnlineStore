@@ -90,4 +90,4 @@ def delete_product(product_id: int) -> None:
     except Product.DoesNotExist:
         raise ValueError(f"Product with id {product_id} not found.")
     except IntegrityError as e:
-        raise ValueError(f"Cannot delete product {product_id}: {str(e)}")
+        raise ValueError(f"Cannot delete products {product_id}: {str(e)}")

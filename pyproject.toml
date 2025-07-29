@@ -20,6 +20,7 @@ psycopg = "^3.2.9"
 pytest = "^7.4.0"
 pytest-django = "^4.5.2"
 django-import-export-extensions = "^1.8.0"
+django-import-export = "^4.3.9"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^6.0.1"

@@ -1,6 +1,6 @@
 import pytest
 from apps.database_products.models import Product
-from backend.apps.product.services.product_service import (
+from backend.apps.products.services.product_service import (
     create_product,
     delete_product,
     get_product_by_id,

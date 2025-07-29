@@ -1,11 +1,13 @@
-from import_export import resources, fields, widgets
-from apps.database_products.models import Product, Supply
 from uuid import uuid4
+
+from apps.database_products.models import Product, Supply
+
+from import_export import fields, resources, widgets
 
 
 class SupplyResource(resources.ModelResource):
     product = fields.Field(
-        attribute='product',  
+        attribute='products',
         column_name='SKU',
         widget=widgets.ForeignKeyWidget(Product, field='sku') 
     )
@@ -25,5 +27,5 @@ class SupplyResource(resources.ModelResource):
 
     class Meta:
         model = Supply
-        import_id_fields = ('product', 'serving_type', 'price')
-        fields = ('product', 'serving_type', 'price', 'quantity')
+        import_id_fields = ('products', 'serving_type', 'price')
+        fields = ('products', 'serving_type', 'price', 'quantity')

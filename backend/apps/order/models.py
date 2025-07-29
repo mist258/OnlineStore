@@ -1,10 +1,16 @@
 from django.db import models
-from apps.product.models import Product
+
 from apps.customer.models import Customer
-from backend.apps.utils import get_timenow
-    
+from apps.products.models import Product
+from apps.utils import get_timenow
+
 
 class Order(models.Model):
+
+    class Meta:
+        db_table = "order"
+        ordering = ("id",)
+
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
@@ -26,23 +32,28 @@ class Order(models.Model):
 
 
 class OrderPosition(models.Model):
+
+    class Meta:
+        db_table = "order_position"
+        ordering = ("id",)
+
     quantity = models.IntegerField(default=1)
     total_price = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
+        max_digits=10,
+        decimal_places=2,
         default=0.00
     )
     date = models.DateField(default=get_timenow)
     product = models.ForeignKey(
-        Product, 
+        Product,
         null=True,
         blank=True,
         on_delete=models.PROTECT,
         related_name='order_positions'
     )
     order = models.ForeignKey(
-        Order, 
-        on_delete=models.CASCADE, 
+        Order,
+        on_delete=models.CASCADE,
         related_name='positions'
     )
 

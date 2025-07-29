@@ -113,7 +113,7 @@ class Review(models.Model):
     )
 
     def __str__(self):
-        return f"Review {self.grade}★ by {self.customer.email}"
+        return f"Review {self.grade} ★ by {self.customer.email}"
 
 
 class Order(models.Model):
@@ -155,9 +155,6 @@ class OrderPosition(models.Model):
         on_delete=models.CASCADE, 
         related_name='positions'
     )
-
-
-
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name} in Order #{self.order.id}"

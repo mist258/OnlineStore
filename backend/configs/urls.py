@@ -15,8 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import include, path
 from django.contrib import admin
+from django.urls import include, path
 
 from rest_framework.permissions import AllowAny
 
@@ -35,10 +35,14 @@ schema_view = get_schema_view(
     permission_classes=[AllowAny]
 )
 urlpatterns = [
-    path('api/initial', include('apps.initial.urls')),
-    path('', include('apps.database_products.urls')),
-    path('api/doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
-    path('admin/', admin.site.urls),
+    path("/api/products", include("apps.products.urls")),
+    path("/api/reviev", include("apps.review.urls")),
+    path("/api/supply", include("apps.supply.urls")),
+    path("/api/subscription", include("apps.subscription.urls")),
+    path("/api/order", include("apps.order.urls")),
+    path("/api/billing_details", include("apps.billing_details.urls")),
+    path("api/doc", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger"),
+    path("admin/", admin.site.urls),
 
 
 ]

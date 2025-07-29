@@ -1,21 +1,26 @@
 from django.db import models
-from apps.product.models import Product
+
 from apps.customer.models import Customer
-from backend.apps.utils import get_timenow
+from apps.products.models import Product
+from apps.utils import get_timenow
 
 
 class Review(models.Model):
+    class Meta:
+        db_table = "review"
+        ordering = ("-id",)
+
     grade = models.IntegerField()
     date = models.DateField(default=get_timenow)
     comment = models.TextField(blank=True, null=True)
     customer = models.ForeignKey(
-        Customer, 
+        Customer,
         on_delete=models.CASCADE,
         related_name='reviews'
     )
     product = models.ForeignKey(
-        Product, 
-        on_delete=models.CASCADE, 
+        Product,
+        on_delete=models.CASCADE,
         related_name='reviews'
     )
 
