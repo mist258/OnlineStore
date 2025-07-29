@@ -43,7 +43,6 @@ GOOGLE_OAUTH_CLIENT_SECRET=os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
@@ -61,14 +60,14 @@ INSTALLED_APPS = [
 
 
     # my apps
-    "core',
+    "core",
     "apps.users",
     "apps.auth",
     "apps.oauth_google",
     "apps.products",
     "apps.supply",
-    "apps.subscription',
-    "apps.customer',
+    "apps.subscription",
+    "apps.customer",
     "apps.review",
     "apps.order",
     "apps.billing_details",
