@@ -15,7 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
+
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import include, path
 
 from rest_framework.permissions import AllowAny
@@ -26,13 +28,13 @@ from drf_yasg.views import get_schema_view
 schema_view = get_schema_view(
     openapi.Info(
         title="Online store",
-        default_version='v1',
+        default_version="v1",
         description="Online coffee store",
         contact=openapi.Contact(email="admin@gmai.com"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,
-    permission_classes=[AllowAny]
+    permission_classes=[AllowAny],
 )
 urlpatterns = [
     path("/api/products", include("apps.products.urls")),
@@ -41,8 +43,12 @@ urlpatterns = [
     path("/api/services", include("apps.subscription.urls")),
     path("/api/order", include("apps.order.urls")),
     path("/api/billing_details", include("apps.billing_details.urls")),
-    path("api/doc", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger"),
     path("admin/", admin.site.urls),
-
-
+    path("api/users", include("apps.users.urls")),
+    path("api/auth", include("apps.auth.urls")),
+    path("api/auth_google", include("apps.oauth_google.urls")),
+    path("api/doc", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger",
+    ),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

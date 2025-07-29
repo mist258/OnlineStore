@@ -1,0 +1,2 @@
+class GoogleTokenException(Exception):
+    pass

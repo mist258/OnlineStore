@@ -6,6 +6,7 @@ from django.db.backends.postgresql.base import DatabaseWrapper
 
 connection: DatabaseWrapper = connection
 
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Waiting for database...")

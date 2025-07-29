@@ -1,35 +1,72 @@
 # Coffee shop
 **Python version** - 3.12
 
-**Database** - PostgreSQL
-
-App **'initial'** - is test app, during development will be deleted.
+**Database** - PostgreSQL (Supabase)
+**Deployment** - Render
 
 
 ## Already added to the project
  
-✔️ poetry (instead of .venv & .requirements.txt)
+✔️ *poetry* (instead of .venv & .requirements.txt)
 
-✔️ docker
+✔️ *docker*
 
-✔️ nginx (for proxying requests but can be removed)
+✔️ *isort* (for managing and sorting imports)
 
-✔️ isort (for managing and sorting imports)
+✔️ *ruff* (linter)
 
-✔️ ruff (linter)
-
-✔️ pillow (photo managing)
+✔️ *pillow* (photo managing)
   
-✔️ django-filter (filtering requests)
+✔️ *django-filter* (filtering requests)
 
-✔️ joined pagination (DEFAULT_PAGINATION_CLASS)
+✔️ *joined pagination* (DEFAULT_PAGINATION_CLASS)
   
-✔️ joined filters (DEFAULT_FILTER_BACKENDS)
+✔️ *joined filters* (DEFAULT_FILTER_BACKENDS)
 
-✔️ cloudinary (photo storage)
+✔️ *gunicorn* (for deploying on render)
 
-✔️ added gunicorn (for deploying on render)
+✔️ *celery + redis* (perform tasks in the background)
 
+✔️ *drf-yasg* (documentation)
+
+✔️ *whitenoise* (serving static files without using a separate web server (Nginx),
+this needed to display the documentation on 'Render')
+
+✔️ *djangorestframework-simplejwt* (authentication by JWT)
+
+✔️ *psycopg2-binary* (need to connect supabase with drf)
+
+✔️ *google-auth* (need for oAuth)
+
+# ENDPOINTS
+
+## auth
+
+**/api/auth/login** - login for registered users
+
+**/api/auth/refresh** - create new refresh and access tokens
+
+**/api/auth/logout** - logout for authenticated users
+
+**/api/auth/recovery_request** - send request to change password
+
+**/api/auth/recovery_password/<str:token>** - changing password 
+
+
+## oauth_google
+
+**/api/oauth_google** - auth user from Google
+
+
+## users
+
+**/api/users** - register new user
+
+**/api/users/info** - authenticated user can get own info
+
+**/api/users/list/** - superuser/admin can list all users
+
+**/api/users/list/<int:pk>** - superuser/admin can retrieve user
 
 
 ## Installation

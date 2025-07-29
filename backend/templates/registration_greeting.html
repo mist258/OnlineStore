@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f1ee; padding: 20px;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <tr>
+            <td style="padding: 30px;">
+                <h2 style="color: #3e2723;">☕ Welcome to Coffee Lane, {{ first_name }}!</h2>
+
+                <p style="font-size: 16px; color: #5d4037;">
+                    You've successfully registered on <strong>Coffee Lane</strong> — your go-to destination for aromatic coffee and premium blends.
+                </p>
+
+                <p style="font-size: 16px; color: #5d4037;">
+                    As a registered member, you now have access to exclusive deals, personalized recommendations, and the finest coffee selections we have to offer.
+                </p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://coffe-shop-frontend-six.vercel.app" style="padding: 12px 24px; background-color: #6d4c41; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">
+                        Visit Coffee Lane
+                    </a>
+                </div>
+
+                <p style="font-size: 14px; color: #8d6e63;">
+                    If you have any questions, our support team is always here to help ☕
+                </p>
+
+                <p style="font-size: 14px; color: #a1887f;">
+                    Best regards,<br>
+                    The <strong>Coffee Lane</strong> Team
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+{% endblock %}
