@@ -27,3 +27,8 @@ class PasswordSerializer(serializers.ModelSerializer):
             raise ValidationError('Password must contain at least 8 characters, '
                                   '1 special symbol, 1 letter, 1 number')
         return attrs
+
+
+class ChangePasswordFromProfileSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.auth.serializers import EmailSerializer, PasswordSerializer
+from apps.auth.serializers import ChangePasswordFromProfileSerializer, EmailSerializer, PasswordSerializer
 
 from core.services.email_service import EmailService
 from core.services.jwt_services import JWTService, RecoveryToken
@@ -89,3 +89,34 @@ class ChangePasswordView(generics.GenericAPIView):
         user.save()
         return Response({"Details": "Password successfully changed"},
                         status.HTTP_200_OK)
+
+
+@method_decorator(name="put",
+                  decorator=swagger_auto_schema(
+                      operation_id="change_password_from_profile"
+))
+class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
+    """
+        change password from profile
+        (available for authenticated users)
+    """
+    serializer_class = ChangePasswordFromProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def put(self, request, *args, **kwargs):
+        old_password = request.data["old_password"]
+        new_password = request.data["new_password"]
+
+        user = request.user
+
+        if not user.check_password(raw_password=old_password):
+            return Response(
+                {"Details": "Your current password has been entered incorrectly."},
+                status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save()
+        EmailService.password_changed_notification_email(user)
+        return Response(
+            {"Details": "Your password has been changed successfully."},
+            status.HTTP_200_OK)
+

@@ -18,9 +18,9 @@ class EmailService:
     @app.task
     def __send_email(to: str, template_name: str, context: dict, subject: '') -> None:
         template = get_template(template_name)
-        html_comtent = template.render(context)
+        html_content = template.render(context)
         msg = EmailMultiAlternatives(subject=subject, from_email=os.environ.get("EMAIL_HOST_USER"), to=[to])
-        msg.attach_alternative(html_comtent, "text/html")
+        msg.attach_alternative(html_content, "text/html")
         msg.send()
 
     @classmethod
@@ -57,48 +57,16 @@ class EmailService:
             raise TemplateException
 
     @classmethod
-    def order_created_notification_email(cls, user: UserModel):
+    def password_changed_notification_email(cls, user: UserModel):
 
         try:
             cls.__send_email.delay(user.email,
-                                   "order_created.html",
+                                   "password_changed.html",
                                    {
                                        "first_name": user.profile.first_name,
                                    },
-                                   "Order created"
+                                   "Password has been successfully changed"
                                    )
         except Exception:
             raise TemplateException
-
-
-    @classmethod
-    def subscription_notification_email(cls, user: UserModel):
-
-        try:
-            cls.__send_email.delay(user.email,
-                                   "subscribed_for_newsletters.html",
-                                   {
-                                       "first_name": user.profile.first_name,
-                                   },
-                                   "Subscription notification"
-                                   )
-        except Exception:
-            raise TemplateException
-
-    @classmethod
-    def order_status_notification_email(cls, user: UserModel):
-
-        try:
-            cls.__send_email.delay(user.email,
-                                   "inform_order_status.html",
-                                   {
-                                       "first_name": user.profile.first_name,
-                                   },
-                                   "Order status notification")
-        except Exception:
-            raise TemplateException
-
-
-        
-
 
