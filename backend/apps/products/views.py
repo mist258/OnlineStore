@@ -24,7 +24,17 @@ class ProductListView(generics.ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
 
+
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    security=[],
+    operation_id='get_product_by_id',
+    responses={200: ProductSerializer(many=True)},
+))
 class ProductByIdView(generics.RetrieveAPIView):
+    """
+        get product by id
+        (available to anyone)
+    """
     queryset = Product.objects.prefetch_related('photos', 'supplies').all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
