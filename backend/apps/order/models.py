@@ -43,7 +43,7 @@ class OrderPosition(models.Model):
         decimal_places=2,
         default=0.00
     )
-    date = models.DateField(default=get_timenow)
+    date = models.DateTimeField(default=get_timenow)
     product = models.ForeignKey(
         Product,
         null=True,
