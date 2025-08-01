@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
-from apps.customer.models import Customer
 from apps.products.models import Product
 from apps.utils import get_timenow
+
+UserModel = get_user_model()
 
 
 class Review(models.Model):
@@ -14,7 +16,7 @@ class Review(models.Model):
     date = models.DateField(default=get_timenow)
     comment = models.TextField(blank=True, null=True)
     customer = models.ForeignKey(
-        Customer,
+        UserModel,
         on_delete=models.CASCADE,
         related_name='reviews'
     )
@@ -25,4 +27,4 @@ class Review(models.Model):
     )
 
     def __str__(self):
-        return f"Review {self.grade}★ by {self.customer.email}"
+        return f"Review {self.grade} ★ by {self.customer.email}"

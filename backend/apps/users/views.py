@@ -47,9 +47,7 @@ class GetMyInfoView(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, *args, **kwargs):
-        user = self.request.user
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status.HTTP_200_OK)
+        return self.request.user
 
 
 @method_decorator(

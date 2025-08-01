@@ -1,7 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
-from apps.customer.models import Customer
 from apps.order.models import Order
+
+UserModel = get_user_model()
 
 
 class BillingDetails(models.Model):
@@ -22,7 +24,7 @@ class BillingDetails(models.Model):
     is_configuration = models.BooleanField(default=False)
     order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='billing_details', null=True,
                                  blank=True)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='billing_details', null=True)
+    customer = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='billing_details', null=True)
 
     def __str__(self):
         return f"Billing for {self.first_name} {self.last_name}"

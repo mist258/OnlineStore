@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
-from apps.customer.models import Customer
 from apps.products.models import Product
 from apps.utils import get_timenow
+
+UserModel = get_user_model()
 
 
 class Order(models.Model):
@@ -21,7 +23,7 @@ class Order(models.Model):
 
     order_notes = models.TextField(blank=True, null=True)
     customer = models.ForeignKey(
-        Customer, 
+        UserModel,
         on_delete=models.CASCADE, 
         related_name='orders'
     )
