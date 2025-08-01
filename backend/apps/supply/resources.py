@@ -6,7 +6,7 @@ from import_export import fields, resources, widgets
 
 class SupplyResource(resources.ModelResource):
     product = fields.Field(
-        attribute='products',
+        attribute='product',
         column_name='SKU',
         widget=widgets.ForeignKeyWidget(Product, field='sku') 
     )
@@ -26,5 +26,5 @@ class SupplyResource(resources.ModelResource):
 
     class Meta:
         model = Supply
-        import_id_fields = ('products', 'serving_type', 'price')
-        fields = ('products', 'serving_type', 'price', 'quantity')
+        import_id_fields = ('product', 'serving_type', 'price')
+        fields = ('product', 'serving_type', 'price', 'quantity')

@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-
+from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
@@ -48,6 +48,7 @@ urlpatterns = [
     path("api/auth_google", include("apps.oauth_google.urls")),
     path("api/doc", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger",
     ),
+    path("admin/", admin.site.urls),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

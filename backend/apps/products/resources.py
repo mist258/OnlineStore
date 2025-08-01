@@ -47,7 +47,7 @@ class ProductResource(resources.ModelResource):
 
 class PhotoResource(resources.ModelResource):
     product = fields.Field(
-        attribute='products',
+        attribute='product',
         column_name='Name',
         widget=widgets.ForeignKeyWidget(Product, 'name')
     )
@@ -58,8 +58,8 @@ class PhotoResource(resources.ModelResource):
 
     class Meta:
         model = Photo
-        import_id_fields = ('photos', 'products')
-        fields = ('photos', 'position', 'products')
+        import_id_fields = ('photos', 'product')
+        fields = ('photos', 'position', 'product')
 
     def import_row(self, row, instance_loader, **kwargs):
         result = RowResult()
