@@ -47,7 +47,10 @@ class GetMyInfoView(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, *args, **kwargs):
-        return self.request.user
+        user = self.request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data,
+                        status.HTTP_200_OK)
 
 
 @method_decorator(
@@ -66,4 +69,26 @@ class ListUsersView(viewsets.ReadOnlyModelViewSet):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
+
+
+@method_decorator(name="delete", decorator=swagger_auto_schema(
+    operation_id="delete_user"
+    ),
+)
+class DeleteUserView(generics.DestroyAPIView):
+    """
+        delete user
+        (allow for superuser)
+    """
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.delete()
+        return Response({"Details": "User successfully deleted"},
+                        status.HTTP_204_NO_CONTENT)
+
+
+
 
