@@ -21,7 +21,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 UserModel: Type[AbstractBaseUser] = get_user_model()
 
 @method_decorator(
-    name="post", decorator=swagger_auto_schema(operation_id="log_out_user")
+    name="post", decorator=swagger_auto_schema(
+        operation_id="log_out_user")
 )
 class LogOutUserView(APIView):
     """
@@ -91,10 +92,10 @@ class ChangePasswordView(generics.GenericAPIView):
                         status.HTTP_200_OK)
 
 
-@method_decorator(name="put",
-                  decorator=swagger_auto_schema(
-                      operation_id="change_password_from_profile"
-))
+@method_decorator(
+    name="put", decorator=swagger_auto_schema(
+                      operation_id="change_password_from_profile")
+)
 class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
     """
         change password from profile

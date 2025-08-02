@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import UserSerializer
+from .serializers import UpdateUserInfoSerializer, UserSerializer
 
 UserModel = get_user_model()
 
@@ -90,5 +90,26 @@ class DeleteUserView(generics.DestroyAPIView):
                         status.HTTP_204_NO_CONTENT)
 
 
+@method_decorator(name="put", decorator=swagger_auto_schema(
+    operation_id="update_user's_info",
+    responses={200: UserSerializer()}
+    ),
+)
+class UpdateUsersInfoView(generics.UpdateAPIView):
+    """
+        user can update own info
+        (available for authenticated users)
+    """
+    serializer_class = UpdateUserInfoSerializer
+    queryset = UserModel.objects.all()
+    permission_classes = (IsAuthenticated,)
+    allowed_methods = ("PATCH",)
 
+    def patch(self, request, *args, **kwargs):
+        user = self.request.user
+        data = request.data
+        serializer = self.serializer_class(user, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status.HTTP_200_OK)
 

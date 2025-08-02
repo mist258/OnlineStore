@@ -86,3 +86,31 @@ class UserSerializer(serializers.ModelSerializer):
                                   '1 special symbol, 1 letter, 1 number')
         return attrs
 
+
+class UpdateUserInfoSerializer(serializers.ModelSerializer):
+    """
+        serializer for updating user info
+    """
+    profile = UserProfileSerializer()
+
+    class Meta:
+        model = UserModel
+        fields = ("email",
+                  "profile",
+                  )
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop("profile", None)
+
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+
+        if profile_data:
+            profile = instance.profile
+            for key, value in profile_data.items():
+                setattr(profile, key, value)
+            profile.save()
+        EmailService.updated_info_notification_email(instance)
+        return instance
+
