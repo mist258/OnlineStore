@@ -1,6 +1,6 @@
 .idea
 postgresql_db
 .env
-
+backend/apps/*/migrations/
 __pycache__/
 
