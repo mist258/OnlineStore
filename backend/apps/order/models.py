@@ -2,7 +2,9 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from apps.products.models import Product
+from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
+from core.services.email_service import send_order_status_email
 
 UserModel = get_user_model()
 
@@ -22,15 +24,33 @@ class Order(models.Model):
     ]
 
     order_notes = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
     customer = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE, 
-        related_name='orders'
+        related_name='orders',
+        null=True,
+        blank=True
     )
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
-
+    billing_details = models.OneToOneField(
+        UserProfileModel, 
+        on_delete=models.CASCADE, 
+        related_name='order',
+    )
+    
     def __str__(self):
         return f"Order #{self.id} by {self.customer.email}"
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_status = Order.objects.get(pk=self.pk).status
+            if old_status != self.status:
+                send_order_status_email(
+                    user=self.customer,
+                    order=self
+                )
+            
+        super().save(*args, **kwargs)
 
 
 class OrderPosition(models.Model):
