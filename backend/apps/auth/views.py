@@ -94,7 +94,7 @@ class ChangePasswordView(generics.GenericAPIView):
 
 @method_decorator(
      name="put", decorator=swagger_auto_schema(
-                      operation_id="change_password_from_profile")
+                      operation_id="change_password_via_profile")
 )
 class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
     """
