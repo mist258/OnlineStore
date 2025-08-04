@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import UserSerializer
+from .serializers import UpdateUserInfoSerializer, UserSerializer
 
 UserModel = get_user_model()
 
@@ -47,7 +47,10 @@ class GetMyInfoView(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, *args, **kwargs):
-        return self.request.user
+        user = self.request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data,
+                        status.HTTP_200_OK)
 
 
 @method_decorator(
@@ -66,4 +69,47 @@ class ListUsersView(viewsets.ReadOnlyModelViewSet):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
+
+
+@method_decorator(name="delete", decorator=swagger_auto_schema(
+    operation_id="delete_user"
+    ),
+)
+class DeleteUserView(generics.DestroyAPIView):
+    """
+        delete user
+        (allow for superuser)
+    """
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.delete()
+        return Response({"Details": "User successfully deleted"},
+                        status.HTTP_204_NO_CONTENT)
+
+
+@method_decorator(name="put", decorator=swagger_auto_schema(
+    operation_id="update_user's_info",
+    responses={200: UserSerializer()}
+    ),
+)
+class UpdateUsersInfoView(generics.UpdateAPIView):
+    """
+        user can update own info
+        (available for authenticated users)
+    """
+    serializer_class = UpdateUserInfoSerializer
+    queryset = UserModel.objects.all()
+    permission_classes = (IsAuthenticated,)
+    allowed_methods = ("PATCH",)
+
+    def patch(self, request, *args, **kwargs):
+        user = self.request.user
+        data = request.data
+        serializer = self.serializer_class(user, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status.HTTP_200_OK)
 

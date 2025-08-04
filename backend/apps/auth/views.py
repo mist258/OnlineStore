@@ -21,7 +21,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 UserModel: Type[AbstractBaseUser] = get_user_model()
 
 @method_decorator(
-    name="post", decorator=swagger_auto_schema(operation_id="log_out_user")
+    name="post", decorator=swagger_auto_schema(
+        operation_id="log_out_user")
 )
 class LogOutUserView(APIView):
     """
@@ -91,10 +92,10 @@ class ChangePasswordView(generics.GenericAPIView):
                         status.HTTP_200_OK)
 
 
-@method_decorator(name="put",
-                  decorator=swagger_auto_schema(
-                      operation_id="change_password_from_profile"
-))
+@method_decorator(
+     name="put", decorator=swagger_auto_schema(
+                      operation_id="change_password_via_profile")
+)
 class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
     """
         change password from profile
@@ -104,19 +105,19 @@ class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
     permission_classes = (IsAuthenticated,)
 
     def put(self, request, *args, **kwargs):
-        old_password = request.data["old_password"]
-        new_password = request.data["new_password"]
-
+        data = request.data
         user = request.user
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
 
-        if not user.check_password(raw_password=old_password):
+        if not user.check_password(raw_password=serializer.data["old_password"]):
             return Response(
-                {"Details": "Your current password has been entered incorrectly."},
-                status.HTTP_400_BAD_REQUEST)
-        user.set_password(new_password)
+                             {"Details": "Your current password has been entered incorrectly."},
+                             status.HTTP_400_BAD_REQUEST)
+        user.set_password(serializer.data["new_password"])
         user.save()
         EmailService.password_changed_notification_email(user)
         return Response(
-            {"Details": "Your password has been changed successfully."},
-            status.HTTP_200_OK)
+                     {"Details": "Your password has been changed successfully."},
+                     status.HTTP_200_OK)
 

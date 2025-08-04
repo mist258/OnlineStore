@@ -73,6 +73,19 @@ class EmailService:
             raise TemplateException
 
     @classmethod
+    def updated_info_notification_email(cls, user: UserModel):
+
+        try:
+            cls.__send_email.delay(user.email,
+                                   "update_info.html",
+                                   {
+                                       "first_name": user.profile.first_name,
+                                   },
+                                   "Profile data has been successfully updated")
+        except Exception:
+            raise TemplateException
+
+    @classmethod
     def send_order_status_email(cls, order: Order):
         try:
             cls.__send_email.delay(order.customer.email,

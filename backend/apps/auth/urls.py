@@ -21,6 +21,6 @@ urlpatterns = [
         "/recovery_password/<str:token>", ChangePasswordView.as_view(), name="change_password"
     ), # changing password
     path(
-        "/change_password", ChangePasswordFromProfileView.as_view(), name="change_password_from_profile"
-    ), # change password from profile
+        "/change_password", ChangePasswordFromProfileView.as_view(), name="change_password_via_profile"
+    ), # change password via profile
 ]
