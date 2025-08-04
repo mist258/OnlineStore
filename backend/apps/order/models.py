@@ -16,15 +16,15 @@ class Order(models.Model):
         ordering = ("id",)
 
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-        ('in_progress', 'In Progress'),
+        ('processing', 'Order in processing'),
+        ('preparing', 'Preparing'),
+        ('shipping', 'Shipping'),
+        ('in_transit', 'In transit'),
         ('delivered', 'Delivered'),
     ]
 
     order_notes = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='processing')
     customer = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE, 
