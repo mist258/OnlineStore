@@ -9,7 +9,7 @@ class FlavorProfile(models.Model):
         db_table = "flavor_profile"
         ordering = ("id",)
 
-    name = models.CharField(max_length=100, null=False, unique=True)
+    name = models.CharField(max_length=100, null=False)
 
     def __str__(self):
         return self.name
@@ -21,13 +21,13 @@ class Product(models.Model):
         db_table = "product"
         ordering = ("id",)
 
-    sku = models.CharField(max_length=50, unique=True, null=False)
+    sku = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=255, null=False)
     brend = models.CharField(max_length=255, null=False)
-    caffeine_type = models.CharField(max_length=25, blank=True, null=False)
+    caffeine_type = models.CharField(max_length=25, blank=True)
     sort = models.CharField(max_length=25, null=False, blank=True)
     roast = models.CharField(max_length=50)
-    description = models.TextField(blank=True, null=False)
+    description = models.TextField(blank=True)
 
     flavor_profiles = models.ManyToManyField(
         FlavorProfile,

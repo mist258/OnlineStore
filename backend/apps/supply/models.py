@@ -9,18 +9,15 @@ class Supply(models.Model):
         db_table = "supply"
         ordering = ("id",)
 
-    serving_type = models.CharField(max_length=50, blank=True, null=False)
+    serving_type = models.CharField(max_length=50, blank=True)
     price = models.DecimalField(
         max_digits=8, 
         decimal_places=2, 
-        default=0.00, 
-        null=True
+        default=0.00,
     )
     weight = models.DecimalField(
         max_digits=5, 
-        decimal_places=2, 
-        blank=True, 
-        null=True
+        decimal_places=2
     )
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(
