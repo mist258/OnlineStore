@@ -4,11 +4,13 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.products.models import Product
+from apps.products.models import FlavorProfile, Product
+
+from core.views import UpdateDestroyAPIView
 
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import ProductSerializer
+from .serializers import FlavourProfileSerializer, ProductSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -76,7 +78,6 @@ class UpdateProductView(generics.GenericAPIView):
     """
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
-    #http_method_names = ("put",)
 
     def put(self, request, *args, **kwargs):
         data = request.data
@@ -112,3 +113,46 @@ class DeleteProductView(generics.GenericAPIView):
         product = self.get_object()
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@method_decorator(name="get", decorator=swagger_auto_schema(
+    operation_id='get_all_flavours',
+    responses={200: ProductSerializer(many=True)},
+))
+@method_decorator(name="post", decorator=swagger_auto_schema(
+    operation_id='add_flavours',
+    responses={200: FlavourProfileSerializer()},
+))
+class ListCreateFlavourProfileView(generics.ListCreateAPIView):
+    """
+        get: show the entire list of flavour
+        post: create a new flavour
+        (available to superuser)
+    """
+
+    queryset = FlavorProfile.objects.all()
+    serializer_class = FlavourProfileSerializer
+
+
+@method_decorator(name="put", decorator=swagger_auto_schema(
+    operation_id='update_flavour_by_id',
+    responses={200: FlavourProfileSerializer()},
+))
+@method_decorator(name="delete", decorator=swagger_auto_schema(
+    operation_id='delete_flavour_by_id'
+))
+class UpdateDestroyFlavourProfileView(UpdateDestroyAPIView):
+    """
+        delete: delete the flavour by id
+        put: update the flavour by id
+        (available to superuser)
+    """
+    queryset = FlavorProfile.objects.all()
+    serializer_class = FlavourProfileSerializer
+    http_method_names = ("put", "delete")
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
