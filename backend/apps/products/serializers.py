@@ -1,8 +1,9 @@
 from django.db.transaction import atomic
+from django.forms import model_to_dict
 
 from rest_framework import serializers
 
-from apps.products.models import FlavorProfile, Photo, Product
+from apps.products.models import Photo, Product
 from apps.supply.models import Supply
 from apps.supply.serializers import SupplySerializer
 
@@ -41,7 +42,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
 
     @atomic
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> Product:
         supplies = validated_data.pop("supplies", [])
         flavor_profiles = validated_data.pop("flavor_profiles", [])
         product = Product.objects.create(**validated_data)
@@ -55,4 +56,24 @@ class ProductSerializer(serializers.ModelSerializer):
             flavor_profile_instance.append(obj)
 
         product.flavor_profiles.set(flavor_profile_instance)
+
         return product
+
+    @atomic
+    def update(self, instance, validated_data: dict) -> Product:
+        supplies = validated_data.pop("supplies", [])
+        flavor_profiles = validated_data.pop("flavor_profiles", [])
+        instance = super().update(instance, validated_data)
+        
+        if supplies:
+            for item_supply in supplies:
+                print(el for el in supplies)
+                Supply.objects.update(**item_supply)
+
+        if flavor_profiles:
+            for item_flavor_profile in flavor_profiles:
+                FlavorProfile.objects.update(**item_flavor_profile)
+
+        instance.save()
+        return instance
+

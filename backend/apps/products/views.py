@@ -47,7 +47,7 @@ class ProductByIdView(generics.RetrieveAPIView):
 ))
 class CreateProductView(generics.GenericAPIView):
     """
-        create a new product
+        create a new product dy id
         (available to superuser)
     """
     serializer_class = ProductSerializer
@@ -59,3 +59,56 @@ class CreateProductView(generics.GenericAPIView):
         serializer.save()
         return Response(serializer.data,
                         status.HTTP_201_CREATED)
+
+
+@method_decorator(name='put', decorator=swagger_auto_schema(
+    operation_id='full_update_product',
+    responses={200: ProductSerializer()},
+))
+@method_decorator(name='patch', decorator=swagger_auto_schema(
+    operation_id='partial_update_product',
+    responses={200: ProductSerializer()},
+))
+class UpdateProductView(generics.GenericAPIView):
+    """
+        update a product by id
+        (available to superuser)
+    """
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    #http_method_names = ("put",)
+
+    def put(self, request, *args, **kwargs):
+        data = request.data
+        product = self.get_object()
+        serializer = ProductSerializer(product, data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data,
+                        status.HTTP_200_OK)
+
+    def patch(self, request, *args, **kwargs):
+        data = request.data
+        product = self.get_object()
+        serializer = ProductSerializer(product, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data,
+                        status.HTTP_200_OK)
+
+
+@method_decorator(name='delete', decorator=swagger_auto_schema(
+    operation_id='delete_product',
+))
+class DeleteProductView(generics.GenericAPIView):
+    """
+        delete a product by id
+        (available to superuser)
+    """
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        product = self.get_object()
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
