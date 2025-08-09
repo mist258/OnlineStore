@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from apps.products.models import Product, Accessory
-from apps.utils import get_timenow
+from django.utils import timezone
+
 
 UserModel = get_user_model()
 
@@ -45,7 +46,7 @@ class OrderPosition(models.Model):
         decimal_places=2,
         default=0.00
     )
-    date = models.DateTimeField(default=get_timenow)
+    date = models.DateTimeField(default=timezone.now)
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,

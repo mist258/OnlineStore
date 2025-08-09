@@ -40,6 +40,11 @@ class Product(models.Model):
 
 
 class Accessory(models.Model):
+    class Meta:
+        db_table = "products_accessory"
+        ordering = ("id",)
+
+    sku = models.CharField(max_length=50, unique=True, null=False)
     name = models.CharField(max_length=255)
     brand = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -66,7 +71,9 @@ class Photo(models.Model):
    product = models.ForeignKey(
        Product,
        related_name='photos',
-       on_delete=models.CASCADE
+       on_delete=models.CASCADE,
+       null=True,
+       blank=True
    )
    accessory = models.ForeignKey(
        Accessory,
@@ -77,4 +84,5 @@ class Photo(models.Model):
    )
 
    def __str__(self):
-       return f"{self.url} (Product: {self.product.name})"
+       good = self.product or self.accessory
+       return f"{self.url} (Good: {good.name if good else 'No Product/Accessory'})"

@@ -45,7 +45,6 @@ class ProductResource(resources.ModelResource):
         )
 
 
-
 class PhotoResource(resources.ModelResource):
     # Using ForeignKeyWidget to associate photos with either a Product or Accessory
     product = fields.Field(
@@ -65,7 +64,7 @@ class PhotoResource(resources.ModelResource):
 
     class Meta:
         model = Photo
-        import_id_fields = ('photos', 'product', 'accessory')
+        import_id_fields = ('photos',)
         fields = ('photos', 'position', 'product', 'accessory')
 
     def import_row(self, row, instance_loader, **kwargs):
@@ -129,3 +128,42 @@ class PhotoResource(resources.ModelResource):
         result.diff = diff_list
         result.object = last_photo_obj or Photo(url=f"dummy_{uuid4()}.jpg")
         return result
+    
+    
+class AccessoryResource(resources.ModelResource):
+    sku = fields.Field(
+        attribute='sku',
+        column_name='SKU'
+    )
+    name = fields.Field(
+        attribute='name',
+        column_name='Accessory Name'
+    )
+    brand = fields.Field(
+        attribute='brand',
+        column_name='Brand'
+    )
+    description = fields.Field(
+        attribute='description',
+        column_name='Description'
+    )
+    price = fields.Field(
+        attribute='price',
+        column_name='Price'
+    )
+    quantity = fields.Field(
+        attribute='quantity',
+        column_name='Quantity'
+    )
+
+    class Meta:
+        model = Accessory
+        import_id_fields = ('sku',)
+        fields = (
+            'sku',
+            'name',
+            'brand',
+            'description',
+            'price',
+            'quantity',
+        )
