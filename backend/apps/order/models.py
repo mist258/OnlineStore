@@ -43,7 +43,7 @@ class OrderPosition(models.Model):
     quantity = models.IntegerField(default=1)
     total_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=2, 
         default=0.00
     )
     date = models.DateTimeField(default=timezone.now)

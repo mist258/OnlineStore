@@ -38,7 +38,6 @@ class Product(models.Model):
         return self.name
 
 
-
 class Accessory(models.Model):
     class Meta:
         db_table = "products_accessory"

@@ -24,4 +24,5 @@ class AccessorySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Accessory
-        fields = ['id', 'sku', 'name', 'brand', 'description', 'price', 'category', 'quantity']
+        fields = '__all__'
+        
