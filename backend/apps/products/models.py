@@ -5,7 +5,7 @@ from apps.utils import get_timenow
 from core.models import BaseModel
 from core.services.photo_service import upload_product_photo
 
-from .choices.product_choices import CaffeineLevelChoices, CoffeeBeanTypeChoices, GrindTypeChoices, RoastLevelChoices
+from .choices.product_choices import CaffeineLevelChoices, CoffeeBeanTypeChoices, RoastLevelChoices
 
 
 class FlavorProfile(models.Model):
@@ -33,8 +33,6 @@ class Product(models.Model):
                                      choices=CaffeineLevelChoices.choices)
     sort = models.CharField(max_length=25, null=True, blank=True,
                             choices=CoffeeBeanTypeChoices.choices)
-    grind_type = models.CharField(max_length=20, blank=True, null=True,
-                                  choices=GrindTypeChoices.choices)
     roast = models.CharField(max_length=13, blank=True, null=True,
                              choices=RoastLevelChoices.choices)
     description = models.TextField(blank=True)

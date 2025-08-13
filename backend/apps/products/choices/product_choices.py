@@ -1,13 +1,6 @@
 from django.db import models
 
 
-class GrindTypeChoices(models.TextChoices):
-    SOLUBLE = "soluble", "Soluble"
-    GROUND = "ground", "Ground"
-    GRAINS = "grains", "In grains"
-    CAPSULES = "capsules", "In capsules"
-
-
 class CoffeeBeanTypeChoices(models.TextChoices):
     ARABICA = "arabica", "100% Arabica"
     ROBUSTA = "robusta", "100% Robusta"
