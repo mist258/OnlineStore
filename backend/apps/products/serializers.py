@@ -1,9 +1,8 @@
 from django.db.transaction import atomic
-from django.forms import model_to_dict
 
 from rest_framework import serializers
 
-from apps.products.models import Photo, Product
+from apps.products.models import Photo, PhotosModel, Product
 from apps.supply.models import Supply
 from apps.supply.serializers import SupplySerializer
 
@@ -18,17 +17,34 @@ class FlavourProfileSerializer(serializers.ModelSerializer):
 
         
 class PhotoSerializer(serializers.ModelSerializer):
+    """
+        serializer that allows add photos to a product via url
+    """
     class Meta:
         model = Photo
         fields = ("id",
-                  "url",)
+                  "url",
+                  "position",)
+
+
+class ProductPhotoSerializer(serializers.ModelSerializer):
+    """"
+        serializer that allows to add photos to a product by uploading file from local machine
+    """
+    class Meta:
+        model = PhotosModel
+        fields = ("id",
+                  "photo",)
 
 
 class ProductSerializer(serializers.ModelSerializer):
     supplies = SupplySerializer(many=True)
     flavor_profiles = FlavourProfileSerializer(many=True)
+    product_photos = ProductPhotoSerializer(read_only=True, many=True)
+    photos_url = PhotoSerializer(read_only=True, many=True)
 
     class Meta:
+        model = Product
         fields = ("id",
                   "sku",
                   "name",
@@ -36,10 +52,13 @@ class ProductSerializer(serializers.ModelSerializer):
                   "caffeine_type",
                   "sort",
                   "roast",
+                  "grind_type",
                   "description",
                   "supplies",
+                  "product_photos",
+                  "photos_url",
                   "flavor_profiles",)
-        model = Product
+
 
     @atomic
     def create(self, validated_data: dict) -> Product:
@@ -76,4 +95,3 @@ class ProductSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-

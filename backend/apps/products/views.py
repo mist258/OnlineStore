@@ -4,13 +4,13 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.products.models import FlavorProfile, Product
+from apps.products.models import FlavorProfile, PhotosModel, Product
 
 from core.views import UpdateDestroyAPIView
 
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import FlavourProfileSerializer, ProductSerializer
+from .serializers import FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -23,7 +23,7 @@ class ProductListView(generics.ListAPIView):
         shows the entire list of products
         (available to anyone)
     """
-    queryset = Product.objects.prefetch_related("photos", "supplies", "flavor_profiles").all()
+    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles").all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
 
@@ -38,7 +38,7 @@ class ProductByIdView(generics.RetrieveAPIView):
         get product by id
         (available to anyone)
     """
-    queryset = Product.objects.prefetch_related("photos", "supplies", "flavor_profiles").all()
+    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles").all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
 
@@ -156,3 +156,47 @@ class UpdateDestroyFlavourProfileView(UpdateDestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+@method_decorator(name="put", decorator=swagger_auto_schema(
+    operation_id='add_photo_to_product',
+    responses={200: ProductSerializer()},
+))
+class AddPhotoToProduct(generics.GenericAPIView):
+    """
+        add a photo to the product from local machine
+        (available to superuser)
+    """
+    queryset = Product.objects.all()
+
+    def put(self, *args, **kwargs):
+        files = self.request.FILES
+        product = self.get_object()
+
+        for index in files:
+            serializer = ProductPhotoSerializer(data={"photo": files[index]})
+            serializer.is_valid(raise_exception=True)
+            serializer.save(product=product)
+        product_serializer = ProductSerializer(product)
+        return Response(product_serializer.data,
+                        status.HTTP_200_OK)
+
+
+@method_decorator(name="delete", decorator=swagger_auto_schema(
+    operation_id='delete_photo_from_product',
+))
+class DeletePhotoFromProduct(generics.GenericAPIView):
+    """
+        delete a photo from the product by id
+        (available to superuser)
+    """
+    queryset = PhotosModel.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        photo = self.get_object()
+
+        if photo:
+            photo.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_404_NOT_FOUND)

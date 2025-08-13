@@ -1,7 +1,9 @@
 from django.urls import path
 
 from .views import (
+    AddPhotoToProduct,
     CreateProductView,
+    DeletePhotoFromProduct,
     DeleteProductView,
     ListCreateFlavourProfileView,
     ProductByIdView,
@@ -32,6 +34,12 @@ urlpatterns = [
     path(
         "/flavour/<int:pk>", UpdateDestroyFlavourProfileView.as_view(), name="update_destroy_flavor"
     ), # update & destroy flavour by id
+    path(
+        "/<int:pk>/photo", AddPhotoToProduct.as_view(), name="add_photo"
+    ), # add photo to the product
+    path(
+        "/photo/<int:pk>/deletion", DeletePhotoFromProduct.as_view(), name="delete_photo"
+    ), # delete photo from product
 
 ]
 
