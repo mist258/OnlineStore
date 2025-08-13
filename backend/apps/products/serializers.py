@@ -3,8 +3,8 @@ from django.db.transaction import atomic
 from rest_framework import serializers
 
 from apps.products.models import Photo, PhotosModel, Product
-from apps.supply.models import Supply
-from apps.supply.serializers import SupplySerializer
+from apps.supplies.models import Supply
+from apps.supplies.serializers import SupplySerializer
 
 from .models import FlavorProfile
 
@@ -52,7 +52,6 @@ class ProductSerializer(serializers.ModelSerializer):
                   "caffeine_type",
                   "sort",
                   "roast",
-                  "grind_type",
                   "description",
                   "supplies",
                   "product_photos",

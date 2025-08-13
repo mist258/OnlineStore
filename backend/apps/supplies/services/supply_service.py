@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
 from apps.products.models import Product
-from apps.supply.models import Supply
+from apps.supplies.models import Supply
 
 from backend.apps.db_utils import get_object_or_error
 
@@ -24,7 +24,7 @@ def create_supply(data: dict) -> Supply:
             quantity=data.get("quantity", 0),
         )
     except IntegrityError as e:
-        raise ValidationError(f"Database error during supply creation: {str(e)}")
+        raise ValidationError(f"Database error during supplies creation: {str(e)}")
     except Exception as e:
         raise ValidationError(f"Unexpected error: {str(e)}")
 
@@ -61,4 +61,4 @@ def delete_supply(supply_id: int) -> None:
     except Supply.DoesNotExist:
         raise ValueError(f"Supply with id {supply_id} not found.")
     except IntegrityError as e:
-        raise ValueError(f"Cannot delete supply {supply_id}: {str(e)}")
+        raise ValueError(f"Cannot delete supplies {supply_id}: {str(e)}")

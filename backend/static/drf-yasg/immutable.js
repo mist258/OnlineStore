@@ -3168,7 +3168,7 @@
     }
 
     // Note: resolvedEnd is undefined when the original sequence's length is
-    // unknown and this slice did not supply an end and should contain all
+    // unknown and this slice did not supplies an end and should contain all
     // elements after resolvedBegin.
     // In that case, resolvedSize will be NaN and sliceSize will remain undefined.
     var resolvedSize = resolvedEnd - resolvedBegin;

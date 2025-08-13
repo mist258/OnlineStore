@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.supply.models import Supply
+from apps.supplies.models import Supply
 
 
 class SupplySerializer(serializers.ModelSerializer):
@@ -11,3 +11,5 @@ class SupplySerializer(serializers.ModelSerializer):
                   "price",
                   "quantity",
                   "weight",)
+
+        read_only_fields = ("id",)
