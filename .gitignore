@@ -3,4 +3,5 @@ postgresql_db
 .env
 backend/apps/*/migrations/
 __pycache__/
+docker-compose-dev.yml
 
