@@ -2,27 +2,25 @@ from django.db import models
 
 from apps.products.models import Product
 
+from .choices.supply_choices import ServingTypeChoices
+
 
 class Supply(models.Model):
 
     class Meta:
-        db_table = "supply"
+        db_table = "supplies"
         ordering = ("id",)
 
-    serving_type = models.CharField(max_length=50, blank=True, null=False)
+    serving_type = models.CharField(choices=ServingTypeChoices.choices, blank=True, null=True,)
     price = models.DecimalField(
-        max_digits=8, 
-        decimal_places=2, 
-        default=0.00, 
-        null=True
+        max_digits=8, decimal_places=2,
+        default=0.00, null=True, blank=True
     )
     weight = models.DecimalField(
-        max_digits=5, 
-        decimal_places=2, 
-        blank=True, 
-        null=True
+        max_digits=5, decimal_places=2,
+        null=True, blank=True,
     )
-    quantity = models.IntegerField(default=0)
+    quantity = models.IntegerField(default=0, null=True, blank=True)
     product = models.ForeignKey(
         Product, 
         related_name='supplies',
