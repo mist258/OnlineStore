@@ -77,12 +77,6 @@ INSTALLED_APPS = [
 
 ]
 
-# MIDDLEWARE = [
-#     "django.contrib.sessions.middleware.SessionMiddleware",
-#     "django.contrib.auth.middleware.AuthenticationMiddleware",
-#     "django.contrib.messages.middleware.MessageMiddleware",
-# ]
-
 ROOT_URLCONF = "configs.urls"
 
 TEMPLATES = [
