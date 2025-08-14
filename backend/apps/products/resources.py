@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from apps.products.models import Photo, Product, Accessory
+from apps.products.models import Accessory, Photo, Product
 
 from import_export import fields, resources, widgets
 from import_export.results import RowResult

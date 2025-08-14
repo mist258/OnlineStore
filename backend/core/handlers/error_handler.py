@@ -8,6 +8,7 @@ def error_handler(exc: Exception, context:dict) -> Response:
         "JWTException": _jwt_validation_exception_handler,
         "TemplateException": _template_validation_exception_handler,
         "GoogleTokenException": _google_token_exception_handler,
+        "PhotoExtensionException": _photo_extension_exception_handler,
 
     }
 
@@ -34,6 +35,13 @@ def _google_token_exception_handler(exc: Exception, context:dict) -> Response:
     return Response(
         {"Detail": "Google Token is invalid or expired"},
         status.HTTP_401_UNAUTHORIZED,
+    )
+
+def _photo_extension_exception_handler(exc: Exception, context:dict) -> Response:
+
+    return Response(
+        {"Detail": "Photo extension is invalid. Allowed extensions: jpg, jpeg, png"},
+        status.HTTP_400_BAD_REQUEST,
     )
 
 
