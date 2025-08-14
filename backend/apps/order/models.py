@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-
-from apps.products.models import Product, Accessory
 from django.utils import timezone
 
+from apps.products.models import Accessory, Product
 
 UserModel = get_user_model()
 

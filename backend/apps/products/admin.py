@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from apps.products.models import Photo, Product, Accessory
+from apps.products.models import Accessory, Photo, Product
 
 from import_export.admin import ImportExportModelAdmin
 
-from .resources import PhotoResource, ProductResource, AccessoryResource
+from .resources import AccessoryResource, PhotoResource, ProductResource
 
 
 @admin.register(Product)

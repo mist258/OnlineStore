@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.products.models import Photo, Product, Accessory
+from apps.products.models import Accessory, Photo, Product
 from apps.supply.serializers import SupplySerializer
 
 
