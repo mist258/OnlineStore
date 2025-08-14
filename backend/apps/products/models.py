@@ -45,7 +45,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-
+      
 class Photo(models.Model):
    """
        model for adding photos to a product by a url

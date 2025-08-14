@@ -72,7 +72,6 @@ INSTALLED_APPS = [
     "apps.subscription",
     "apps.review",
     "apps.order",
-    "apps.billing_details",
   
 
 ]

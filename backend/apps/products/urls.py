@@ -10,6 +10,8 @@ from .views import (
     ProductListView,
     UpdateDestroyFlavourProfileView,
     UpdateProductView,
+    AccessoryListView,
+    AccessoryByIdView,
 )
 
 urlpatterns = [
@@ -40,6 +42,11 @@ urlpatterns = [
     path(
         "/photo/<int:pk>/deletion", DeletePhotoFromProduct.as_view(), name="delete_photo"
     ), # delete photo from product
+    path(
+        "/accessories", AccessoryListView.as_view(), name="accessories_list"
+    ),
+    path(
+        "/accessories/<int:pk>", AccessoryByIdView.as_view(), name="accessories_by_id"
+    ),
 
 ]
-

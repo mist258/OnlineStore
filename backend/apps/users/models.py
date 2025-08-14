@@ -19,7 +19,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     subscription_updates_news = models.BooleanField(default=False)
-
+    
     USERNAME_FIELD = "email"
     objects = UserManager()
 

@@ -5,7 +5,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.products.models import FlavorProfile, PhotosModel, Product
+from apps.products.models import FlavorProfile, PhotosModel, Product, Accessory
 
 from core.views import UpdateDestroyAPIView
 
@@ -13,7 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 
 from .filters import CoffeeProductFilter
-from .serializers import FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
+from .serializers import FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer, AccessorySerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -31,7 +31,6 @@ class ProductListView(generics.ListAPIView):
     permission_classes = (AllowAny,)
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = CoffeeProductFilter
-
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -206,3 +205,33 @@ class DeletePhotoFromProduct(generics.GenericAPIView):
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    security=[],
+    operation_id='get_all_accessories',
+    responses={200: AccessorySerializer(many=True)},
+))
+class AccessoryListView(generics.ListAPIView):
+    """
+        shows the entire list of accessories
+        (available to anyone)
+    """
+    queryset = Accessory.objects.prefetch_related('photos').all()
+    serializer_class = AccessorySerializer
+    permission_classes = (AllowAny,)
+    
+    
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    security=[],
+    operation_id='get_accessory_by_id',
+    responses={200: AccessorySerializer(many=True)},
+))
+class AccessoryByIdView(generics.RetrieveAPIView):
+    """
+        get accessory by id
+        (available to anyone)
+    """
+    queryset = Accessory.objects.prefetch_related('photos').all()
+    serializer_class = AccessorySerializer
+    permission_classes = (AllowAny,)

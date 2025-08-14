@@ -2,7 +2,11 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 
-from apps.products.models import Accessory, Product
+from apps.products.models import Product, Accessory
+from apps.users.models import UserProfileModel
+from apps.utils import get_timenow
+from core.services.email_service import EmailService
+
 
 UserModel = get_user_model()
 
@@ -14,23 +18,44 @@ class Order(models.Model):
         ordering = ("id",)
 
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-        ('in_progress', 'In Progress'),
+        ('processing', 'Order in processing'),
+        ('preparing', 'Preparing'),
+        ('shipping', 'Shipping'),
+        ('in_transit', 'In transit'),
         ('delivered', 'Delivered'),
     ]
 
     order_notes = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='processing')
     customer = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE, 
-        related_name='orders'
+        related_name='orders',
+        null=True,
+        blank=True
     )
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
-
+    billing_details = models.OneToOneField(
+        UserProfileModel, 
+        on_delete=models.CASCADE, 
+        related_name='order',
+    )
+    
     def __str__(self):
         return f"Order #{self.id} by {self.customer.email}"
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_status = Order.objects.get(pk=self.pk).status
+            if old_status != self.status:
+                EmailService.send_order_status_email(
+                    order_id=self.id,
+                    status=self.status,
+                    customer_email=self.customer.email,
+                    first_name=self.billing_details.first_name,
+                    last_name=self.billing_details.last_name
+                )
+            
+        super().save(*args, **kwargs)
 
     
 class OrderPosition(models.Model):
@@ -42,7 +67,7 @@ class OrderPosition(models.Model):
     quantity = models.IntegerField(default=1)
     total_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=2, 
         default=0.00
     )
     date = models.DateTimeField(default=timezone.now)
