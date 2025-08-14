@@ -1,10 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 
-from apps.products.models import Product
+from apps.products.models import Product, Accessory
 from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
 from core.services.email_service import send_order_status_email
+
 
 UserModel = get_user_model()
 
@@ -52,7 +54,7 @@ class Order(models.Model):
             
         super().save(*args, **kwargs)
 
-
+    
 class OrderPosition(models.Model):
 
     class Meta:
@@ -62,10 +64,15 @@ class OrderPosition(models.Model):
     quantity = models.IntegerField(default=1)
     total_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=2, 
         default=0.00
     )
-    date = models.DateTimeField(default=get_timenow)
+    date = models.DateTimeField(default=timezone.now)
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='positions',
+    )
     product = models.ForeignKey(
         Product,
         null=True,
@@ -73,11 +80,14 @@ class OrderPosition(models.Model):
         on_delete=models.PROTECT,
         related_name='order_positions'
     )
-    order = models.ForeignKey(
-        Order,
-        on_delete=models.CASCADE,
-        related_name='positions'
+    accessory = models.ForeignKey(
+        Accessory,
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name='accessory_positions'
     )
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name} in Order #{self.order.id}"
+

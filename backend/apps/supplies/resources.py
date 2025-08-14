@@ -1,5 +1,5 @@
 from apps.products.models import Product
-from apps.supply.models import Supply
+from apps.supplies.models import Supply
 
 from import_export import fields, resources, widgets
 

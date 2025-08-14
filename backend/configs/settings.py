@@ -68,19 +68,12 @@ INSTALLED_APPS = [
     "apps.auth",
     "apps.oauth_google",
     "apps.products",
-    "apps.supply",
+    "apps.supplies",
     "apps.subscription",
     "apps.review",
     "apps.order",
-    "apps.billing_details",
   
 
-]
-
-MIDDLEWARE = [
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
 ROOT_URLCONF = "configs.urls"

@@ -1,0 +1,2 @@
+class PhotoExtensionException(Exception):
+    pass
