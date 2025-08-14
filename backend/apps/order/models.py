@@ -5,7 +5,7 @@ from django.utils import timezone
 from apps.products.models import Product, Accessory
 from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
-from core.services.email_service import send_order_status_email
+from core.services.email_service import EmailService
 
 
 UserModel = get_user_model()
@@ -47,9 +47,12 @@ class Order(models.Model):
         if self.pk:
             old_status = Order.objects.get(pk=self.pk).status
             if old_status != self.status:
-                send_order_status_email(
-                    user=self.customer,
-                    order=self
+                EmailService.send_order_status_email(
+                    order_id=self.id,
+                    status=self.status,
+                    customer_email=self.customer.email,
+                    first_name=self.billing_details.first_name,
+                    last_name=self.billing_details.last_name
                 )
             
         super().save(*args, **kwargs)
