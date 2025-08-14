@@ -1,13 +1,15 @@
 from datetime import date
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.customer.models import Customer
 from apps.products.models import Product
 from apps.review.models import Review
 
 from backend.apps.db_utils import get_object_or_error
+
+UserModel = get_user_model()
 
 
 @transaction.atomic
@@ -23,7 +25,7 @@ def create_review(data: dict) -> Review:
     if product_id is None:
         raise ValidationError("Review 'product_id' is required.")
 
-    customer = get_object_or_error(Customer, customer_id)
+    customer = get_object_or_error(UserModel, customer_id)
     product = get_object_or_error(Product, product_id)
 
     try:
@@ -57,7 +59,7 @@ def update_review(review_id: int, data: dict) -> Review:
     if "comment" in data:
         review.comment = data["comment"]
     if "customer_id" in data:
-        review.customer = get_object_or_error(Customer, data["customer_id"])
+        review.customer = get_object_or_error(UserModel, data["customer_id"])
     if "product_id" in data:
         review.product = get_object_or_error(Product, data["product_id"])
 
