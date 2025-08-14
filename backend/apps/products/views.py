@@ -217,7 +217,7 @@ class AccessoryListView(generics.ListAPIView):
         shows the entire list of accessories
         (available to anyone)
     """
-    queryset = Accessory.objects.prefetch_related('photos').all()
+    queryset = Accessory.objects.prefetch_related('photos_url').all()
     serializer_class = AccessorySerializer
     permission_classes = (AllowAny,)
     
@@ -232,6 +232,6 @@ class AccessoryByIdView(generics.RetrieveAPIView):
         get accessory by id
         (available to anyone)
     """
-    queryset = Accessory.objects.prefetch_related('photos').all()
+    queryset = Accessory.objects.prefetch_related('photos_url').all()
     serializer_class = AccessorySerializer
     permission_classes = (AllowAny,)
