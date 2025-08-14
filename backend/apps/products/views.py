@@ -33,7 +33,6 @@ class ProductListView(generics.ListAPIView):
     filterset_class = CoffeeProductFilter
 
 
-
 @method_decorator(name='get', decorator=swagger_auto_schema(
     security=[],
     operation_id='get_product_by_id',

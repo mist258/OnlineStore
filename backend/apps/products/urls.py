@@ -10,6 +10,8 @@ from .views import (
     ProductListView,
     UpdateDestroyFlavourProfileView,
     UpdateProductView,
+    AccessoryListView,
+    AccessoryByIdView,
 )
 
 urlpatterns = [
