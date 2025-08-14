@@ -5,7 +5,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.products.models import FlavorProfile, PhotosModel, Product, Accessory
+from apps.products.models import Accessory, FlavorProfile, PhotosModel, Product
 
 from core.views import UpdateDestroyAPIView
 
@@ -13,7 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 
 from .filters import CoffeeProductFilter
-from .serializers import FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer, AccessorySerializer
+from .serializers import AccessorySerializer, FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

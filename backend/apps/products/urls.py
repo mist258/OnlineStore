@@ -1,6 +1,8 @@
 from django.urls import path
 
 from .views import (
+    AccessoryByIdView,
+    AccessoryListView,
     AddPhotoToProduct,
     CreateProductView,
     DeletePhotoFromProduct,
@@ -10,8 +12,6 @@ from .views import (
     ProductListView,
     UpdateDestroyFlavourProfileView,
     UpdateProductView,
-    AccessoryListView,
-    AccessoryByIdView,
 )
 
 urlpatterns = [

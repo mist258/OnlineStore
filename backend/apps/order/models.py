@@ -2,11 +2,11 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 
-from apps.products.models import Product, Accessory
+from apps.products.models import Accessory, Product
 from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
-from core.services.email_service import EmailService
 
+from core.services.email_service import EmailService
 
 UserModel = get_user_model()
 
