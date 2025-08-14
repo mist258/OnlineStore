@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from apps.order.models import Order
+from apps.orders.models import Order
 
 UserModel = get_user_model()
 

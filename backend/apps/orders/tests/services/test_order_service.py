@@ -1,9 +1,9 @@
 from apps.customer.models import Customer
-from apps.order.models import Order
+from apps.orders.models import Order
 
 import pytest
 
-from backend.apps.order.services.order_service import create_order, delete_order, get_order_by_id, update_order
+from backend.apps.orders.services.order_service import create_order, delete_order, get_order_by_id, update_order
 
 
 @pytest.mark.django_db

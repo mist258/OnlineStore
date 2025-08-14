@@ -3,7 +3,7 @@ from django.db import IntegrityError, transaction
 
 from apps.billing_details.models import BillingDetails
 from apps.customer.models import Customer
-from apps.order.models import Order
+from apps.orders.models import Order
 
 from backend.apps.db_utils import get_object_or_error
 

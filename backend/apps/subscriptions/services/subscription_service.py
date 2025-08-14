@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.subscription.models import Subscription
+from apps.subscriptions.models import Subscription
 
 from backend.apps.db_utils import get_object_or_error
 

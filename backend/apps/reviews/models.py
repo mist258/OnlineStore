@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core import validators
 from django.db import models
 
 from apps.products.models import Product
@@ -9,10 +10,12 @@ UserModel = get_user_model()
 
 class Review(models.Model):
     class Meta:
-        db_table = "review"
-        ordering = ("-id",)
+        db_table = "reviews"
+        ordering = ("-date",)
 
-    grade = models.IntegerField()
+    is_approved = models.BooleanField(default=False)
+    grade = models.FloatField(validators=[validators.MinValueValidator(1.0),
+                                          validators.MaxValueValidator(5.0)])
     date = models.DateField(default=get_timenow)
     comment = models.TextField(blank=True, null=True)
     customer = models.ForeignKey(

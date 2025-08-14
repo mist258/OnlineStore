@@ -1,10 +1,10 @@
 from apps.customer.models import Customer
-from apps.order.models import Order, OrderPosition
+from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 
 import pytest
 
-from backend.apps.order.services.order_position_service import (
+from backend.apps.orders.services.order_position_service import (
     create_order_position,
     delete_order_position,
     get_order_position_by_id,

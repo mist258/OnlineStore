@@ -69,9 +69,9 @@ INSTALLED_APPS = [
     "apps.oauth_google",
     "apps.products",
     "apps.supplies",
-    "apps.subscription",
-    "apps.review",
-    "apps.order",
+    "apps.subscriptions",
+    "apps.reviews",
+    "apps.orders",
     "apps.billing_details",
   
 

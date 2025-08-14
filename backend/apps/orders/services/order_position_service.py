@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.order.models import Order, OrderPosition
+from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 
 from backend.apps.db_utils import get_object_or_error

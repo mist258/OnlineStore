@@ -10,7 +10,7 @@ UserModel = get_user_model()
 class Order(models.Model):
 
     class Meta:
-        db_table = "order"
+        db_table = "orders"
         ordering = ("id",)
 
     STATUS_CHOICES = [
