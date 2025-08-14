@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 
+
+from apps.order.models import Order
 from core.exceptions.template_exception import TemplateException
 from core.services.jwt_services import JWTService, RecoveryToken
 
@@ -83,3 +85,18 @@ class EmailService:
         except Exception:
             raise TemplateException
 
+    @classmethod
+    def send_order_status_email(cls, order: Order):
+        try:
+            cls.__send_email.delay(order.customer.email,
+                                   "order_status.html",
+                                   {
+                                       "order_id": order.id,
+                                       "status": order.status,
+                                       "customer_name": f"{order.billing_details.first_name} {order.billing_details.last_name}"
+                                       
+                                   },
+                                   f"Order #{order.id} status update"
+                                   )
+        except Exception:
+            raise TemplateException
