@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -8,8 +9,10 @@ from apps.products.models import FlavorProfile, PhotosModel, Product
 
 from core.views import UpdateDestroyAPIView
 
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 
+from .filters import CoffeeProductFilter
 from .serializers import FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
 
 
@@ -26,6 +29,9 @@ class ProductListView(generics.ListAPIView):
     queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles").all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = CoffeeProductFilter
+
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
