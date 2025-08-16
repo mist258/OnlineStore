@@ -69,6 +69,12 @@ this needed to display the documentation on 'Render')
 **/api/users/list/<int:pk>** - superuser/admin can retrieve user
 
 
+## products
+
+
+## supplies
+
+
 ## Installation
 
 Install project 
