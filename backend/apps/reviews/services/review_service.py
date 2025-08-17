@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
 from apps.products.models import Product
-from apps.review.models import Review
+from apps.reviews.models import Review
 
 from backend.apps.db_utils import get_object_or_error
 
@@ -37,7 +37,7 @@ def create_review(data: dict) -> Review:
             product=product
         )
     except IntegrityError as e:
-        raise ValidationError(f"Database error during review creation: {str(e)}")
+        raise ValidationError(f"Database error during reviews creation: {str(e)}")
     except Exception as e:
         raise ValidationError(f"Unexpected error: {str(e)}")
 
@@ -76,4 +76,4 @@ def delete_review(review_id: int) -> None:
     except Review.DoesNotExist:
         raise ValueError(f"Review with id {review_id} not found.")
     except IntegrityError as e:
-        raise ValueError(f"Cannot delete review {review_id}: {str(e)}")
+        raise ValueError(f"Cannot delete reviews {review_id}: {str(e)}")

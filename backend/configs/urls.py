@@ -38,10 +38,10 @@ schema_view = get_schema_view(
 )
 urlpatterns = [
     path("api/products", include("apps.products.urls")),
-    path("api/reviev", include("apps.review.urls")),
+    path("api/reviev", include("apps.reviews.urls")),
     path("api/supplies", include("apps.supplies.urls")),
     path("api/services", include("apps.subscription.urls")),
-    path("api/order", include("apps.order.urls")),
+    path("api/orders", include("apps.orders.urls")),
     path("api/users", include("apps.users.urls")),
     path("api/auth", include("apps.auth.urls")),
     path("api/auth_google", include("apps.oauth_google.urls")),

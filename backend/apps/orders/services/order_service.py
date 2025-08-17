@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
 from apps.customer.models import Customer
-from apps.order.models import Order
+from apps.orders.models import Order
 
 from backend.apps.db_utils import get_object_or_error
 
@@ -21,7 +21,7 @@ def create_order(data: dict) -> Order:
             order_notes=data.get("order_notes")
         )
     except IntegrityError as e:
-        raise ValidationError(f"Database error during order creation: {str(e)}")
+        raise ValidationError(f"Database error during orders creation: {str(e)}")
     except Exception as e:
         raise ValidationError(f"Unexpected error: {str(e)}")
 
@@ -56,4 +56,4 @@ def delete_order(order_id: int) -> None:
     except Order.DoesNotExist:
         raise ValueError(f"Order with id {order_id} not found.")
     except IntegrityError as e:
-        raise ValueError(f"Cannot delete order {order_id}: {str(e)}")
+        raise ValueError(f"Cannot delete orders {order_id}: {str(e)}")

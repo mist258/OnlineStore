@@ -44,9 +44,9 @@ urlpatterns = [
     ), # delete photo from product
     path(
         "/accessories", AccessoryListView.as_view(), name="accessories_list"
-    ),
+    ), # display a list of all accessories
     path(
         "/accessories/<int:pk>", AccessoryByIdView.as_view(), name="accessories_by_id"
-    ),
+    ), # display a specific accessory by its id
 
 ]

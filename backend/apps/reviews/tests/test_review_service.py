@@ -2,11 +2,11 @@ from datetime import date
 
 from apps.customer.models import Customer
 from apps.products.models import Product
-from apps.review.models import Review
+from apps.reviews.models import Review
 
 import pytest
 
-from backend.apps.review.services.review_service import create_review, delete_review, get_review_by_id, update_review
+from backend.apps.reviews.services.review_service import create_review, delete_review, get_review_by_id, update_review
 
 
 @pytest.mark.django_db

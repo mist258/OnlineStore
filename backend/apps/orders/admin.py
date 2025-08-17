@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.order.models import Order, OrderPosition
+from apps.orders.models import Order, OrderPosition
 
 admin.site.register(Order)
 
