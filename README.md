@@ -66,13 +66,40 @@ this needed to display the documentation on 'Render')
 
 **/api/users/list/** - superuser/admin can list all users
 
-**/api/users/list/<int:pk>** - superuser/admin can retrieve user
+**/api/users/list/<int:pk>** - superuser/admin can retrieve user by ID
 
 
 ## products
 
+**/api/products** - display a list of all coffee products (for anyone)
+
+**/api/products/<int:pk>** - display a specific product by its ID (for anyone)
+
+**/api/products/product** - create a new product (only for superuser)
+
+**/api/products/product/<int:pk>** -  full/partial update product by  its ID  (only for superuser)
+
+**/api/products/<int:pk>/deletion** - deletes a specific product by its ID (only for superuser)
+
+**/api/products/flavour** - display a list of all flavours or create a new one (only for superuser)
+
+**/api/products/flavour/<int:pk>** - update or destroy flavour by its ID (only for superuser)
+
+**/api/products/<int:pk>/photo** - add photo (from local machine) to the product by its ID (only for superuser)
+
+**/api/products/photo/<int:pk>/deletion** - delete photo from product by its ID (only for superuser)
+
+**/api/products/accessories** - display a list of all accessories (for anyone)
+
+**/api/products/accessories/<int:pk>** - display a specific accessories by its ID (for anyone)
+
 
 ## supplies
+
+**/api/supplies/products/<int:pk>** - add supplies to specific product by its ID  (only for superuser)
+
+**/api/supplies/<int:pk>** - update or delete or partial update a specific supplies by its ID (only for superuser)
+
 
 
 ## Installation
