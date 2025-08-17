@@ -2,6 +2,7 @@
 **Python version** - 3.12
 
 **Database** - PostgreSQL (Supabase)
+
 **Deployment** - Render
 
 
