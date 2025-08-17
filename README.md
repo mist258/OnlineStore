@@ -117,6 +117,8 @@ Install project
 
  ./manage.py makemigrations
  ./manage.py migrate
+ ./manage.py createsuperuser
+
 
 ```
 
