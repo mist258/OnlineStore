@@ -9,7 +9,7 @@ UserModel = get_user_model()
 
 class Review(models.Model):
     class Meta:
-        db_table = "review"
+        db_table = "reviews"
         ordering = ("-id",)
 
     grade = models.IntegerField()

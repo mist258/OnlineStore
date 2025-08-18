@@ -14,7 +14,7 @@ UserModel = get_user_model()
 class Order(models.Model):
 
     class Meta:
-        db_table = "order"
+        db_table = "orders"
         ordering = ("id",)
 
     STATUS_CHOICES = [
@@ -37,7 +37,7 @@ class Order(models.Model):
     billing_details = models.OneToOneField(
         UserProfileModel, 
         on_delete=models.CASCADE, 
-        related_name='order',
+        related_name='orders',
     )
     
     def __str__(self):
