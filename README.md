@@ -3,7 +3,7 @@
 
 **Database** - PostgreSQL (Supabase)
 
-**Deployment** - Render
+**Deployment** - Render (https://onlinestore-928b.onrender.com/api/doc)
 
 
 ## Already added to the project
