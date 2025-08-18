@@ -94,6 +94,11 @@ this needed to display the documentation on 'Render')
 
 **/api/products/accessories/<int:pk>** - display a specific accessories by its ID (for anyone)
 
+**/api/products//new_accessory** -  add new accessory (only for superuser)
+
+**/api/products/search** - searching for a query for two models Product & Accessory (for anyone)
+
+
 
 ## supplies
 
