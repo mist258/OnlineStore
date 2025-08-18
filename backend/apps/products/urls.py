@@ -2,11 +2,13 @@ from django.urls import path
 
 from .views import (
     AccessoryByIdView,
+    AccessoryCreateView,
     AccessoryListView,
     AddPhotoToProduct,
     CreateProductView,
     DeletePhotoFromProduct,
     DeleteProductView,
+    GlobalSearchView,
     ListCreateFlavourProfileView,
     ProductByIdView,
     ProductListView,
@@ -48,5 +50,11 @@ urlpatterns = [
     path(
         "/accessories/<int:pk>", AccessoryByIdView.as_view(), name="accessories_by_id"
     ), # display a specific accessory by its id
+    path(
+        "/new_accessory", AccessoryCreateView.as_view(), name="new_accessory"
+    ), # add new accessory
+    path(
+        "/search", GlobalSearchView.as_view(), name="general_search"
+    ) # searching for a query for two models Product & Accessory
 
 ]

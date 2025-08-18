@@ -60,6 +60,8 @@ class ProductSerializer(serializers.ModelSerializer):
                   "photos_url",
                   "flavor_profiles",)
 
+        read_only_fields = ("id",)
+
     @atomic
     def create(self, validated_data: dict) -> Product:
         supplies = validated_data.pop("supplies", [])
@@ -96,10 +98,28 @@ class ProductSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class AccessorySerializer(serializers.ModelSerializer):
     photos = PhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Accessory
-        fields = '__all__'
+        fields = ("id",
+                  "name",
+                  "sku",
+                  "description",
+                  "brand",
+                  "price",
+                  "category",
+                  "quantity",
+                  "photos")
+
+        read_only_fields = ("id",)
+
+
+class GlobalSearchSerializer(serializers.Serializer):
+
+    name = serializers.CharField(required=True)
+
+
         

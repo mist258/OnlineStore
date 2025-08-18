@@ -3,7 +3,7 @@ from apps.supplies.choices.supply_choices import ServingTypeChoices
 
 from django_filters import rest_framework as filters
 
-from .models import Product
+from .models import Accessory, Product
 
 
 class CoffeeProductFilter(filters.FilterSet):

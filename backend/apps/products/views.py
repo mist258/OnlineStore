@@ -13,7 +13,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 
 from .filters import CoffeeProductFilter
-from .serializers import AccessorySerializer, FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
+from .serializers import (
+    AccessorySerializer,
+    FlavourProfileSerializer,
+    GlobalSearchSerializer,
+    ProductPhotoSerializer,
+    ProductSerializer,
+)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -219,8 +225,22 @@ class AccessoryListView(generics.ListAPIView):
     """
     queryset = Accessory.objects.prefetch_related('photos_url').all()
     serializer_class = AccessorySerializer
+    filter_backends = [OrderingFilter]
     permission_classes = (AllowAny,)
-    
+
+
+@method_decorator(name='post', decorator=swagger_auto_schema(
+    operation_id='add_accessory',
+    responses={200: AccessorySerializer()},
+))
+class AccessoryCreateView(generics.CreateAPIView):
+    """
+        create a new accessory
+        (available to superuser)
+    """
+    queryset = Accessory.objects.all()
+    serializer_class = AccessorySerializer
+
     
 @method_decorator(name='get', decorator=swagger_auto_schema(
     security=[],
@@ -235,3 +255,23 @@ class AccessoryByIdView(generics.RetrieveAPIView):
     queryset = Accessory.objects.prefetch_related('photos_url').all()
     serializer_class = AccessorySerializer
     permission_classes = (AllowAny,)
+
+
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    operation_id='get_accessory_or_product_by_name'
+))
+class GlobalSearchView(generics.ListAPIView): # todo
+    """
+        displays the results of a general search by the “name” field
+        for "Product" and "Accessory" models
+        (available to anyone)
+    """
+    serializer_class = GlobalSearchSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        query = self.request.query_params.get('search', None)
+
+        product = Product.objects.filter()
+        accessory = Accessory.objects.filter()
+
