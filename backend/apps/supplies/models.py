@@ -24,7 +24,9 @@ class Supply(models.Model):
     product = models.ForeignKey(
         Product, 
         related_name='supplies',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True, 
+        blank=True
     )
 
     def __str__(self):
