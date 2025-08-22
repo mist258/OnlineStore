@@ -115,9 +115,3 @@ class AccessorySerializer(serializers.ModelSerializer):
                   "photos")
 
         read_only_fields = ("id",)
-
-
-
-
-
-        
