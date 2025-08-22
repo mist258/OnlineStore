@@ -117,9 +117,7 @@ class AccessorySerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
-class GlobalSearchSerializer(serializers.Serializer):
 
-    name = serializers.CharField(required=True)
 
 
         

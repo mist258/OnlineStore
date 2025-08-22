@@ -7,19 +7,14 @@ from rest_framework.response import Response
 
 from apps.products.models import Accessory, FlavorProfile, PhotosModel, Product
 
+from core.pagination import PagePagination
 from core.views import UpdateDestroyAPIView
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 
 from .filters import CoffeeProductFilter
-from .serializers import (
-    AccessorySerializer,
-    FlavourProfileSerializer,
-    GlobalSearchSerializer,
-    ProductPhotoSerializer,
-    ProductSerializer,
-)
+from .serializers import AccessorySerializer, FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -260,18 +255,27 @@ class AccessoryByIdView(generics.RetrieveAPIView):
 @method_decorator(name='get', decorator=swagger_auto_schema(
     operation_id='get_accessory_or_product_by_name'
 ))
-class GlobalSearchView(generics.ListAPIView): # todo
+class GlobalSearchView(generics.ListAPIView):
     """
         displays the results of a general search by the “name” field
         for "Product" and "Accessory" models
         (available to anyone)
     """
-    serializer_class = GlobalSearchSerializer
+    pagination_class = PagePagination
     permission_classes = (AllowAny,)
 
-    def get_queryset(self):
-        query = self.request.query_params.get('search', None)
+    def get(self, request, *args, **kwargs):
+        query = request.query_params.get('search', '')
 
-        product = Product.objects.filter()
-        accessory = Accessory.objects.filter()
+        products = Product.objects.filter(name__icontains=query)
+        prod_data = ProductSerializer(products, many=True)
+
+        accessories = Accessory.objects.filter(name__icontains=query)
+        accessory_data = AccessorySerializer(accessories, many=True)
+
+        data = accessory_data.data + prod_data.data
+
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(data, request, view=self)
+        return paginator.get_paginated_response(page)
 
