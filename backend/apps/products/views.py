@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -261,6 +261,7 @@ class GlobalSearchView(generics.ListAPIView):
         for "Product" and "Accessory" models
         (available to anyone)
     """
+    filter_backends = [SearchFilter]
     pagination_class = PagePagination
     permission_classes = (AllowAny,)
 
