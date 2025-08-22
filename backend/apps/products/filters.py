@@ -1,9 +1,12 @@
+from django.db.models import QuerySet
+from django.http import QueryDict
+
 from apps.products.choices.product_choices import CaffeineLevelChoices, CoffeeBeanTypeChoices, RoastLevelChoices
 from apps.supplies.choices.supply_choices import ServingTypeChoices
 
 from django_filters import rest_framework as filters
 
-from .models import Product
+from .models import Accessory, Product
 
 
 class CoffeeProductFilter(filters.FilterSet):
@@ -22,4 +25,3 @@ class CoffeeProductFilter(filters.FilterSet):
     caffeine_content = filters.MultipleChoiceFilter(field_name='caffeine_type', choices=CaffeineLevelChoices)
     coffee_bean_type = filters.MultipleChoiceFilter(field_name='sort', choices=CoffeeBeanTypeChoices)
     price_range = filters.RangeFilter(field_name='supplies__price')
-

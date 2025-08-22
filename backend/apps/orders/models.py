@@ -4,7 +4,6 @@ from django.utils import timezone
 
 from apps.products.models import Accessory, Product
 from apps.users.models import UserProfileModel
-from apps.utils import get_timenow
 
 from core.services.email_service import EmailService
 
