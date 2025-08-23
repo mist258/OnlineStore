@@ -3,18 +3,18 @@ from django.core import validators as v
 from django.db import models
 
 from apps.products.models import Product
-from apps.utils import get_timenow
+
+from core.models import BaseModel
 
 UserModel = get_user_model()
 
 
-class Review(models.Model):
+class Review(BaseModel):
     class Meta:
         db_table = "reviews"
-        ordering = ("-id",)
+        ordering = ("-created_at",)
 
     grade = models.IntegerField(validators=[v.MinValueValidator(1), v.MaxValueValidator(5)])
-    date = models.DateField(default=get_timenow)
     comment = models.TextField(blank=True, null=True)
     customer = models.ForeignKey(
         UserModel,
