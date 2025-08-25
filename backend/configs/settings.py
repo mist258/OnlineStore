@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "django_celery_results",
     "import_export",
+    "anymail",
 
 
     # my apps

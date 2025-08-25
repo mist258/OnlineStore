@@ -8,7 +8,7 @@
 
 ## Already added to the project
  
-✔️ *poetry* (instead of .venv & .requirements.txt)
+✔️ *poetry* 
 
 ✔️ *docker*
 
@@ -19,10 +19,6 @@
 ✔️ *pillow* (photo managing)
   
 ✔️ *django-filter* (filtering requests)
-
-✔️ *joined pagination* (DEFAULT_PAGINATION_CLASS)
-  
-✔️ *joined filters* (DEFAULT_FILTER_BACKENDS)
 
 ✔️ *gunicorn* (for deploying on render)
 

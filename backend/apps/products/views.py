@@ -1,12 +1,13 @@
 from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.products.models import Accessory, FlavorProfile, PhotosModel, Product
 
+from core.pagination import PagePagination
 from core.views import UpdateDestroyAPIView
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -219,8 +220,22 @@ class AccessoryListView(generics.ListAPIView):
     """
     queryset = Accessory.objects.prefetch_related('photos_url').all()
     serializer_class = AccessorySerializer
+    filter_backends = [OrderingFilter]
     permission_classes = (AllowAny,)
-    
+
+
+@method_decorator(name='post', decorator=swagger_auto_schema(
+    operation_id='add_accessory',
+    responses={200: AccessorySerializer()},
+))
+class AccessoryCreateView(generics.CreateAPIView):
+    """
+        create a new accessory
+        (available to superuser)
+    """
+    queryset = Accessory.objects.all()
+    serializer_class = AccessorySerializer
+
     
 @method_decorator(name='get', decorator=swagger_auto_schema(
     security=[],
@@ -235,3 +250,32 @@ class AccessoryByIdView(generics.RetrieveAPIView):
     queryset = Accessory.objects.prefetch_related('photos_url').all()
     serializer_class = AccessorySerializer
     permission_classes = (AllowAny,)
+
+
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    operation_id='get_accessory_or_product_by_name'
+))
+class GlobalSearchView(generics.ListAPIView):
+    """
+        displays the results of a general search by the “name” field
+        for "Product" and "Accessory" models
+        (available to anyone)
+    """
+    filter_backends = [SearchFilter]
+    pagination_class = PagePagination
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        query = request.query_params.get('search', '')
+
+        products = Product.objects.filter(name__icontains=query)
+        prod_data = ProductSerializer(products, many=True)
+
+        accessories = Accessory.objects.filter(name__icontains=query)
+        accessory_data = AccessorySerializer(accessories, many=True)
+
+        data = accessory_data.data + prod_data.data
+
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(data, request, view=self)
+        return paginator.get_paginated_response(page)
