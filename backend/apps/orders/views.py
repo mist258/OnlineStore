@@ -5,11 +5,13 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.views import APIView
 
 from .models import Order
 from .services.order_service import create_order
 from .serializers import OrderWriteSerializer, OrderReadSerializer
 
+from core.services.novaposhta_service import NovaPoshtaService
 
 class CreateOrderView(viewsets.GenericViewSet):
     """
@@ -55,3 +57,26 @@ class ListOrdersView(viewsets.ReadOnlyModelViewSet):
         if self.request.method in ['GET']:
             self.permission_classes = [IsAuthenticated,]  # Change to IsAdminUser if needed
         return super().get_permissions()
+    
+
+class TrackTTNView(APIView):
+    """
+    Endpoint for tracking NovaPoshta TTN (waybill).
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        ttn = request.query_params.get("ttn")
+
+        if not ttn:
+            return Response(
+                {"error": "Missing required parameter: ttn"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        result = NovaPoshtaService.track_ttn(ttn)
+
+        if result.get("success"):
+            return Response(result, status=status.HTTP_200_OK)
+        else:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
