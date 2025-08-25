@@ -62,7 +62,7 @@ class Accessory(models.Model):
     def __str__(self):
         return f"{self.name} by {self.brand or 'Unknown Brand'}"
     
-      
+    
 class Photo(models.Model):
    """
        model for adding photos to a product by a url

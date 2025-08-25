@@ -5,6 +5,8 @@ from django.utils import timezone
 from apps.products.models import Accessory, Product
 from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
+from django.db.models import Q, CheckConstraint
+from django.core.exceptions import ValidationError
 
 from core.services.email_service import EmailService
 
@@ -31,8 +33,6 @@ class Order(models.Model):
         UserModel,
         on_delete=models.CASCADE, 
         related_name='orders',
-        null=True,
-        blank=True
     )
     billing_details = models.OneToOneField(
         UserProfileModel, 
@@ -41,7 +41,8 @@ class Order(models.Model):
     )
     
     def __str__(self):
-        return f"Order #{self.id} by {self.customer.email}"
+        customer_email = self.customer.email if self.customer else "No customer"
+        return f"Order #{self.id} ({customer_email})"
     
     def save(self, *args, **kwargs):
         if self.pk:
@@ -61,8 +62,17 @@ class Order(models.Model):
 class OrderPosition(models.Model):
 
     class Meta:
-        db_table = "order_position"
+        db_table = "order_positions"
         ordering = ("id",)
+        constraints = [
+            CheckConstraint(
+                check=(
+                    (Q(product__isnull=False) & Q(accessory__isnull=True)) |
+                    (Q(product__isnull=True) & Q(accessory__isnull=False))
+                ),
+                name="exactly_one_product_or_accessory"
+            )
+        ]
 
     quantity = models.IntegerField(default=1)
     total_price = models.DecimalField(
@@ -90,7 +100,14 @@ class OrderPosition(models.Model):
         on_delete=models.PROTECT,
         related_name='accessory_positions'
     )
+    
+    def clean(self):
+        if not self.product and not self.accessory:
+            raise ValidationError("Either product or accessory must be set.")
+        if self.product and self.accessory:
+            raise ValidationError("Only one of product or accessory can be set.")
 
     def __str__(self):
-        return f"{self.quantity}x {self.product.name} in Order #{self.order.id}"
+        product = self.product or self.accessory
+        return f"{self.quantity}x {product.name} in Order #{self.order.id}"
 
