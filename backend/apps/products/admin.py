@@ -22,3 +22,4 @@ class PhotoAdmin(ImportExportModelAdmin):
 @admin.register(Accessory)
 class AccessoryAdmin(ImportExportModelAdmin):
     resource_class = AccessoryResource
+    list_display = ('name', 'brand', 'id', 'price', 'category', 'quantity')
