@@ -61,7 +61,6 @@ class OrderWriteSerializer(serializers.ModelSerializer):
         customer_snapshot = UserModel.objects.create_snapshot(customer_data.get("email"))
         billing_snapshot = UserProfileModel.objects.create_snapshot(billing_data)
         
-
         # Create the order
         order = Order.objects.create(
             customer=customer_snapshot,
@@ -95,3 +94,68 @@ class OrderWriteSerializer(serializers.ModelSerializer):
 
         # Optional: handle positions update here if needed
         return super().update(instance, validated_data)
+
+
+class OrderPositionReadSerializer(serializers.ModelSerializer):
+    """
+    Read-only serializer for order positions.
+    Includes nested product or accessory details.
+    """
+    product = serializers.SerializerMethodField()
+    accessory = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = OrderPosition
+        fields = [
+            "id",
+            "quantity",
+            "product",
+            "accessory",
+        ]
+        read_only_fields = fields
+
+    def get_product(self, obj):
+        if obj.product:
+            return {
+                "id": obj.product.id,
+                "name": obj.product.name,
+                "quantity": obj.quantity,
+                "total_price": obj.total_price,
+            }
+        return None
+
+    def get_accessory(self, obj):
+        if obj.accessory:
+            return {
+                "id": obj.accessory.id,
+                "name": obj.accessory.name,
+                "price": obj.accessory.price,
+                "quantity": obj.quantity,
+                "total_price": obj.total_price,
+            }
+        return None
+
+
+class OrderReadSerializer(serializers.ModelSerializer):
+    """
+    Read-only serializer for orders.
+    Includes nested billing details and positions.
+    """
+    billing_details = BillingDetailsSerializer(read_only=True)
+    positions = OrderPositionReadSerializer(read_only=True, many=True)
+    
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "order_notes",
+            "status",
+            "customer",
+            "billing_details",
+            "positions",
+        ]
+        read_only_fields = fields
+
+    def get_positions(self, obj):
+        positions = OrderPosition.objects.filter(order=obj)
+        return OrderPositionReadSerializer(positions, many=True).data

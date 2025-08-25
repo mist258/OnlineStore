@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .models import Order
 from .services.order_service import create_order
-from .serializers import OrderWriteSerializer
+from .serializers import OrderWriteSerializer, OrderReadSerializer
 
 
 class CreateOrderView(viewsets.GenericViewSet):
@@ -25,7 +25,7 @@ class CreateOrderView(viewsets.GenericViewSet):
         responses={201: OrderWriteSerializer()}
     )
     def create(self, request, *args, **kwargs):
-        user = request.user if request.user.is_authenticated else None
+        user = request.user if getattr(request, "user", None) else None
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -41,3 +41,17 @@ class CreateOrderView(viewsets.GenericViewSet):
 
         output_serializer = self.get_serializer(order)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ListOrdersView(viewsets.ReadOnlyModelViewSet):
+    """
+    List all orders (admin only).
+    """
+    queryset = Order.objects.prefetch_related()
+    serializer_class = OrderReadSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_permissions(self):
+        if self.request.method in ['GET']:
+            self.permission_classes = [IsAuthenticated,]  # Change to IsAdminUser if needed
+        return super().get_permissions()

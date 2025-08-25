@@ -79,7 +79,12 @@ def create_order(user, data: dict) -> Order:
             raise ValidationError("At least, customer_email must be provided.")
 
         # Handle customer profile if customer_email is provided
-        customer = UserModel.objects.check_and_create_anonymous_user(customer_email)
+        if user and user.is_authenticated:
+            customer = user
+        else:
+            if not customer_email:
+                raise ValidationError("Anonymous orders must include customer_email.")
+            customer = UserModel.objects.check_and_create_anonymous_user(email=customer_email)
         
         # Handle provided billing details
         if billing_details:
@@ -160,7 +165,7 @@ def create_order(user, data: dict) -> Order:
                 accessory.quantity -= quantity
                 accessory.save()
 
-            total_order_price += position_total
+            total_order_price += position_total 
 
             order_positions.append(OrderPosition(
                 order=order,

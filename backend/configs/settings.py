@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     ".onrender.com",
+    "34.116.176.216" # Please, don't delete this IP, it's for testing deployment only
 ]
 AUTH_USER_MODEL = "users.UserModel"
 
