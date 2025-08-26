@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from core.models import BaseModel
 
-from .managers import UserManager
+from .managers import UserManager, UserProfileManager
 from .regex.user_validation_regex import UserValidationRegex
 
 
@@ -25,6 +25,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
 
 
 class UserProfileModel(BaseModel):
+    objects = UserProfileManager()
     class Meta:
         db_table = "user_profile"
         ordering = ("id",)
@@ -67,8 +68,12 @@ class UserProfileModel(BaseModel):
                 UserValidationRegex.PHONE.pattern, UserValidationRegex.PHONE.msg
             )
         ],
-        unique=True, null=True, blank=True,
+        unique=False, null=True, blank=True,
     )
     user = models.OneToOneField(
-        UserModel, on_delete=models.CASCADE, related_name="profile"
+        UserModel, 
+        on_delete=models.CASCADE, 
+        related_name="profile",
+        null=True,
+        blank=True
     )

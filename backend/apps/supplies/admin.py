@@ -10,3 +10,4 @@ from .resources import SupplyResource
 @admin.register(Supply)
 class SupplyAdmin(ImportExportModelAdmin):
     resource_class = SupplyResource
+    list_display = ('product', 'id', 'serving_type', 'price', 'quantity')
