@@ -43,7 +43,10 @@ class CreateOrderView(viewsets.GenericViewSet):
         output_serializer = self.get_serializer(order)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
-
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    operation_id='get_order',
+    responses={200: OrderReadSerializer(many=True)}
+))
 class ListOrdersView(viewsets.ReadOnlyModelViewSet):
     """
     List all orders (admin only).
