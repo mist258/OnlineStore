@@ -1,12 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import CheckConstraint, Q
 from django.utils import timezone
 
 from apps.products.models import Accessory, Product
 from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
-from django.db.models import Q, CheckConstraint
-from django.core.exceptions import ValidationError
 
 from core.services.email_service import EmailService
 

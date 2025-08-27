@@ -1,12 +1,9 @@
-from django.db.models import QuerySet
-from django.http import QueryDict
-
 from apps.products.choices.product_choices import CaffeineLevelChoices, CoffeeBeanTypeChoices, RoastLevelChoices
 from apps.supplies.choices.supply_choices import ServingTypeChoices
 
 from django_filters import rest_framework as filters
 
-from .models import Accessory, Product
+from .models import Product
 
 
 class CoffeeProductFilter(filters.FilterSet):
