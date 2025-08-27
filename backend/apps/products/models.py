@@ -31,7 +31,7 @@ class Product(models.Model):
 
     sku = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=100, blank=True, null=True)
-    brend = models.CharField(max_length=100, blank=True, null=True)
+    brand = models.CharField(max_length=100, blank=True, null=True)
     caffeine_type = models.CharField(max_length=18,null=True, blank=True,
                                      choices=CaffeineLevelChoices.choices)
     sort = models.CharField(max_length=25, null=True, blank=True,

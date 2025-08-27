@@ -2,9 +2,9 @@ from django.db import models
 
 
 class CoffeeBeanTypeChoices(models.TextChoices):
-    ARABICA = "arabica", "Arabica"
-    ROBUSTA = "robusta", "Robusta"
-    ARABICA_ROBUSTA = "arabica_robusta", "Arabica/robusta blend"
+    ARABICA = "Arabica", "Arabica"
+    ROBUSTA = "Robusta", "Robusta"
+    ARABICA_ROBUSTA = "Arabica/robusta blend", "Arabica/robusta blend"
 
 
 class RoastLevelChoices(models.TextChoices):
@@ -14,5 +14,6 @@ class RoastLevelChoices(models.TextChoices):
 
 
 class CaffeineLevelChoices(models.TextChoices):
-    REGULAR = "regular", "Regular"
-    DECAF = "decaf", "Decaf"
+    CAFFEINE = "Caffeine", "Caffeine"
+    CAFFEINE_MEDIUM = "Caffeine Medium", "Caffeine Medium"
+    DECAFFEINATED = "Decaffeinated", "Decaffeinated"

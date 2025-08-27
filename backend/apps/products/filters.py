@@ -11,10 +11,8 @@ class CoffeeProductFilter(filters.FilterSet):
     class Meta:
         model = Product
         fields = ("name",
-                  "brend",
-                  "roast",
-                  "sort",
-                  "caffeine_type")
+                  "brand",
+)
 
     # search in choices
     grind_type = filters.MultipleChoiceFilter(field_name='supplies__serving_type', choices=ServingTypeChoices)

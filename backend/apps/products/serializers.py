@@ -50,7 +50,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ("id",
                   "sku",
                   "name",
-                  "brend",
+                  "brand",
                   "caffeine_type",
                   "sort",
                   "roast",

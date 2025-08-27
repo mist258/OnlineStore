@@ -27,11 +27,11 @@ class ProductListView(generics.ListAPIView):
         shows the entire list of products
         (available to anyone)
     """
-    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles").all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = CoffeeProductFilter
+    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles").all()
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
