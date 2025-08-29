@@ -1,3 +1,4 @@
+from .anymail_conf import *
 from .cache_conf import *
 from .celery_conf import *
 from .cors_conf import *
