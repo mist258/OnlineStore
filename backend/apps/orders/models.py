@@ -39,6 +39,8 @@ class Order(models.Model):
         on_delete=models.CASCADE, 
         related_name='orders',
     )
+    ttn = models.CharField(max_length=50, blank=True, null=True)
+    created_at = models.DateTimeField(default=get_timenow)
     
     def __str__(self):
         customer_email = self.customer.email if self.customer else "No customer"

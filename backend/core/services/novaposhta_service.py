@@ -1,13 +1,12 @@
 # core/services/novaposhta_service.py
 
-import os
 import requests
+
 from typing import Dict, Any, List
 
 
 class NovaPoshtaService:
     BASE_URL = "https://api.novaposhta.ua/v2.0/json/"
-    API_KEY = os.getenv("NOVA_POSHTA_API_KEY")
 
     @classmethod
     def track_ttn(cls, ttn: str) -> Dict[str, Any]:
@@ -20,7 +19,6 @@ class NovaPoshtaService:
             raise ValueError("NovaPoshta API key not configured")
 
         payload = {
-            "apiKey": cls.API_KEY,
             "modelName": "TrackingDocument",
             "calledMethod": "getStatusDocuments",
             "methodProperties": {
@@ -61,5 +59,6 @@ class NovaPoshtaService:
             "delivery_date": tracking_info.get("ActualDeliveryDate"),
             "warehouse_sender": tracking_info.get("WarehouseSender"),
             "warehouse_recipient": tracking_info.get("WarehouseRecipient"),
+            "ttn": tracking_info.get("IntDocNumber"),
             "raw": tracking_info  # full response if you need extra fields
         }
