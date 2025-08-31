@@ -73,7 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
         profile = validated_data.pop("profile")
         user = UserModel.objects.create_user(**validated_data)
         UserProfileModel.objects.create(**profile, user=user)
-        EmailService.greeting_registration_email(user)
+        #EmailService.greeting_registration_email(user)
         return user
 
     def validate(self, attrs):
@@ -111,6 +111,6 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
             for key, value in profile_data.items():
                 setattr(profile, key, value)
             profile.save()
-        EmailService.updated_info_notification_email(instance)
+        #EmailService.updated_info_notification_email(instance)
         return instance
 

@@ -96,7 +96,7 @@ class ChangePasswordView(generics.GenericAPIView):
      name="put", decorator=swagger_auto_schema(
                       operation_id="change_password_via_profile")
 )
-class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
+class ChangePasswordFromProfileView(generics.GenericAPIView):
     """
         change password from profile
         (available for authenticated users)
