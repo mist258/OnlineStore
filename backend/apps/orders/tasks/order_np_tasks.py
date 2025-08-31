@@ -1,8 +1,8 @@
-from celery import shared_task
-from core.services.novaposhta_service import NovaPoshtaService
-from apps.orders.services import get_order_by_id
+from apps.orders.services.order_service import get_order_by_id, update_order
 
-from apps.orders.services import update_order
+from core.services.novaposhta_service import NovaPoshtaService
+
+from celery import shared_task
 
 
 @shared_task(bind=True, max_retries=3, countdown=43200, retry_backoff=True)

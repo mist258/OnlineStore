@@ -1,5 +1,6 @@
-from celery import shared_task
 from core.services.email_service import EmailService
+
+from celery import shared_task
 
 
 @shared_task(bind=True, max_retries=3, retry_backoff=True)
