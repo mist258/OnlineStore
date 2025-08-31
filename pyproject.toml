@@ -28,7 +28,7 @@ uvicorn = "^0.35.0"
 psycopg2-binary = "^2.9.10"
 google-auth = "^2.40.3"
 requests = "^2.32.4"
-django-anymail = {extras = ["mailersend"], version = "^13.0.1"}
+django-anymail = {extras = ["resend"], version = "^13.0.1"}
 
 
 [tool.poetry.group.dev.dependencies]

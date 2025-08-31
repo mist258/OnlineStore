@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from .models import Order, OrderPosition
+
+from apps.products.models import Accessory, Product
 from apps.users.models import UserModel, UserProfileModel
-from apps.products.models import Product, Accessory
+
+from .models import Order, OrderPosition
 
 
 class OrderPositionWriteSerializer(serializers.Serializer):

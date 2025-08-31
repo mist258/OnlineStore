@@ -11,15 +11,15 @@ def create_product(data: dict) -> Product:
     # check required fields
     sku = data.get("sku")
     name = data.get("name")
-    brend = data.get("brend")
+    brand = data.get("brand")
     sort = data.get("sort")
     roast = data.get("roast")
     if not sku:
         raise ValidationError("Product 'sku' field is required.")
     if not name:
         raise ValidationError("Product 'name' field is required.")
-    if not brend:
-        raise ValidationError("Product 'brend' field is required.")
+    if not brand:
+        raise ValidationError("Product 'brand' field is required.")
     if not sort:
         raise ValidationError("Product 'sort' field is required.")
     if not roast:
@@ -36,7 +36,7 @@ def create_product(data: dict) -> Product:
         product = Product.objects.create(
             sku=sku,
             name=name,
-            brend=brend,
+            brend=brand,
             caffeine_type=data.get("caffeine_type"),
             sort=sort,
             roast=roast,

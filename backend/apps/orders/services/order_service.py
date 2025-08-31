@@ -1,12 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.orders.models import Order, OrderPosition
-from apps.users.models import UserModel, UserProfileModel
-from apps.products.models import Product, Accessory
-from apps.supplies.models import Supply
-
 from apps.db_utils import get_object_or_error
+from apps.orders.models import Order, OrderPosition
+from apps.products.models import Accessory, Product
+from apps.supplies.models import Supply
+from apps.users.models import UserModel, UserProfileModel
 
 
 @transaction.atomic

@@ -1,15 +1,16 @@
-from django.utils.decorators import method_decorator
 from django.core.exceptions import ValidationError
+from django.utils.decorators import method_decorator
 
-from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import status, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from .models import Order
+from .serializers import OrderReadSerializer, OrderWriteSerializer
 from .services.order_service import create_order
-from .serializers import OrderWriteSerializer, OrderReadSerializer
 
 from core.services.novaposhta_service import NovaPoshtaService
 

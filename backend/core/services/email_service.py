@@ -19,7 +19,7 @@ class EmailService:
     def __send_email(to: str, template_name: str, context: dict, subject: '') -> None:
         template = get_template(template_name)
         html_content = template.render(context)
-        msg = EmailMultiAlternatives(subject=subject, from_email=os.environ.get("EMAIL_HOST_USER"), to=[to])
+        msg = EmailMultiAlternatives(subject=subject, from_email=os.environ.get("DEFAULT_FROM_EMAIL"), to=[to])
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
