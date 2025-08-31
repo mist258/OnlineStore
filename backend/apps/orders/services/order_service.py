@@ -201,8 +201,8 @@ def update_order(order_id: int, data: dict) -> Order:
         customer = get_object_or_error(UserModel, data["customer_email"])
         order.customer = customer
         
-    if "status" in data:
-        order.status = data["status"]
+    if "status_transcription" in data:
+        order.status = data["status_transcription"]
 
     order.save()
     return order

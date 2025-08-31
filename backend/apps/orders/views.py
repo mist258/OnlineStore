@@ -63,7 +63,7 @@ class TrackTTNView(APIView):
     """
     Endpoint for tracking NovaPoshta TTN (waybill).
     """
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         ttn = request.query_params.get("ttn")
