@@ -8,9 +8,9 @@ class CoffeeBeanTypeChoices(models.TextChoices):
 
 
 class RoastLevelChoices(models.TextChoices):
-    LIGHT = "light", "Light Roast"
-    MEDIUM = "medium", "Medium Roast"
-    DARK = "dark", "Dark Roast"
+    LIGHT = "Light", "Light"
+    MEDIUM = "Medium", "Medium"
+    DARK = "Dark", "Dark"
 
 
 class CaffeineLevelChoices(models.TextChoices):
