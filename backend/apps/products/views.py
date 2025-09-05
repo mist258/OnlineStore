@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from apps.products.models import Accessory, FlavorProfile, PhotosModel, Product
 
 from core.pagination import PagePagination
-from core.views import UpdateDestroyAPIView
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
@@ -147,7 +146,7 @@ class ListCreateFlavourProfileView(generics.ListCreateAPIView):
 @method_decorator(name="delete", decorator=swagger_auto_schema(
     operation_id='delete_flavour_by_id'
 ))
-class UpdateDestroyFlavourProfileView(UpdateDestroyAPIView):
+class UpdateDestroyFlavourProfileView(generics.RetrieveUpdateDestroyAPIView):
     """
         delete: delete the flavour by id
         put: update the flavour by id
@@ -156,12 +155,6 @@ class UpdateDestroyFlavourProfileView(UpdateDestroyAPIView):
     queryset = FlavorProfile.objects.all()
     serializer_class = FlavourProfileSerializer
     http_method_names = ("put", "delete")
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
 
 
 @method_decorator(name="put", decorator=swagger_auto_schema(
