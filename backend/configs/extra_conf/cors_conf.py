@@ -3,7 +3,7 @@ import os
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://coffe-shop-frontend-six.vercel.app",
+    "https://https://coffelanecoffeshop.vercel.app",
 ]
 
 FRONTEND_BASE_URL = (
