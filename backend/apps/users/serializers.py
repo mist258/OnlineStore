@@ -14,6 +14,9 @@ UserModel = get_user_model()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    """
+        Serializer for user profile
+    """
     class Meta:
         model = UserProfileModel
         fields = (
@@ -32,6 +35,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+        Serializer for creating new users
+    """
     profile = UserProfileSerializer()
 
     class Meta:
