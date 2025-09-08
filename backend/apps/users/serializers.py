@@ -6,6 +6,8 @@ from django.db.transaction import atomic
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from apps.orders.serializers import OrderReadSerializer
+
 from core.services.email_service import EmailService
 
 from .models import UserProfileModel
@@ -120,3 +122,19 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
         #EmailService.updated_info_notification_email(instance)
         return instance
 
+
+class UserOwnProfileInformationSerializer(serializers.ModelSerializer):
+    """
+        for the user to view their own account information
+        and created orders
+    """
+    profile = UserProfileSerializer(read_only=True)
+    orders = OrderReadSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = UserModel
+        fields = (
+            "email",
+            "profile",
+            "orders",
+        )

@@ -2,7 +2,14 @@ from django.urls import include, path
 
 from rest_framework.routers import DefaultRouter
 
-from .views import CreateUserView, DeleteUserView, GetMyInfoView, ListUsersView, UpdateUsersInfoView
+from .views import (
+    CreateUserView,
+    DeleteUserView,
+    GetProfileInfoView,
+    ListUsersView,
+    UpdateUsersInfoView,
+    UserInfoForAutofillOrdersForm,
+)
 
 router = DefaultRouter()
 router.register(r"list", ListUsersView, basename="users_list")
@@ -14,7 +21,7 @@ urlpatterns = [
          CreateUserView.as_view(), name="register_user"
          ), # register new user
     path(
-        "/info", GetMyInfoView.as_view(), name="get_own_info"
+        "/info", GetProfileInfoView.as_view(), name="get_own_info"
     ), # get own info
     path(
         "/<int:pk>", DeleteUserView.as_view(), name="destroy_user"
@@ -22,6 +29,9 @@ urlpatterns = [
     path(
         "/update", UpdateUsersInfoView.as_view(), name="update_user_info"
     ), # users can update own info
+    path(
+        "/autofill_form", UserInfoForAutofillOrdersForm.as_view(), name="autofill_form"
+    ) # this view can be used to autofill form when user will place an order
 
 
 
