@@ -25,6 +25,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "id",
             "first_name",
             "last_name",
+            "avatar",
             "company_name",
             "country",
             "state",
@@ -122,6 +123,14 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
         #EmailService.updated_info_notification_email(instance)
         return instance
 
+
+class ProfileAvatarSerializer(serializers.ModelSerializer):
+    """
+        serializer for uploading avatar to user profile
+    """
+    class Meta:
+        model = UserProfileModel
+        fields = ("avatar",)
 
 class UserOwnProfileInformationSerializer(serializers.ModelSerializer):
     """

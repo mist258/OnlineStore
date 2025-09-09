@@ -6,7 +6,7 @@ from django.db import models
 from apps.utils import get_timenow
 
 from core.models import BaseModel
-from core.services.photo_service import upload_product_photo
+from core.services.photo_service import PhotoService
 
 from .choices.product_choices import CaffeineLevelChoices, CoffeeBeanTypeChoices, RoastLevelChoices
 
@@ -109,6 +109,6 @@ class PhotosModel(BaseModel):
         db_table = "product_photo"
         ordering = ("id",)
 
-    photo = models.ImageField(upload_to=upload_product_photo, blank=True)
+    photo = models.ImageField(upload_to=PhotoService.upload_product_photo, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_photos")
     

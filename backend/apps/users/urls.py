@@ -3,6 +3,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    AddProfileAvatarView,
     CreateUserView,
     DeleteUserView,
     GetProfileInfoView,
@@ -31,8 +32,9 @@ urlpatterns = [
     ), # users can update own info
     path(
         "/autofill_form", UserInfoForAutofillOrdersForm.as_view(), name="autofill_form"
-    ) # this view can be used to autofill form when user will place an order
-
-
+    ), # this view can be used to autofill form when user will place an order
+    path(
+        "/avatars", AddProfileAvatarView.as_view(), name="avatar"
+    ) # user can add photo
 
 ]

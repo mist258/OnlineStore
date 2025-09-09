@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import BaseModel
+from core.services.photo_service import PhotoService
 
 from .managers import UserManager, UserProfileManager
 from .regex.user_validation_regex import UserValidationRegex
@@ -25,7 +26,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
 
 
 class UserProfileModel(BaseModel):
-    objects = UserProfileManager()
+
     class Meta:
         db_table = "user_profile"
         ordering = ("id",)
@@ -46,6 +47,7 @@ class UserProfileModel(BaseModel):
             )
         ],
     )
+    avatar = models.ImageField(upload_to=PhotoService.upload_avatar, blank=True)
     company_name = models.CharField(max_length=25, null=True, blank=True)
     country = models.CharField(max_length=25, null=True, blank=True)
     state = models.CharField(max_length=25, null=True, blank=True)
@@ -77,3 +79,6 @@ class UserProfileModel(BaseModel):
         null=True,
         blank=True
     )
+
+    objects = UserProfileManager()
+
