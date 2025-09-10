@@ -59,12 +59,15 @@ this needed to display the documentation on 'Render')
 
 **/api/users** - register new user
 
-**/api/users/info** - authenticated user can get own info
+**/api/users/info** - authenticated user can get own info (display profile and oreder information)
 
 **/api/users/list/** - superuser/admin can list all users
 
 **/api/users/list/<int:pk>** - superuser/admin can retrieve user by ID
 
+**/api/users/avatars** - admin or regular user can add avatar to profile (for authenticated users)
+
+**/api/users/autofill_form** - display user's profile information to autofill form's fields when user place an order
 
 ## products
 
@@ -95,13 +98,20 @@ this needed to display the documentation on 'Render')
 **/api/products/search** - searching for a query for two models Product & Accessory (for anyone)
 
 
-
 ## supplies
 
 **/api/supplies/products/<int:pk>** - add supplies to specific product by its ID  (only for superuser)
 
 **/api/supplies/<int:pk>** - update or delete or partial update a specific supplies by its ID (only for superuser)
 
+
+## orders
+
+**/api/order/create** - user can place an order (for anyone)
+
+**/api/order/list** -  admin can list all orders (for superuser)
+
+**/api/order/track-ttn/** - user can track ttn (for authemticated users)
 
 
 ## Installation
