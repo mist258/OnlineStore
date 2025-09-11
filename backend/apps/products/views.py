@@ -167,6 +167,7 @@ class AddPhotoToProduct(generics.GenericAPIView):
         (available to superuser)
     """
     queryset = Product.objects.all()
+    http_method_names = ("put",)
 
     def put(self, *args, **kwargs):
         files = self.request.FILES
