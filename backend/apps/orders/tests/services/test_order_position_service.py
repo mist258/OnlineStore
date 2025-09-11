@@ -1,4 +1,4 @@
-from apps.customer.models import Customer
+from apps.users.models import UserModel
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 
@@ -14,7 +14,7 @@ from backend.apps.orders.services.order_position_service import (
 
 @pytest.mark.django_db
 def test_create_order_position():
-    customer = Customer.objects.create(email="alice@example.com")
+    customer = UserModel.objects.create(email="alice@example.com")
     product = Product.objects.create(name="Espresso", roast="Dark", caffeine_type="regular")
     order = Order.objects.create(customer=customer)
 
@@ -33,7 +33,7 @@ def test_create_order_position():
 
 @pytest.mark.django_db
 def test_get_order_position_by_id():
-    customer = Customer.objects.create(email="bob@example.com")
+    customer = UserModel.objects.create(email="bob@example.com")
     product = Product.objects.create(name="Latte", roast="Medium", caffeine_type="decaf")
     order = Order.objects.create(customer=customer)
 
@@ -47,7 +47,7 @@ def test_get_order_position_by_id():
 
 @pytest.mark.django_db
 def test_update_order_position():
-    customer = Customer.objects.create(email="carol@example.com")
+    customer = UserModel.objects.create(email="carol@example.com")
     product = Product.objects.create(name="Mocha", roast="Light", caffeine_type="regular")
     order = Order.objects.create(customer=customer)
 
@@ -64,7 +64,7 @@ def test_update_order_position():
 
 @pytest.mark.django_db
 def test_delete_order_position():
-    customer = Customer.objects.create(email="dave@example.com")
+    customer = UserModel.objects.create(email="dave@example.com")
     product = Product.objects.create(name="Cappuccino", roast="Dark", caffeine_type="decaf")
     order = Order.objects.create(customer=customer)
 

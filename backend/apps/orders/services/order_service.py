@@ -1,16 +1,17 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
-
+from typing import Optional
 from apps.orders.models import Order, OrderPosition
 from apps.users.models import UserModel, UserProfileModel
 from apps.products.models import Product, Accessory
 from apps.supplies.models import Supply
+from apps.basket.models import Basket, BasketItem
 
 from apps.db_utils import get_object_or_error
 
 
 @transaction.atomic
-def create_order(user, data: dict) -> Order:
+def create_order(data: dict) -> Order:
     '''
     Create an order with billing details and order positions.
     
@@ -35,18 +36,10 @@ def create_order(user, data: dict) -> Order:
             "zip_code": str,        # Optional
             "phone_number": str     # Required
         },
-        
-        # Optional. At least one position must be provided
-        "positions": [
-            {
-                "supply_id": int,   # Optional. ID of Supply model - required
-                "accessory_id": int  # Optional. ID of Accessory model, if provided supply_id must be ommited
-                "quantity": int,    # Optional. Defaults to 1, must be positive
-            },
-            # ... more positions
-        ],
-        
-        # Optional. Accessory flag for order positions
+        # basket 
+        "basket" {
+            "id": int               # Required if basket provided
+        }
     }
     
     Returns:
@@ -64,28 +57,36 @@ def create_order(user, data: dict) -> Order:
         - If database integrity error occurs
     '''
     # Initialize variables
-    customer = None
+    order_notes = data.get("order_notes", "")
     customer_email = data.get("customer_data", {}).get("email")
+    customer = UserModel.objects.filter(email=customer_email).first() if customer_email else None
+    
     billing_details = data.get("billing_details")
     billing_details_snapshot = None
-    positions_data = data.get("positions", [])
+    
+    basket_id = data.get("basket", {}).get("id")
+    basket = get_object_or_error(Basket, basket_id) if basket_id else None
+    basket_items = BasketItem.objects.select_related('product', 'accessory').filter(basket=basket)
+    
+    if not basket:
+        raise ValidationError("Basket is required to create order.")
+    
+    if not basket_items.exists():
+        raise ValidationError("Basket must contain at least one item to create an order.")
+    
+    if not customer_email:
+        raise ValidationError("Anonymous orders must include customer_email.")
+        
+    # Handle customer profile if customer_email is provided
+    if not customer:
+        customer = UserModel.objects.check_and_create_anonymous_user(email=customer_email)
+        
     # Validate positions data
-    if not positions_data:
-        raise ValidationError("Order must have at least one position.")
+    if not basket_items.exists():
+        raise ValidationError("Basket must contain at least one item to create an order.")
+    
 
     try:
-        # 1. Step - Validate and handle billing details
-        if not billing_details and not customer_email:
-            raise ValidationError("At least, customer_email must be provided.")
-
-        # Handle customer profile if customer_email is provided
-        if user and user.is_authenticated:
-            customer = user
-        else:
-            if not customer_email:
-                raise ValidationError("Anonymous orders must include customer_email.")
-            customer = UserModel.objects.check_and_create_anonymous_user(email=customer_email)
-        
         # Handle provided billing details
         if billing_details:
             # Validate required billing fields
@@ -104,42 +105,32 @@ def create_order(user, data: dict) -> Order:
         order = Order.objects.create(
             customer=customer,
             billing_details=billing_details_snapshot,
-            order_notes=data.get("order_notes", ""),
+            order_notes=order_notes,
         )
-        order_positions = []
+        basket_positions = []
         total_order_price = 0
 
         # 3. Step - Create Order Positions and update stock2
-        for pos_data in positions_data:
-            supply_id = pos_data.get("supply_id")
-            accessory_id = pos_data.get("accessory_id")
+        for basket_item in basket_items:
+            supply = basket_item.supply
+            accessory = basket_item.accessory
 
-            if not supply_id and not accessory_id:
-                raise ValidationError("Each position must have either 'supply_id' or 'accessory_id'.")
-            if supply_id and accessory_id:
-                raise ValidationError("Position cannot have both 'supply_id' and 'accessory_id'.")
+            if not supply and not accessory:
+                raise ValidationError("Each position must have either 'supply' or 'accessory'.")
 
-            quantity = int(pos_data.get("quantity", 1))
-            if quantity < 1:
-                raise ValidationError("Quantity must be positive.")
+            quantity = basket_item.quantity
 
             supply = None
             product = None
             accessory = None
             position_total = 0
 
-            if supply_id:
-                try:
-                    supply = Supply.objects.select_for_update().get(pk=supply_id)
-                except Exception as e:
-                    raise ValidationError(f"Invalid supply_id {supply_id}: {str(e)}")
-
-                if supply.quantity < quantity:
-                    raise ValidationError(
-                        f"Not enough stock for supply ID {supply_id}. "
-                        f"Available: {supply.quantity}, requested: {quantity}."
-                    )
-
+            if supply and supply.quantity < quantity:
+                raise ValidationError(
+                    f"Not enough stock for supply ID {supply}. "
+                    f"Available: {supply.quantity}, requested: {quantity}."
+                )
+            else:
                 product = supply.product
                 position_total = supply.price * quantity
 
@@ -147,18 +138,12 @@ def create_order(user, data: dict) -> Order:
                 supply.quantity -= quantity
                 supply.save()
 
-            elif accessory_id:
-                try:
-                    accessory = Accessory.objects.get(pk=accessory_id)
-                except Accessory.DoesNotExist:
-                    raise ValidationError(f"Invalid accessory_id {accessory_id}.")
-
-                if accessory.quantity < quantity:
-                    raise ValidationError(
-                        f"Not enough stock for accessory ID {accessory_id}. "
-                        f"Available: {accessory.quantity}, requested: {quantity}."
-                    )
-
+            if accessory and accessory.quantity < quantity:
+                raise ValidationError(
+                    f"Not enough stock for accessory ID {accessory}. "
+                    f"Available: {accessory.quantity}, requested: {quantity}."
+                )
+            else:
                 position_total = accessory.price * quantity
 
                 # update stock
@@ -167,16 +152,16 @@ def create_order(user, data: dict) -> Order:
 
             total_order_price += position_total 
 
-            order_positions.append(OrderPosition(
-                order=order,
-                product=product,
-                accessory=accessory,
+            basket_positions.append(BasketItem(
+                basket=basket,
+                accessory=accessory if accessory else None,
+                product=product if product else None,
+                supply=supply if supply else None,
                 quantity=quantity,
-                total_price=position_total,
             ))
 
         # Bulk create order positions
-        OrderPosition.objects.bulk_create(order_positions)
+        BasketItem.objects.bulk_create(basket_positions)
 
     except IntegrityError as e:
         raise ValidationError(f"Database error: {str(e)}")

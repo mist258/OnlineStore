@@ -5,7 +5,7 @@ from apps.products.models import Product
 
 class BasketItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)
-    product_price = serializers.DecimalField(source="product.price", read_only=True, max_digits=10, decimal_places=2)
+    supply_price = serializers.DecimalField(source="supply.price", read_only=True, max_digits=10, decimal_places=2)
     total_price = serializers.SerializerMethodField()
 
     class Meta:
@@ -14,13 +14,10 @@ class BasketItemSerializer(serializers.ModelSerializer):
             "id",
             "product",
             "product_name",
-            "product_price",
+            "supply_price",
             "quantity",
             "total_price",
         ]
-
-    def get_total_price(self, obj):
-        return obj.total_price
 
 
 class BasketSerializer(serializers.ModelSerializer):
