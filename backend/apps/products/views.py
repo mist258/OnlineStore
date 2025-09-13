@@ -272,3 +272,9 @@ class GlobalSearchView(generics.ListAPIView):
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(data, request, view=self)
         return paginator.get_paginated_response(page)
+
+
+class ConvertCurrencyProductPrice(generics.GenericAPIView):
+    """
+    convert currency product price
+    """
