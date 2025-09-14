@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.utils import timezone
-from backend.apps.db_utils import get_object_or_error
+from apps.db_utils import get_object_or_error
 
 from apps.basket.models import Basket, BasketItem
 from apps.products.models import Product
@@ -116,8 +116,8 @@ def add_product_to_basket(basket_id: int, product_id: int, quantity: int = 1) ->
     if basket_id is None or product_id is None:
         raise ValidationError("Both 'basket_id' and 'product_id' are required.")
 
-    basket = get_object_or_error(Basket, id=basket_id)
-    product = get_object_or_error(Product, id=product_id)
+    basket = get_object_or_error(Basket, object_id=basket_id)
+    product = get_object_or_error(Product, object_id=product_id)
 
     try:
         item, created = BasketItem.objects.get_or_create(
@@ -136,13 +136,27 @@ def add_product_to_basket(basket_id: int, product_id: int, quantity: int = 1) ->
 
 @transaction.atomic
 def remove_product_from_basket(item_id: int) -> None:
-    item = get_object_or_error(BasketItem, id=item_id)
+    item = get_object_or_error(BasketItem, object_id=item_id)
     item.delete()
 
 
 def get_basket_total(basket_id: int) -> float:
-    basket = get_object_or_error(Basket, id=basket_id)
-    return sum(item.product.price * item.quantity for item in basket.items.all())
+    basket = get_object_or_error(Basket, object_id=basket_id)
+    total_sum = 0
+
+    for item in basket.items.all():
+        if item.supply is not None:
+            price = float(item.supply.price)
+        elif item.accessory is not None:
+            price = float(item.accessory.price)
+        else:
+            # Optional: skip items with neither (or raise error)
+            raise ValueError(f"BasketItem {item.id} has no supply or accessory.")
+
+        total_sum += price * item.quantity
+
+    return total_sum
+
 
 @transaction.atomic
 def get_or_create_basket(request, response=None):
@@ -189,7 +203,7 @@ def get_or_create_basket(request, response=None):
     return basket
 
 
-
+@transaction.atomic
 def attach_guest_basket_to_user(user, guest_token):
     try:
         guest_basket = Basket.objects.get(guest_token=guest_token, is_active=True)
@@ -207,3 +221,12 @@ def attach_guest_basket_to_user(user, guest_token):
         guest_basket.save()
     except Basket.DoesNotExist:
         pass
+    
+    
+@transaction.atomic
+def clear_basket(basket_id: int) -> None:
+    basket = get_object_or_error(Basket, object_id=basket_id)
+    basket.items.all().delete()
+    basket.is_active = False
+    basket.save()
+    

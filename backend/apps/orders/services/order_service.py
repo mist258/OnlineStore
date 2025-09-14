@@ -7,6 +7,7 @@ from apps.products.models import Product, Accessory
 from apps.supplies.models import Supply
 from apps.basket.models import Basket, BasketItem
 
+from apps.basket.services.basket_service import clear_basket
 from apps.db_utils import get_object_or_error
 
 
@@ -105,7 +106,7 @@ def create_order(data: dict) -> Order:
             billing_details=billing_details_snapshot,
             order_notes=order_notes,
         )
-        basket_positions = []
+        order_positions = []
         total_order_price = 0
 
         # 3. Step - Create Order Positions and update stock2
@@ -147,16 +148,18 @@ def create_order(data: dict) -> Order:
 
             total_order_price += position_total 
 
-            basket_positions.append(BasketItem(
-                basket=basket,
-                accessory=accessory if accessory else None,
-                product=product if product else None,
-                supply=supply if supply else None,
+            order_positions.append(OrderPosition(
                 quantity=quantity,
+                total_price=position_total,
+                order=order,
+                product=product,
+                accessory=accessory
             ))
 
+        OrderPosition.objects.bulk_create(order_positions)
+        clear_basket(basket_id)
         # Bulk create order positions
-        BasketItem.objects.bulk_create(basket_positions)
+        
 
     except IntegrityError as e:
         raise ValidationError(f"Database error: {str(e)}")

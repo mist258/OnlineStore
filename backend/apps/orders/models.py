@@ -7,6 +7,7 @@ from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
 from django.db.models import Q, CheckConstraint
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from core.services.email_service import EmailService
 
@@ -40,7 +41,7 @@ class Order(models.Model):
         related_name='orders',
     )
     ttn = models.CharField(max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(default=get_timenow)
+    created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
         customer_email = self.customer.email if self.customer else "No customer"
@@ -68,7 +69,7 @@ class OrderPosition(models.Model):
         ordering = ("id",)
         constraints = [
             CheckConstraint(
-                check=(
+                condition=(
                     (Q(product__isnull=False) & Q(accessory__isnull=True)) |
                     (Q(product__isnull=True) & Q(accessory__isnull=False))
                 ),

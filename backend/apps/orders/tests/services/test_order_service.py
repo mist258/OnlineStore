@@ -21,10 +21,18 @@ def test_create_order():
 
     product = Product.objects.create(name="Smartphone")
     supply = Supply.objects.create(product=product, price=500.0, quantity=5)
+    accessory = Accessory.objects.create(name="Phone Case", price=20.0, quantity=10)
 
-    basket_item = BasketItem.objects.create(
+    basket_product_item = BasketItem.objects.create(
         basket=basket,
-        product=product,   # ✅ only one of product OR accessory
+        product=product,
+        supply=supply,
+        quantity=2
+    )
+    
+    basket_accessory_item = BasketItem.objects.create(
+        basket=basket,
+        accessory=accessory,
         supply=supply,
         quantity=2
     )
@@ -38,7 +46,7 @@ def test_create_order():
         user=customer,
         first_name="Alice",
         last_name="Smith",
-        company_name="Wonderland Inc.",   # ✅ check model field name!
+        company_name="Wonderland Inc.",
         country="Fictionland",
         state="Imagination",
         region="Dreams",
@@ -71,11 +79,20 @@ def test_create_order():
 
     # --- Positions check ---
     positions = order.positions.all()
-    assert positions.count() == 1
+    assert positions.count() == 2
     pos = positions.first()
+    acc = positions.last()
+    assert acc.accessory == accessory
+    assert acc.quantity == 2
+    assert float(acc.total_price) == 40.0
     assert pos.product == product
     assert pos.quantity == 2
-    assert float(pos.total_price) == 1000.0  # 2 × 500
+    assert float(pos.total_price) == 1000.0
+    
+    # --- Basket should be cleared ---
+    basket.refresh_from_db()
+    assert not basket.items.exists()
+    assert basket.is_active == False
 
 
 @pytest.mark.django_db
