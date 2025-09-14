@@ -52,7 +52,10 @@ class BasketItem(models.Model):
     )
     product = models.ForeignKey(
         Product,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="basket_items",
+        null=True,
+        blank=True
     )
     supply = models.ForeignKey(
         Supply,
@@ -64,9 +67,15 @@ class BasketItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
-        unique_together = ("basket", "product")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['basket', 'product', 'accessory', 'supply'],
+                name='unique_basket_item'
+            )
+        ]
+        
     def __str__(self):
-        return f"{self.quantity} x {self.product} in Basket {self.basket.id}"
+        return f"{self.quantity} x {self.product or self.accessory} in Basket {self.basket.id}"
 
     @property
     def total_price(self):

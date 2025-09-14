@@ -21,25 +21,23 @@ def create_order(data: dict) -> Order:
         
         "customer_data": {
             "email": str,                       # Required if customer id provided, and required if customer_email not provided
-            "subscribtion_updates_news": bool   # Optional, defaults to False
+            "subscription_updates_news": bool   # Optional, defaults to False
         }
         # Required if customer_email not provided or customer has no profile
         "billing_details": {
-            "first_name": str,      # Required
-            "last_name": str,       # Required
-            "company_name": str,    # Optional
-            "country": str,         # Required
-            "state": str,           # Optional
-            "region": str,          # Optional
-            "street_name": str,     # Optional
+            "first_name": str,       # Required
+            "last_name": str,        # Required
+            "company_name": str,     # Optional
+            "country": str,          # Required
+            "state": str,            # Optional
+            "region": str,           # Optional
+            "street_name": str,      # Optional
             "apartment_number": str, # Optional
-            "zip_code": str,        # Optional
-            "phone_number": str     # Required
+            "zip_code": str,         # Optional
+            "phone_number": str      # Required
         },
         # basket 
-        "basket" {
-            "id": int               # Required if basket provided
-        }
+        "basket_id"                  # Required
     }
     
     Returns:
@@ -64,7 +62,7 @@ def create_order(data: dict) -> Order:
     billing_details = data.get("billing_details")
     billing_details_snapshot = None
     
-    basket_id = data.get("basket", {}).get("id")
+    basket_id = data.get("basket_id")
     basket = get_object_or_error(Basket, basket_id) if basket_id else None
     basket_items = BasketItem.objects.select_related('product', 'accessory').filter(basket=basket)
     
@@ -112,38 +110,35 @@ def create_order(data: dict) -> Order:
 
         # 3. Step - Create Order Positions and update stock2
         for basket_item in basket_items:
-            supply = basket_item.supply
-            accessory = basket_item.accessory
+            supply = basket_item.supply if basket_item.supply else None
+            product = basket_item.product if basket_item.supply else None
+            accessory = basket_item.accessory if basket_item.accessory else None
+            quantity = basket_item.quantity
+            position_total = 0
 
             if not supply and not accessory:
                 raise ValidationError("Each position must have either 'supply' or 'accessory'.")
 
-            quantity = basket_item.quantity
-
-            supply = None
-            product = None
-            accessory = None
-            position_total = 0
-
-            if supply and supply.quantity < quantity:
+            # Check stock and calculate position total for PRODUCT
+            if supply and supply.quantity < quantity and product:
                 raise ValidationError(
                     f"Not enough stock for supply ID {supply}. "
                     f"Available: {supply.quantity}, requested: {quantity}."
                 )
-            else:
-                product = supply.product
+            elif product:
                 position_total = supply.price * quantity
 
                 # update stock
                 supply.quantity -= quantity
                 supply.save()
 
+            # Check stock and calculate position total for ACCESSORY
             if accessory and accessory.quantity < quantity:
                 raise ValidationError(
                     f"Not enough stock for accessory ID {accessory}. "
                     f"Available: {accessory.quantity}, requested: {quantity}."
                 )
-            else:
+            elif accessory:
                 position_total = accessory.price * quantity
 
                 # update stock
