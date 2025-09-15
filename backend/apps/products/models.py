@@ -87,7 +87,9 @@ class Photo(models.Model):
    product = models.ForeignKey(
        Product,
        related_name='photos_url',
-       on_delete=models.CASCADE
+       on_delete=models.CASCADE,
+       null=True,
+       blank=True
    )
    accessory = models.ForeignKey(
        Accessory,
