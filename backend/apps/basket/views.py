@@ -115,9 +115,5 @@ class DeleteBasketItemView(generics.DestroyAPIView):
         """Filter items to only those in the user's basket"""
         basket = get_or_create_basket(self.request)
         return BasketItem.objects.filter(basket=basket)
-    
-    def perform_destroy(self, instance):
-        """Optional: Add custom logic before deletion"""
-        # Log the deletion, update inventory, etc.
-        super().perform_destroy(instance)
+
 
