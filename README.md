@@ -116,6 +116,11 @@ this needed to display the documentation on 'Render')
 
 **/api/accessories/new_accessory** -  add new accessory (only for superuser)
 
+**/api/accessories/<int:pk>/photo** - add photo to accessory (only for superuser)
+
+**/api/accessories/<int:pk>/remove_photo** - remove photo from accessory (only for superuser)
+
+
 
 ## Installation
 
