@@ -73,6 +73,8 @@ INSTALLED_APPS = [
     "apps.subscription",
     "apps.reviews",
     "apps.orders",
+    "apps.accessories",
+    
   
 
 ]
