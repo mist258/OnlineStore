@@ -89,12 +89,6 @@ this needed to display the documentation on 'Render')
 
 **/api/products/photo/<int:pk>/deletion** - delete photo from product by its ID (only for superuser)
 
-**/api/products/accessories** - display a list of all accessories (for anyone)
-
-**/api/products/accessories/<int:pk>** - display a specific accessories by its ID (for anyone)
-
-**/api/products//new_accessory** -  add new accessory (only for superuser)
-
 **/api/products/search** - searching for a query for two models Product & Accessory (for anyone)
 
 
@@ -112,6 +106,15 @@ this needed to display the documentation on 'Render')
 **/api/order/list** -  admin can list all orders (for superuser)
 
 **/api/order/track-ttn/** - user can track ttn (for authemticated users)
+
+
+## accessories
+
+**/api/accessories** - display a list of all accessories (for anyone)
+
+**/api/accessories/<int:pk>** - display a specific accessories by its ID (for anyone)
+
+**/api/accessories/new_accessory** -  add new accessory (only for superuser)
 
 
 ## Installation
