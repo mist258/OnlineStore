@@ -90,4 +90,5 @@ class PhotosModel(BaseModel):
 
     photo = models.ImageField(upload_to=PhotoService.upload_product_photo, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_photos")
+    accessory = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name="accessory_photos")
     

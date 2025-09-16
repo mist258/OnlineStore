@@ -53,3 +53,22 @@ class AccessoryByIdView(generics.RetrieveAPIView):
     serializer_class = AccessorySerializer
     permission_classes = (AllowAny,)
 
+
+@method_decorator(name='put', decorator=swagger_auto_schema(
+    operation_id='add_photo_to_accessory',
+))
+class AccessoryAddPhotoView(generics.UpdateAPIView):
+    """
+        add a photo to the accessory from local machine
+        (available to superuser)
+    """
+
+
+@method_decorator(name='delete', decorator=swagger_auto_schema(
+    operation_id='remove_photo_from_accessory',
+))
+class AccessoryRemovePhotoView(generics.DestroyAPIView):
+    """
+        remove a photo from accessory
+        (available to superuser)
+    """
