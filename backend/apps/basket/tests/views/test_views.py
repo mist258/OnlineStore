@@ -51,8 +51,8 @@ class TestActiveBasketView:
         response = api_client.get(url)
         
         assert response.status_code == status.HTTP_200_OK
+        assert response.data['user'] is None
         assert 'guest_token' in response.data
-        assert 'user' not in response.data
 
 
 @pytest.mark.django_db
@@ -93,15 +93,13 @@ class TestUpdateBasketItemView:
         api_client.force_authenticate(user=user)
         basket_item = BasketItem.objects.create(
             basket=basket,
-            product=product,
             quantity=1
         )
         
-        url = reverse('basket:basket_update')
         data = {
-            'id': basket_item.id,
             'quantity': 3
         }
+        url = reverse('basket:basket_update', kwargs={'pk': basket_item.id})
         
         response = api_client.put(url, data)
         
@@ -116,8 +114,10 @@ class TestUpdateBasketItemView:
             quantity=1
         )
         
-        url = reverse('basket:basket_update')
-        data = {'quantity': 2}
+        data = {
+            'quantity': 2
+        }
+        url = reverse('basket:basket_update', kwargs={'pk': basket_item.id})
         
         response = api_client.patch(url, data)
         
@@ -135,9 +135,9 @@ class TestDeleteBasketItemView:
             quantity=1
         )
         
-        data = {'pk': basket_item.id}
+        data = {'id': basket_item.id}
 
-        url = reverse('basket:basket_delete', kwargs=data)
+        url = reverse('basket:basket_delete', kwargs={'pk': basket_item.id})
         response = api_client.delete(url, data)
         
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -145,9 +145,9 @@ class TestDeleteBasketItemView:
 
     def test_delete_nonexistent_item(self, api_client, user):
         api_client.force_authenticate(user=user)
-        data = {'pk': 99999}
+        data = {'id': 99999}
 
-        url = reverse('basket:basket_delete', kwargs=data)
+        url = reverse('basket:basket_delete', kwargs={'pk': 99999})
         response = api_client.delete(url, data)
         
         assert response.status_code == status.HTTP_404_NOT_FOUND

@@ -28,10 +28,7 @@ class Basket(models.Model):
     
     @property
     def total_price(self):
-        result = self.items.aggregate(
-            total=Sum(F("quantity") * F("product__price"))
-        )
-        return result["total"] or Decimal("0.00")
+        return sum(item.total_price for item in self.items.all())
 
 
 class BasketItem(models.Model):
