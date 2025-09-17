@@ -1,8 +1,12 @@
 from django.utils.decorators import method_decorator
 
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from apps.products.models import PhotosModel
+from apps.products.serializers import ProductPhotoSerializer
 
 from drf_yasg.utils import swagger_auto_schema
 
@@ -57,18 +61,43 @@ class AccessoryByIdView(generics.RetrieveAPIView):
 @method_decorator(name='put', decorator=swagger_auto_schema(
     operation_id='add_photo_to_accessory',
 ))
-class AccessoryAddPhotoView(generics.UpdateAPIView):
+class AccessoryAddPhotoView(generics.UpdateAPIView): # todo fix
     """
         add a photo to the accessory from local machine
         (available to superuser)
     """
+    queryset = Accessory.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        accessory = self.get_object()
+        files = self.request.FILES
+
+        for index in files:
+            serializer = ProductPhotoSerializer(data={"photo": files[index]})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        accessory_serializer = AccessorySerializer(accessory)
+        return Response(accessory_serializer.data,
+                        status=status.HTTP_200_OK)
 
 
 @method_decorator(name='delete', decorator=swagger_auto_schema(
     operation_id='remove_photo_from_accessory',
 ))
-class AccessoryRemovePhotoView(generics.DestroyAPIView):
+class AccessoryRemovePhotoView(generics.DestroyAPIView): # todo fix
     """
         remove a photo from accessory
         (available to superuser)
     """
+
+    queryset = PhotosModel.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        photo = self.get_object()
+
+        if photo:
+            photo.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+

@@ -10,7 +10,7 @@ urlpatterns = [
         "/<int:pk>", AccessoryByIdView.as_view(), name='accessory_by_id'
     ), # display a specific accessory by its ID
     path(
-        "new_accessory", AccessoryCreateView.as_view(), name='add_accessory'
+        "/new_accessory", AccessoryCreateView.as_view(), name='add_accessory'
     ), # add new accessory
     path(
         "/<int:pk>/photo", AccessoryAddPhotoView.as_view(), name='add_photo'
