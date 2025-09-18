@@ -25,7 +25,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "id",
             "first_name",
             "last_name",
-            "avatar",
             "company_name",
             "country",
             "state",
@@ -47,6 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = UserModel
         fields = (
             "id",
+            "avatar",
             "email",
             "password",
             "is_superuser",
