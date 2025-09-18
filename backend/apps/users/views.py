@@ -144,7 +144,7 @@ class UserInfoForAutofillOrdersForm(generics.GenericAPIView):
     operation_id="add_photo_to_profile",
     responses={200: ProfileAvatarSerializer()}
 ))
-class AddProfileAvatarView(generics.UpdateAPIView):
+class AddProfileAvatarView(generics.UpdateAPIView):# todo fix
     """
         add avatar to user's profile
         (allow for authenticated users)
@@ -154,12 +154,13 @@ class AddProfileAvatarView(generics.UpdateAPIView):
     http_method_names = ("put",)
 
     def get_object(self):
-        return UserModel.objects.get(pk=self.request.user.pk).profile
+        return self.request.user.profile
 
     def perform_update(self, serializer):
         profile = self.get_object()
         profile.avatar.delete()
         super().perform_update(serializer)
+
 
 
 
