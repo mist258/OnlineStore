@@ -2,7 +2,7 @@ from django.db.transaction import atomic
 
 from rest_framework import serializers
 
-from apps.products.models import Photo, PhotosModel, Product
+from apps.products.models import Photo, Product, ProductPhotosModel
 from apps.supplies.models import Supply
 from apps.supplies.serializers import SupplySerializer
 
@@ -34,7 +34,7 @@ class ProductPhotoSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        model = PhotosModel
+        model = ProductPhotosModel
         fields = ("id",
                   "photo",)
 

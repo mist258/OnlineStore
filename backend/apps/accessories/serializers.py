@@ -1,12 +1,21 @@
 from rest_framework import serializers
 
-from apps.products.serializers import PhotoSerializer
+from .models import Accessory, AccessoryPhotosModel
 
-from .models import Accessory
+
+class AccessoryPhotoSerializer(serializers.ModelSerializer):
+    """"
+        serializer that allows to add photos to a product by uploading file from local machine
+    """
+
+    class Meta:
+        model = AccessoryPhotosModel
+        fields = ("id",
+                  "photo",)
 
 
 class AccessorySerializer(serializers.ModelSerializer):
-    photos = PhotoSerializer(many=True, read_only=True)
+    accessory_photos = AccessoryPhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Accessory
@@ -18,6 +27,6 @@ class AccessorySerializer(serializers.ModelSerializer):
                   "price",
                   "category",
                   "quantity",
-                  "photos")
+                  "accessory_photos",)
 
         read_only_fields = ("id",)

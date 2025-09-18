@@ -5,13 +5,10 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.products.models import PhotosModel
-from apps.products.serializers import ProductPhotoSerializer
-
 from drf_yasg.utils import swagger_auto_schema
 
-from .models import Accessory
-from .serializers import AccessorySerializer
+from .models import Accessory, AccessoryPhotosModel
+from .serializers import AccessoryPhotoSerializer, AccessorySerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -61,21 +58,21 @@ class AccessoryByIdView(generics.RetrieveAPIView):
 @method_decorator(name='put', decorator=swagger_auto_schema(
     operation_id='add_photo_to_accessory',
 ))
-class AccessoryAddPhotoView(generics.UpdateAPIView): # todo fix
+class AccessoryAddPhotoView(generics.GenericAPIView):
     """
         add a photo to the accessory from local machine
         (available to superuser)
     """
     queryset = Accessory.objects.all()
 
-    def put(self, request, *args, **kwargs):
-        accessory = self.get_object()
+    def put(self, *args, **kwargs):
         files = self.request.FILES
+        accessory = self.get_object()
 
         for index in files:
-            serializer = ProductPhotoSerializer(data={"photo": files[index]})
+            serializer = AccessoryPhotoSerializer(data={"photo": files[index]})
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            serializer.save(accessory=accessory)
         accessory_serializer = AccessorySerializer(accessory)
         return Response(accessory_serializer.data,
                         status=status.HTTP_200_OK)
@@ -84,13 +81,13 @@ class AccessoryAddPhotoView(generics.UpdateAPIView): # todo fix
 @method_decorator(name='delete', decorator=swagger_auto_schema(
     operation_id='remove_photo_from_accessory',
 ))
-class AccessoryRemovePhotoView(generics.DestroyAPIView): # todo fix
+class AccessoryRemovePhotoView(generics.DestroyAPIView):
     """
         remove a photo from accessory
         (available to superuser)
     """
 
-    queryset = PhotosModel.objects.all()
+    queryset = AccessoryPhotosModel.objects.all()
 
     def delete(self, request, *args, **kwargs):
         photo = self.get_object()

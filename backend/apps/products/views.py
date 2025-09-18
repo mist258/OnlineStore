@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from apps.accessories.models import Accessory
 from apps.accessories.serializers import AccessorySerializer
-from apps.products.models import FlavorProfile, PhotosModel, Product
+from apps.products.models import FlavorProfile, Product, ProductPhotosModel
 
 from core.pagination import PagePagination
 
@@ -161,7 +161,6 @@ class UpdateDestroyFlavourProfileView(generics.RetrieveUpdateDestroyAPIView):
 
 @method_decorator(name="put", decorator=swagger_auto_schema(
     operation_id='add_photo_to_product',
-    responses={200: ProductSerializer()},
 ))
 class AddPhotoToProduct(generics.GenericAPIView):
     """
@@ -191,7 +190,7 @@ class DeletePhotoFromProduct(generics.GenericAPIView):
         delete a photo from the product by id
         (available to superuser)
     """
-    queryset = PhotosModel.objects.all()
+    queryset = ProductPhotosModel.objects.all()
 
     def delete(self, request, *args, **kwargs):
         photo = self.get_object()

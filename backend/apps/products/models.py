@@ -79,16 +79,16 @@ class Photo(models.Model):
        return f"{self.url} (Product: {self.product.name})"
 
 
-class PhotosModel(BaseModel):
+class ProductPhotosModel(BaseModel):
     """
         model for adding photos to a product without using a url,
         but from the local machine
     """
     class Meta:
-        db_table = "product_photo"
+        db_table = "products_photo"
         ordering = ("id",)
 
     photo = models.ImageField(upload_to=PhotoService.upload_product_photo, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_photos")
-    accessory = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name="accessory_photos")
+
     

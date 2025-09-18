@@ -3,6 +3,9 @@ from decimal import Decimal
 from django.core import validators as v
 from django.db import models
 
+from core.models import BaseModel
+from core.services.photo_service import PhotoService
+
 
 class Accessory(models.Model):
     class Meta:
@@ -21,3 +24,16 @@ class Accessory(models.Model):
 
     def __str__(self):
         return f"{self.name} by {self.brand or 'Unknown Brand'}"
+
+
+class AccessoryPhotosModel(BaseModel):
+    """
+        model for adding photos to a product without using a url,
+        but from the local machine
+    """
+    class Meta:
+        db_table = "accessory_photo"
+        ordering = ("id",)
+
+    photo = models.ImageField(upload_to=PhotoService.upload_product_photo, blank=True)
+    accessory = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name="accessory_photos")
