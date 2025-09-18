@@ -124,12 +124,12 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ProfileAvatarSerializer(serializers.ModelSerializer):
+class UserAvatarSerializer(serializers.ModelSerializer):
     """
         serializer for uploading avatar to user profile
     """
     class Meta:
-        model = UserProfileModel
+        model = UserModel
         fields = ("avatar",)
 
 class UserOwnProfileInformationSerializer(serializers.ModelSerializer):

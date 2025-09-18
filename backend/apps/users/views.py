@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import ProfileAvatarSerializer, UpdateUserInfoSerializer, UserOwnProfileInformationSerializer, UserSerializer
+from .serializers import UpdateUserInfoSerializer, UserAvatarSerializer, UserOwnProfileInformationSerializer, UserSerializer
 
 UserModel = get_user_model()
 
@@ -142,30 +142,22 @@ class UserInfoForAutofillOrdersForm(generics.GenericAPIView):
 
 @method_decorator(name="put", decorator=swagger_auto_schema(
     operation_id="add_photo_to_profile",
-    responses={200: ProfileAvatarSerializer()}
+    responses={200: UserAvatarSerializer()}
 ))
-class AddProfileAvatarView(generics.UpdateAPIView):# todo fix
+class AddProfileAvatarView(generics.UpdateAPIView):# todo change for admin
     """
         add avatar to user's profile
         (allow for authenticated users)
     """
-    serializer_class = ProfileAvatarSerializer
+    serializer_class = UserAvatarSerializer
     permission_classes = (IsAuthenticated,)
     http_method_names = ("put",)
 
     def get_object(self):
-        return self.request.user.profile
+        return self.request.user
 
     def perform_update(self, serializer):
-        profile = self.get_object()
-        profile.avatar.delete()
+        user = self.get_object()
+        user.avatar.delete()
         super().perform_update(serializer)
-
-
-
-
-
-
-
-
 
