@@ -144,7 +144,7 @@ class UserInfoForAutofillOrdersForm(generics.GenericAPIView):
     operation_id="add_photo_to_profile",
     responses={200: UserAvatarSerializer()}
 ))
-class AddProfileAvatarView(generics.UpdateAPIView):# todo change for admin
+class AddProfileAvatarView(generics.UpdateAPIView):
     """
         add avatar to user's profile
         (allow for authenticated users)
