@@ -28,7 +28,7 @@ class CoffeeProductFilter(filters.FilterSet):
     #range
     price_range = filters.RangeFilter(field_name='supplies__price')
 
-    # filtering by product popularity by orders (ASC)
+    # filtering by product popularity by orders (DESC)
     popularity = filters.BooleanFilter(method='filter_popularity')
 
     def filter_popularity(self, queryset, name, value):
