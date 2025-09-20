@@ -1,4 +1,4 @@
-from apps.users.models import UserModel
+from apps.users.models import UserModel, UserProfileModel
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 
@@ -15,8 +15,13 @@ from backend.apps.orders.services.order_position_service import (
 @pytest.mark.django_db
 def test_create_order_position():
     customer = UserModel.objects.create(email="alice@example.com")
+    billing_details = UserProfileModel.objects.create(
+        user=customer,
+        first_name="Alice",
+        last_name="Smith",
+    )
     product = Product.objects.create(name="Espresso", roast="Dark", caffeine_type="regular")
-    order = Order.objects.create(customer=customer)
+    order = Order.objects.create(customer=customer, billing_details=billing_details)
 
     data = {
         "quantity": 3,
