@@ -122,33 +122,10 @@ class DeleteProductView(generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@method_decorator(name="get", decorator=swagger_auto_schema(
-    operation_id='get_all_flavours',
-    responses={200: ProductSerializer(many=True)},
-))
-@method_decorator(name="post", decorator=swagger_auto_schema(
-    operation_id='add_flavours',
-    responses={200: FlavourProfileSerializer()},
-))
-class ListCreateFlavourProfileView(generics.ListCreateAPIView):
-    """
-        get: show the entire list of flavour
-        post: create a new flavour
-        (available to superuser)
-    """
-
-    queryset = FlavorProfile.objects.all()
-    serializer_class = FlavourProfileSerializer
-
-
-@method_decorator(name="put", decorator=swagger_auto_schema(
-    operation_id='update_flavour_by_id',
-    responses={200: FlavourProfileSerializer()},
-))
 @method_decorator(name="delete", decorator=swagger_auto_schema(
     operation_id='delete_flavour_by_id'
 ))
-class UpdateDestroyFlavourProfileView(generics.RetrieveUpdateDestroyAPIView):
+class DestroyFlavourProfileView(generics.DestroyAPIView):
     """
         delete: delete the flavour by id
         put: update the flavour by id
@@ -156,7 +133,6 @@ class UpdateDestroyFlavourProfileView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = FlavorProfile.objects.all()
     serializer_class = FlavourProfileSerializer
-    http_method_names = ("put", "delete")
 
 
 @method_decorator(name="put", decorator=swagger_auto_schema(
