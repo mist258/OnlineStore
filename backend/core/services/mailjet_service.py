@@ -52,8 +52,9 @@ class SendEmail:
                 variables={"username": user.profile.first_name},
                 template_id=7331750
             )
-        except Exception:
-            raise TemplateException
+        except Exception as e:
+            return {"Details": str(e)}
+
 
     @classmethod
     def profile_update_notification(cls, user: UserModel):
