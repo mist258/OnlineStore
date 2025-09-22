@@ -52,8 +52,8 @@ class SendEmail:
                 variables={"username": user.profile.first_name},
                 template_id=7331750
             )
-        except Exception as e:
-            return {"Details": str(e)}
+        except Exception:
+            raise TemplateException
 
 
     @classmethod
