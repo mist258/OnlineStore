@@ -118,21 +118,13 @@ class DeleteProductView(generics.GenericAPIView):
 
     def delete(self, request, *args, **kwargs):
         product = self.get_object()
+        flavours = product.flavor_profiles.all()
+        for flavour in flavours:
+            if flavour.products.count() == 1:
+                flavour.delete()
         product.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@method_decorator(name="delete", decorator=swagger_auto_schema(
-    operation_id='delete_flavour_by_id'
-))
-class DestroyFlavourProfileView(generics.DestroyAPIView):
-    """
-        delete: delete the flavour by id
-        put: update the flavour by id
-        (available to superuser)
-    """
-    queryset = FlavorProfile.objects.all()
-    serializer_class = FlavourProfileSerializer
 
 
 @method_decorator(name="put", decorator=swagger_auto_schema(

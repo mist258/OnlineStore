@@ -5,7 +5,6 @@ from .views import (
     CreateProductView,
     DeletePhotoFromProduct,
     DeleteProductView,
-    DestroyFlavourProfileView,
     GlobalSearchView,
     ProductByIdView,
     ProductListView,
@@ -28,9 +27,6 @@ urlpatterns = [
     path(
         "/<int:pk>/deletion", DeleteProductView.as_view(), name="delete_product"
     ), # delete product by id
-    path(
-        "/flavour/<int:pk>", DestroyFlavourProfileView.as_view(), name="update_destroy_flavor"
-    ), # destroy flavour by id
     path(
         "/<int:pk>/photo", AddPhotoToProduct.as_view(), name="add_photo"
     ), # add photo to the product
