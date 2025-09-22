@@ -4,8 +4,6 @@ from django.dispatch import receiver
 from apps.orders.models import Order
 from apps.orders.services.order_service import get_order_by_id
 
-from core.services.email_service import EmailService
-
 from backend.apps.orders.tasks.order_email_tasks import send_order_status_email
 from backend.apps.orders.tasks.order_np_tasks import np_ttn_check_and_update
 

@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 
 from apps.orders.serializers import OrderReadSerializer
 
-from core.services.email_service import EmailService
+from core.services.mailjet_service import SendEmail
 
 from .models import UserProfileModel
 
@@ -82,7 +82,7 @@ class UserSerializer(serializers.ModelSerializer):
         profile = validated_data.pop("profile")
         user = UserModel.objects.create_user(**validated_data)
         UserProfileModel.objects.create(**profile, user=user)
-        #EmailService.greeting_registration_email(user)
+        SendEmail.registration_greeting_email(user)
         return user
 
     def validate(self, attrs):
@@ -120,7 +120,7 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
             for key, value in profile_data.items():
                 setattr(profile, key, value)
             profile.save()
-        #EmailService.updated_info_notification_email(instance)
+        SendEmail.profile_update_notification(instance)
         return instance
 
 
