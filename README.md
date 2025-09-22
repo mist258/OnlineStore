@@ -81,10 +81,6 @@ this needed to display the documentation on 'Render')
 
 **/api/products/<int:pk>/deletion** - deletes a specific product by its ID (only for superuser)
 
-**/api/products/flavour** - display a list of all flavours or create a new one (only for superuser)
-
-**/api/products/flavour/<int:pk>** - update or destroy flavour by its ID (only for superuser)
-
 **/api/products/<int:pk>/photo** - add photo (from local machine) to the product by its ID (only for superuser)
 
 **/api/products/photo/<int:pk>/deletion** - delete photo from product by its ID (only for superuser)
