@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "import_export",
     "phonenumber_field",
+    "django_password_validators",
 
     # my apps
     "core",
@@ -118,6 +119,18 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+    {
+        'NAME': 'django_password_validators.password_character_requirements.password_validation.PasswordCharacterValidator',
+        'OPTIONS': {
+            'min_length_digit': 4,
+            'min_length_alpha': 2,
+            'min_length_special': 1,
+            'min_length_lower': 1,
+            'min_length_upper': 1,
+            'special_characters': "~!@#$%^&*()_+{}\":;'[]"
+        }
+    },
+
 ]
 
 

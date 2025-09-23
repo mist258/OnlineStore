@@ -461,6 +461,23 @@ django = ">=1.8"
 mailjet_rest = "*"
 
 [[package]]
+name = "django-password-validators"
+version = "1.7.3"
+description = "Additional libraries for validating passwords in Django."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-password-validators-1.7.3.tar.gz", hash = "sha256:7175aefa6e86dc002dd3539327bf2d752097651704927dc409a669259e0d2195"},
+    {file = "django_password_validators-1.7.3-py3-none-any.whl", hash = "sha256:f243a82957e9b17a0c7cf5580f9d7588471cb6530c2dce7ee4e1222dddfe5768"},
+]
+
+[package.dependencies]
+django = ">=3.0"
+
+[package.extras]
+test = ["bump-my-version (>=0.12)", "tox (>=4.11)"]
+
+[[package]]
 name = "django-phonenumber-field"
 version = "8.1.0"
 description = "An international phone number field for django models."
@@ -1091,17 +1108,6 @@ files = [
 pyasn1 = ">=0.6.1,<0.7.0"
 
 [[package]]
-name = "pycountry"
-version = "24.6.1"
-description = "ISO country, subdivision, language, currency and script definitions and their translations"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "pycountry-24.6.1-py3-none-any.whl", hash = "sha256:f1a4fb391cd7214f8eefd39556d740adcc233c778a27f8942c8dca351d6ce06f"},
-    {file = "pycountry-24.6.1.tar.gz", hash = "sha256:b61b3faccea67f87d10c1f2b0fc0be714409e8fcdcc1315613174f6466c10221"},
-]
-
-[[package]]
 name = "pyjwt"
 version = "2.10.1"
 description = "JSON Web Token implementation in Python"
@@ -1686,4 +1692,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "efadd51780440babf684659fe1d3055af4a972052f7663fb1bfba526ff429f92"
+content-hash = "9aa3d0f877d3206e49d61007f9dd1c50a654ae755f6ff0f958240f1975a4854e"
