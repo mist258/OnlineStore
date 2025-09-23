@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "django_celery_results",
     "import_export",
+    "phonenumber_field",
 
     # my apps
     "core",

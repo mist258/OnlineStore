@@ -29,6 +29,7 @@ psycopg2-binary = "^2.9.10"
 google-auth = "^2.40.3"
 requests = "^2.32.4"
 django-mailjet = "^0.3.1"
+django-phonenumber-field = {extras = ["phonenumbers"], version = "^8.1.0"}
 
 
 

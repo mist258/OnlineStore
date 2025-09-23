@@ -9,13 +9,6 @@ class UserValidationRegex(Enum):
         _("Must start with a capital letter and contain only the letters"),
     )
 
-    PHONE = (
-        r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$",
-        _(
-            "The number format must be as follows: +919367788755, 8989829304, +16308520397, 786-307-3615"
-        ),
-    )
-
     ZIP_CODE = (
         r"^(\d{5}(-\d{4})?|[A-Z]\d[A-Z][ -]?\d[A-Z]\d|[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2})$",
         _(

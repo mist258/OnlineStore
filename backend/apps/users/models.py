@@ -6,7 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from core.models import BaseModel
 from core.services.photo_service import PhotoService
 
-from .managers import UserManager, UserProfileManager
+from phonenumber_field.modelfields import PhoneNumberField
+
+from.managers import UserManager, UserProfileManager
+
 from .regex.user_validation_regex import UserValidationRegex
 
 
@@ -63,15 +66,7 @@ class UserProfileModel(BaseModel):
         ],
         null=True, blank=True,
     )
-    phone_number = models.CharField(
-        max_length=15,
-        validators=[
-            V.RegexValidator(
-                UserValidationRegex.PHONE.pattern, UserValidationRegex.PHONE.msg
-            )
-        ],
-        unique=False, null=True, blank=True,
-    )
+    phone_number = PhoneNumberField(null=True, blank=True)
     user = models.OneToOneField(
         UserModel, 
         on_delete=models.CASCADE, 
