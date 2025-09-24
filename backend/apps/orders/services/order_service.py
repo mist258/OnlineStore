@@ -156,9 +156,9 @@ def create_order(data: dict) -> Order:
                 accessory=accessory
             ))
 
+        # Bulk create order positions
         OrderPosition.objects.bulk_create(order_positions)
         clear_basket(basket_id)
-        # Bulk create order positions
         
 
     except IntegrityError as e:

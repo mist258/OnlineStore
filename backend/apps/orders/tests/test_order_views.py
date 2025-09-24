@@ -31,13 +31,13 @@ def user():
 @pytest.fixture
 def product():
     product = Product.objects.create(name='Test Product')
-    Supply.objects.create(product=product, price=100.0, quantity=10)
     return product
 
 
 @pytest.fixture
 def basket(user):
     return Basket.objects.create(user=user)
+
 
 
 @pytest.fixture
@@ -53,13 +53,25 @@ def order(user):
     )
 
 
+@pytest.fixture
+def order_position(product, order):
+    return OrderPosition.objects.create(
+        order=order,
+        product=product,
+        quantity=2
+    )
+    
+    
+@pytest.fixture
+def supply(product):
+    return Supply.objects.create(product=product, price=100.0, quantity=10)
+
+
 @pytest.mark.django_db
 class TestCreateOrderView:
-    def test_create_order_authenticated(self, api_client, user, basket, product):
+    def test_create_order_authenticated(self, api_client, user, basket, product, supply):
         api_client.force_authenticate(user=user)
-        BasketItem.objects.create(basket=basket, product=product, quantity=2,
-                                          supply=Supply.objects.filter(product=product).first()  # Add supply
-        )
+        BasketItem.objects.create(basket=basket, product=product, quantity=2, supply=supply)
         
         url = reverse('orders:create_order')
         data = {

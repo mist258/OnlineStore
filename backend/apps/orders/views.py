@@ -18,7 +18,7 @@ class CreateOrderView(viewsets.GenericViewSet):
     Create a new order (authenticated users only).
     """
     serializer_class = OrderWriteSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     queryset = Order.objects.all()
 
     @swagger_auto_schema(
@@ -27,13 +27,11 @@ class CreateOrderView(viewsets.GenericViewSet):
         responses={201: OrderWriteSerializer()}
     )
     def create(self, request, *args, **kwargs):
-        user = request.user if getattr(request, "user", None) else None
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
             order = create_order(
-                user=user,
                 data=serializer.validated_data
             )
         except ValidationError as e:
@@ -41,8 +39,8 @@ class CreateOrderView(viewsets.GenericViewSet):
         except Exception:
             return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        output_serializer = self.get_serializer(order)
-        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+        read_serializer = OrderReadSerializer(order)
+        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ListOrdersView(viewsets.ReadOnlyModelViewSet):
