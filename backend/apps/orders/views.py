@@ -18,7 +18,7 @@ class CreateOrderView(viewsets.GenericViewSet):
     Create a new order (authenticated users only).
     """
     serializer_class = OrderWriteSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     queryset = Order.objects.all()
 
     @swagger_auto_schema(

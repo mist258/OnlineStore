@@ -42,3 +42,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "configs.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
+filterwarnings = [
+    "ignore::DeprecationWarning:drf_yasg.*",
+    "ignore::UserWarning:django.core.handlers.base.*",
+    "ignore::RuntimeWarning:django.db.models.fields"
+]

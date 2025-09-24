@@ -21,7 +21,7 @@ def create_order(data: dict) -> Order:
         "order_notes": str,  # Optional. Additional notes for the order
         
         "customer_data": {
-            "email": str,                       # Required if customer id provided, and required if customer_email not provided
+            "email": str,                       # Required
             "subscription_updates_news": bool   # Optional, defaults to False
         }
         # Required if customer_email not provided or customer has no profile

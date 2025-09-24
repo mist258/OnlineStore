@@ -40,7 +40,7 @@ class OrderWriteSerializer(serializers.ModelSerializer):
     """
     customer_data = serializers.DictField(write_only=True)
     billing_details = BillingDetailsSerializer()
-    positions = OrderPositionWriteSerializer(many=True, write_only=True)
+    positions = OrderPositionWriteSerializer(many=True, write_only=True, required=False)
 
     class Meta:
         model = Order
