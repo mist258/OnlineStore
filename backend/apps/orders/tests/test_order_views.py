@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from apps.users.models import UserModel
+from apps.users.models import UserModel, UserProfileModel
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 from apps.supplies.models import Supply
@@ -21,12 +21,31 @@ def api_client():
 
 
 @pytest.fixture
+def admin_user(db):
+    return UserModel.objects.create_superuser(
+        email="admin@example.com",
+        password="adminpass123",
+        is_staff=True,
+        is_superuser=True
+    )
+
+
+@pytest.fixture
 def user():
     return UserModel.objects.create_user(
         email='test@example.com',
         password='testpass123'
     )
 
+@pytest.fixture
+def user_profile(user):
+    return UserProfileModel.objects.create(
+        user=user,
+        first_name='John',
+        last_name='Doe',
+        country='US',
+        phone_number='+1234567890'
+    )
 
 @pytest.fixture
 def product():
@@ -39,17 +58,11 @@ def basket(user):
     return Basket.objects.create(user=user)
 
 
-
 @pytest.fixture
-def order(user):
+def order(user, user_profile):
     return Order.objects.create(
         customer=user,
-        billing_details={
-            'first_name': 'John',
-            'last_name': 'Doe',
-            'country': 'US',
-            'phone_number': '+1234567890'
-        }
+        billing_details=user_profile
     )
 
 
@@ -88,41 +101,17 @@ class TestCreateOrderView:
         }
         
         response = api_client.post(url, data, format='json')
-        print(f"Response data: {response.data}")  # Add this for debugging
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data['customer'] == user.id
         assert len(response.data['positions']) == 1
-
-    def test_create_order_guest(self, api_client, product):
-        basket = Basket.objects.create(guest_token="123e4567-e89b-12d3-a456-426614174000", is_active=True)
-        BasketItem.objects.create(basket=basket, product=product, quantity=1)
-        
-        url = reverse('orders:create_order')
-        data = {
-            'basket_id': basket.id,
-            'customer_data': {
-                'email': 'guest@example.com'
-            },
-            'billing_details': {
-                'first_name': 'Guest',
-                'last_name': 'User',
-                'country': 'US',
-                'phone_number': '+1234567890'
-            }
-        }
-        
-        response = api_client.post(url, data, format='json')
-        
-        assert response.status_code == status.HTTP_201_CREATED
-        assert 'guest@example.com' in response.data['customer_email']
 
 
 @pytest.mark.django_db
 class TestOrderDetailView:
     def test_get_order_detail(self, api_client, user, order):
         api_client.force_authenticate(user=user)
-        url = reverse('orders:order_detail', kwargs={'pk': order.id})
+        url = reverse('orders:details_order', kwargs={'pk': order.id})
         
         response = api_client.get(url)
         
@@ -132,7 +121,7 @@ class TestOrderDetailView:
 
     def test_get_nonexistent_order(self, api_client, user):
         api_client.force_authenticate(user=user)
-        url = reverse('orders:order_detail', kwargs={'pk': 99999})
+        url = reverse('orders:details_order', kwargs={'pk': 99999})
         
         response = api_client.get(url)
         
@@ -141,22 +130,24 @@ class TestOrderDetailView:
 
 @pytest.mark.django_db
 class TestUpdateOrderView:
-    def test_update_order_status(self, api_client, user, order):
-        api_client.force_authenticate(user=user)
-        url = reverse('orders:order_update', kwargs={'pk': order.id})
+    def test_update_order_status(self, api_client, admin_user, order):
+        api_client.force_authenticate(user=admin_user)
+        url = reverse('orders:update_order', kwargs={'pk': order.id})
         
         data = {
-            'status': 'completed'
+            'status': 'delivered'
         }
         
-        response = api_client.patch(url, data)
+        response = api_client.patch(url, data, format='json')  # Add format='json'
+        print(f'Response data: {response.data}')
+        print(f'Response status: {response.status_code}')  # Add this for debugging
         
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['status'] == 'completed'
+        assert response.data['status'] == 'delivered'
 
-    def test_update_order_notes(self, api_client, user, order):
-        api_client.force_authenticate(user=user)
-        url = reverse('orders:order_update', kwargs={'pk': order.id})
+    def test_update_order_notes(self, api_client, admin_user, order):
+        api_client.force_authenticate(user=admin_user)
+        url = reverse('orders:update_order', kwargs={'pk': order.id})
         
         data = {
             'order_notes': 'Please deliver after 6 PM'

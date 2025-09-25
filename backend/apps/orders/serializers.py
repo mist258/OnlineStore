@@ -43,9 +43,10 @@ class OrderWriteSerializer(serializers.ModelSerializer):
     """
     customer_data = serializers.DictField(write_only=True, required=False)
     order_notes = serializers.CharField(required=False, allow_blank=True)
-    billing_details = BillingDetailsSerializer()
+    billing_details = BillingDetailsSerializer(required=False)
     positions = OrderPositionWriteSerializer(many=True, write_only=True, required=False)
     basket_id = serializers.IntegerField(required=False, write_only=True)
+    status = serializers.ChoiceField(choices=Order.STATUS_CHOICES, required=False)
 
     class Meta:
         model = Order
@@ -54,7 +55,8 @@ class OrderWriteSerializer(serializers.ModelSerializer):
             "customer_data",
             "billing_details",
             "positions",
-            "basket_id"
+            "basket_id",
+            'status',
         ]
 
     def create(self, validated_data):
@@ -96,15 +98,25 @@ class OrderWriteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         billing_data = validated_data.pop("billing_details", None)
-        positions_data = validated_data.pop("positions", None)
+        positions_data = validated_data.pop("positions", None)  # Not used yet
 
+        # Update billing details
         if billing_data:
             for field, value in billing_data.items():
                 setattr(instance.billing_details, field, value)
             instance.billing_details.save()
 
-        # Optional: handle positions update here if needed
-        return super().update(instance, validated_data)
+        # Update status if provided
+        status = validated_data.pop("status", "preparing")
+        if status is not None:
+            instance.status = status
+
+        # Update order notes or other simple fields
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        instance.save()
+        return instance
 
 
 class OrderPositionReadSerializer(serializers.ModelSerializer):
