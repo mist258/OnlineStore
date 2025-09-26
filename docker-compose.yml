@@ -4,6 +4,7 @@ services:
       context: .
     volumes:
       - ./backend:/app
+      - ./whoosh_index:/app/whoosh_index
     env_file:
       - .env
     ports:

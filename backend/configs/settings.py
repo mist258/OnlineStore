@@ -45,6 +45,15 @@ AUTH_USER_MODEL = "users.UserModel"
 GOOGLE_OAUTH_CLIENT_ID=os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_OAUTH_CLIENT_SECRET=os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
 
+# Haystack
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),  # Directory to store Whoosh index
+    },
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -67,6 +76,7 @@ INSTALLED_APPS = [
     "import_export",
     "phonenumber_field",
     "django_password_validators",
+    "haystack",
 
     # my apps
     "core",

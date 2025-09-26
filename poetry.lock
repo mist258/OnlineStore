@@ -394,6 +394,24 @@ files = [
 Django = ">=4.2"
 
 [[package]]
+name = "django-haystack"
+version = "3.3.0"
+description = "Pluggable search for Django."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django_haystack-3.3.0.tar.gz", hash = "sha256:e3ceed6b8000625da14d409eb4dac69894905e2ac8ac18f9bfdb59323ca02eab"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+packaging = "*"
+
+[package.extras]
+elasticsearch = ["elasticsearch (>=5,<8)"]
+testing = ["coverage", "geopy (==2)", "pysolr (>=3.7)", "python-dateutil", "requests", "whoosh (>=2.5.4,<3.0)"]
+
+[[package]]
 name = "django-import-export"
 version = "4.3.9"
 description = "Django application and library for importing and exporting data with included admin integration."
@@ -1692,4 +1710,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "9aa3d0f877d3206e49d61007f9dd1c50a654ae755f6ff0f958240f1975a4854e"
+content-hash = "99736ef1b3e1ffc0f76eaa250805c94a48d3c7cbc726ab0f19dd02a062cb36db"
