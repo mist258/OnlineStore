@@ -97,21 +97,21 @@ class OrderWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"Failed to create order: {str(e)}")
 
     def update(self, instance, validated_data):
-        billing_data = validated_data.pop("billing_details", None)
-        positions_data = validated_data.pop("positions", None)  # Not used yet
 
-        # Update billing details
+        billing_data = validated_data.pop("billing_details", None)
+        positions_data = validated_data.pop("positions", None)
+
         if billing_data:
+            print(">>> Updating billing details:", billing_data)
             for field, value in billing_data.items():
                 setattr(instance.billing_details, field, value)
             instance.billing_details.save()
 
-        # Update status if provided
-        status = validated_data.pop("status", "preparing")
-        if status is not None:
-            instance.status = status
+        status_val = validated_data.pop("status", None)
+        if status_val is not None:
 
-        # Update order notes or other simple fields
+            instance.status = status_val
+
         for field, value in validated_data.items():
             setattr(instance, field, value)
 

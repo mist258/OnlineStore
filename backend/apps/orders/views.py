@@ -120,11 +120,22 @@ class UpdateOrderView(viewsets.GenericViewSet):
 
     @swagger_auto_schema(auto_schema=None)
     def partial_update(self, request, *args, **kwargs):
-        order = self.get_object() 
+
+        order = self.get_object()
 
         serializer = self.get_serializer(order, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            print(">>> Serializer validation failed:", e)
+            raise
+
+        try:
+            serializer.save()
+        except Exception as e:
+            raise
 
         read_serializer = OrderReadSerializer(order)
+
         return Response(read_serializer.data, status=status.HTTP_200_OK)
