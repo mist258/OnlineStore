@@ -1681,6 +1681,18 @@ files = [
 brotli = ["brotli"]
 
 [[package]]
+name = "whoosh"
+version = "2.7.4"
+description = "Fast, pure-Python full text indexing, search, and spell checking library."
+optional = false
+python-versions = "*"
+files = [
+    {file = "Whoosh-2.7.4-py2.py3-none-any.whl", hash = "sha256:aa39c3c3426e3fd107dcb4bde64ca1e276a65a889d9085a6e4b54ba82420a852"},
+    {file = "Whoosh-2.7.4.tar.gz", hash = "sha256:7ca5633dbfa9e0e0fa400d3151a8a0c4bec53bd2ecedc0a67705b17565c31a83"},
+    {file = "Whoosh-2.7.4.zip", hash = "sha256:e0857375f63e9041e03fedd5b7541f97cf78917ac1b6b06c1fcc9b45375dda69"},
+]
+
+[[package]]
 name = "xlrd"
 version = "2.0.2"
 description = "Library for developers to extract data from Microsoft Excel (tm) .xls spreadsheet files"
@@ -1710,4 +1722,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "99736ef1b3e1ffc0f76eaa250805c94a48d3c7cbc726ab0f19dd02a062cb36db"
+content-hash = "de266adb114ada54e17e21df627329275300cf6bf7a0720b90ad963dd490bfcd"

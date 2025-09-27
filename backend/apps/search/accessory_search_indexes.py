@@ -1,5 +1,6 @@
+from apps.accessories.models import Accessory
+
 from haystack import indexes
-from models import Accessory
 
 
 class AccessorySearchIndex(indexes.SearchIndex, indexes.Indexable):
