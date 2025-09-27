@@ -72,6 +72,11 @@ def basket(user):
 
 
 @pytest.fixture
+def guest_basket():
+    return Basket.objects.create(guest_token=str(uuid.uuid4()))
+
+
+@pytest.fixture
 def order(user, user_profile):
     return Order.objects.create(
         customer=user,

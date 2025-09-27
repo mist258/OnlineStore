@@ -117,3 +117,16 @@ class DeleteBasketItemView(generics.DestroyAPIView):
         return BasketItem.objects.filter(basket=basket)
 
 
+@method_decorator(name='delete', decorator=swagger_auto_schema(
+    operation_id='clear_basket',
+))
+class ClearBasketView(generics.DestroyAPIView):
+    """
+    Clear all items from the active basket.
+    """
+    permission_classes = (AllowAny,)
+
+    def delete(self, request, *args, **kwargs):
+        basket = get_or_create_basket(request)
+        basket.items.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

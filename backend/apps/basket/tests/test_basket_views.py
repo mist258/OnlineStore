@@ -8,31 +8,6 @@ from apps.products.models import Product, Accessory
 from apps.supplies.models import Supply
 
 
-@pytest.fixture
-def api_client():
-    return APIClient()
-
-
-@pytest.fixture
-def user():
-    return UserModel.objects.create_user(
-        email='test@example.com',
-        password='testpass123'
-    )
-
-
-@pytest.fixture
-def product():
-    product = Product.objects.create(name='Test Product')
-    Supply.objects.create(product=product, price=100.0, quantity=10)
-    return product
-
-
-@pytest.fixture
-def basket(user):
-    return Basket.objects.create(user=user)
-
-
 @pytest.mark.django_db
 class TestActiveBasketView:
     def test_get_basket_authenticated(self, api_client, user):
@@ -152,9 +127,25 @@ class TestDeleteBasketItemView:
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-
+    
 @pytest.mark.django_db
-class TestBasketPermissions:
+class TestClearBasketView:
+    def test_clear_authenticated_user_basket(self, api_client, user, basket):
+        api_client.force_authenticate(user=user)
+        url = reverse("basket:basket_clear")
+        response = api_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert basket.items.count() == 0
+
+    def test_clear_guest_basket(self, api_client, guest_basket):
+        url = reverse("basket:basket_clear")
+        response = api_client.delete(url)
+
+        guest_basket.refresh_from_db()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert guest_basket.items.count() == 0
+        
     def test_anonymous_user_can_create_basket(self, api_client):
         url = reverse('basket:basket_summary')
         response = api_client.get(url)
@@ -163,12 +154,8 @@ class TestBasketPermissions:
         assert 'guest_token' in response.cookies
 
     def test_authenticated_user_cannot_access_other_user_basket(
-        self, api_client, user, basket
+        self, api_client, user, other_user
     ):
-        other_user = UserModel.objects.create_user(
-            email='other@example.com',
-            password='otherpass123'
-        )
         api_client.force_authenticate(user=other_user)
         
         url = reverse('basket:basket_summary')
