@@ -39,5 +39,6 @@ class BasketSerializer(serializers.ModelSerializer):
             "updated_at",
             "items",
             "total_price",
+            "discount_code",
         ]
         read_only_fields = ["user", "created_at", "updated_at"]

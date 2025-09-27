@@ -5,8 +5,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
-from apps.basket.models import Basket, BasketItem
-from apps.basket.serializers import BasketSerializer, BasketItemSerializer
+from apps.basket.models import Basket, BasketItem, DiscountCode
+from apps.basket.serializers import BasketSerializer, BasketItemSerializer, DiscountCodeSerializer
 from apps.basket.services.basket_service import get_or_create_basket
 import uuid
 
@@ -130,3 +130,29 @@ class ClearBasketView(generics.DestroyAPIView):
         basket = get_or_create_basket(request)
         basket.items.all().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    operation_id='get_discount_code',
+))
+def DiscountCodeView(generics.RetrieveAPIView):
+    """
+    Retrieve details about a discount code.
+    """
+    permission_classes = (AllowAny,)
+    
+    def get(self, request, *args, **kwargs):
+        code = request.query_params.get('code', None)
+        if not code:
+            return Response({"error": "Code parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            discount = DiscountCode.objects.get(code=code, valid_from__lte=timezone.now(), valid_to__gte=timezone.now())
+            data = {
+                "code": discount.code,
+                "amount": str(discount.amount),
+                "is_percentage": discount.is_percentage,
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        except DiscountCode.DoesNotExist:
+            return Response({"error": "Invalid or expired discount code"}, status=status.HTTP_404_NOT_FOUND)

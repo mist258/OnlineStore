@@ -8,6 +8,32 @@ from django.conf import settings
 from apps.products.models import Product, Accessory
 from apps.supplies.models import Supply
 
+
+class DiscountCode(models.Model):
+    """
+    Represents a discount code that can be applied to a basket.
+    """
+    code = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True)
+    discount_percent = models.DecimalField(max_digits=5, decimal_places=2)
+    active = models.BooleanField(default=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+
+    def __str__(self):
+        return self.code
+
+    def is_valid(self):
+        from django.utils import timezone
+        now = timezone.now()
+        return self.active and self.valid_from <= now <= self.valid_to
+
+    def apply_discount(self, amount):
+        if not self.is_valid():
+            return amount
+        discount_amount = (self.discount_percent / Decimal('100.00')) * amount
+        return amount - discount_amount
+    
 class Basket(models.Model):
     """
     Represents a user's shopping basket (cart).
@@ -17,6 +43,13 @@ class Basket(models.Model):
         on_delete=models.CASCADE,
         related_name="baskets",
         null=True, blank=True  # allow guest baskets if needed
+    )
+    discount_code = models.ForeignKey(
+        DiscountCode,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="baskets"
     )
     guest_token = models.UUIDField(null=True, blank=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -79,3 +112,5 @@ class BasketItem(models.Model):
         if self.accessory:
             return self.accessory.price * self.quantity
         return self.supply.price * self.quantity
+
+
