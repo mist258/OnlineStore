@@ -54,6 +54,13 @@ def user_profile(user):
     )
 
 @pytest.fixture
+def other_user():
+    return UserModel.objects.create_user(
+        email='other@example.com',
+        password='othertestpass123'
+    )
+        
+@pytest.fixture
 def product():
     product = Product.objects.create(name='Test Product')
     return product

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from drf_yasg import openapi
+from django.http import Http404
 
 from .models import Order
 from .services.order_service import create_order
@@ -82,27 +83,17 @@ class TrackTTNView(APIView):
         
         
 class DetailsOrderView(viewsets.ReadOnlyModelViewSet):
-    """
-    Retrieve order details (authenticated users only).
-    """
-    queryset = Order.objects.all()
     serializer_class = OrderReadSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_permissions(self):
-        if self.request.method in ['GET']:
-            self.permission_classes = [IsAuthenticated,]
-        return super().get_permissions()
-    
-    def get(self, request, *args, **kwargs):
-        order_id = kwargs.get('pk')
-        try:
-            order = Order.objects.get(id=order_id, customer=request.user)
-        except Order.DoesNotExist:
-            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+    def get_queryset(self):
+        return Order.objects.filter(customer=self.request.user)
 
-        serializer = self.get_serializer(order)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UpdateOrderView(viewsets.GenericViewSet):
