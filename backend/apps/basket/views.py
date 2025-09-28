@@ -150,15 +150,17 @@ class DiscountCodeView(generics.RetrieveAPIView):
         
         try:
             discount = DiscountCode.objects.get(code=code)
-            order_summary = get_object_or_error(Order, id=kwargs.get('order_id'))
+            order_id = kwargs.net('order_id', None)
+            order = get_object_or_error(Order, id=order_id) if order_id else None
             data = {
                 "code": discount.code,
-                "amount": str(discount.amount),
-                "is_percentage": discount.is_percentage,
+                "description": discount.description,
+                "discount_percent": discount.discount_percent,
+                "active": discount.active,
                 "is_valid": discount.is_valid(),
                 "valid_from": discount.valid_from,
                 "valid_to": discount.valid_to,
-                "appy_discount": discount.apply_discount(order_summary.get_order_amount())
+                "appy_discount": discount.apply_discount(order.get_order_amount()) if order else None
             }
             return Response(data, status=status.HTTP_200_OK)
         except DiscountCode.DoesNotExist:

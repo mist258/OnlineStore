@@ -53,7 +53,7 @@ class DiscountCodeSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "code",
-            "discount_percent",  # use this instead of 'amount'
+            "discount_percent",
             "valid_from",
             "valid_to",
             "is_valid"

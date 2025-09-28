@@ -57,8 +57,7 @@ class Order(models.Model):
     
     def get_order_amount(self):
         total = sum(position.total_price for position in self.positions.all())
-        if self.discount_code and self.discount_code.is_valid():
-            total = self.discount_code.apply_discount(total)
+
         return total
     
     def save(self, *args, **kwargs):

@@ -29,7 +29,6 @@ class DiscountCode(models.Model):
         return self.active and self.valid_from <= now <= self.valid_to
 
     def apply_discount(self, amount):
-        
         if not self.is_valid():
             return amount
         discount_amount = (self.discount_percent / Decimal('100.00')) * amount
