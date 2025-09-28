@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from apps.basket.models import Basket, BasketItem, DiscountCode
+from apps.basket.models import DiscountCode
 
 
-class DiscountCodeSerializer(serializers.ModelSerializer):
+class DiscountCodesSerializer(serializers.ModelSerializer):
     is_valid = serializers.SerializerMethodField()
     apply_discount = serializers.SerializerMethodField()
     

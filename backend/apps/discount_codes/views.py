@@ -6,15 +6,15 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
 from apps.orders.models import Order
-from apps.basket.models import Basket, BasketItem, DiscountCode
-from apps.basket.serializers import BasketSerializer, BasketItemSerializer
-from apps.basket.services.basket_service import get_or_create_basket
+from apps.discount_codes.models import DiscountCode
+from apps.discount_codes.serializers import DiscountCodesSerializer
 from apps.db_utils import get_object_or_error
 import uuid
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
     operation_id='get_discount_code',
+    responses={200: DiscountCodesSerializer()},
 ))
 class GetDiscountCodeView(generics.RetrieveAPIView):
     """
@@ -48,6 +48,7 @@ class GetDiscountCodeView(generics.RetrieveAPIView):
 
 @method_decorator(name='post', decorator=swagger_auto_schema(
     operation_id='create_discount_code_to_basket',
+    responses={200: DiscountCodesSerializer()},
 ))
 class CreateDiscountCodeView(generics.CreateAPIView):
     """
@@ -65,11 +66,9 @@ class CreateDiscountCodeView(generics.CreateAPIView):
             if not discount.is_valid():
                 return Response({"error": "Discount code is not valid"}, status=status.HTTP_400_BAD_REQUEST)
             
-            basket = get_or_create_basket(request)
-            basket.discount_code = discount
-            basket.save()
+            discount.save()
             
-            serializer = BasketSerializer(basket)
+            serializer = DiscountCodesSerializer(discount)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except DiscountCode.DoesNotExist:
             return Response({"error": "Invalid or expired discount code"}, status=status.HTTP_404_NOT_FOUND)

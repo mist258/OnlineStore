@@ -32,5 +32,37 @@ class TestDiscountCodeView:
         assert response.data['is_valid'] is True
         assert response.data['appy_discount'] == discount_code.apply_discount(order.get_order_amount())
         
+    def test_create_discount_code_unauthenticated(self, api_client):
+        url = reverse('discount_codes:create_discount_code')
         
-    
+        data = {
+            'code': 'NEWCODE',
+            'description': 'New Discount Code',
+            'discount_percent': 15,
+            'valid_from': '2024-01-01T00:00:00Z',
+            'valid_to': '2024-12-31T23:59:59Z',
+            'active': True
+        }
+        
+        response = api_client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_403_FORBIDDEN    
+        
+    def test_create_discount_code_authenticated(self, api_client, admin_user):
+        api_client.force_authenticate(user=admin_user)
+        url = reverse('discount_codes:create_discount_code')
+
+        data = {
+            'code': 'NEWCODE',
+            'description': 'New Discount Code',
+            'discount_percent': 15,
+            'valid_from': '2024-01-01T00:00:00Z',
+            'valid_to': '2024-12-31T23:59:59Z',
+            'active': True
+        }
+        response = api_client.post(url, data, format='json')
+        print(f"Response data: {response.data}")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data['code'] == data['code']
+        assert response.data['discount_percent'] == data['discount_percent']
