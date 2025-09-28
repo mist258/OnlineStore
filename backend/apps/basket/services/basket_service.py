@@ -47,8 +47,7 @@ def migrate_guest_basket_to_user(guest_token, user):
     if not guest_items.exists():
         # Empty guest basket, just deactivate it
         guest_basket.is_active = False
-        guest_basket.migrated_to_user = user
-        guest_basket.migrated_at = timezone.now()
+        guest_basket.updated_at = timezone.now()
         guest_basket.save()
         return {"success": True, "items_migrated": 0, "reason": "Empty basket"}
     
@@ -58,7 +57,8 @@ def migrate_guest_basket_to_user(guest_token, user):
             user_basket, created = Basket.objects.get_or_create(
                 user=user, 
                 is_active=True,
-                defaults={'created_at': timezone.now()}
+                defaults={'created_at': timezone.now()},
+                discount_code=guest_basket.discount_code
             )
             
             migrated_count = 0
@@ -83,15 +83,13 @@ def migrate_guest_basket_to_user(guest_token, user):
                 else:
                     # Transfer item to user basket
                     guest_item.basket = user_basket
-                    guest_item.migrated_from_guest = True
                     guest_item.updated_at = timezone.now()
                     guest_item.save()
                     migrated_count += 1
             
             # Mark guest basket as migrated
             guest_basket.is_active = False
-            guest_basket.migrated_to_user = user
-            guest_basket.migrated_at = timezone.now()
+            guest_basket.updated_at = timezone.now()
             guest_basket.save()
             
             logger.info(

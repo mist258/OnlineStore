@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 from apps.users.models import UserModel
-from apps.basket.models import Basket, BasketItem
+from apps.basket.models import Basket, BasketItem, DiscountCode
 from apps.products.models import Product, Accessory
 from apps.supplies.models import Supply
 from apps.basket.services.basket_service import (
@@ -35,8 +35,9 @@ def test_add_product_to_basket():
 def test_migrate_guest_basket_to_user():
     # Setup
     user = UserModel.objects.create(email="user@example.com")
+    discount_code = DiscountCode.objects.create(code="DISCOUNT10", description="10% off", discount_percent=10)
     guest_token = "123e4567-e89b-12d3-a456-426614174000"
-    guest_basket = Basket.objects.create(guest_token=guest_token, is_active=True)
+    guest_basket = Basket.objects.create(guest_token=guest_token, is_active=True, discount_code=discount_code)
     
     product = Product.objects.create(name="Test Product")
     supply = Supply.objects.create(product=product, price=100.0, quantity=10)
@@ -59,6 +60,7 @@ def test_migrate_guest_basket_to_user():
     guest_basket.refresh_from_db()
     assert guest_basket.is_active is False
     assert result["user_basket_id"] == user.baskets.first().id
+    assert result["discount_code"] == discount_code.code
 
 
 @pytest.mark.django_db

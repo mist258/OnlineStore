@@ -15,7 +15,8 @@
 
 ## 2. What is planning
 
-* ❌ (empty)
+* `test_get_apply_discount_with_order()` - recheck after modifying order positions
+* 
 
 ---
 

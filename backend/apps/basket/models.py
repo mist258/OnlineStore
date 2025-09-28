@@ -43,7 +43,7 @@ class Basket(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="baskets",
-        null=True, blank=True  # allow guest baskets if needed
+        null=True, blank=True
     )
     discount_code = models.ForeignKey(
         DiscountCode,
@@ -55,7 +55,8 @@ class Basket(models.Model):
     guest_token = models.UUIDField(null=True, blank=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True)  # useful to deactivate once converted to Order
+    is_active = models.BooleanField(default=True)
+    
 
     def __str__(self):
         return f"Basket {self.id} for {self.user}"
