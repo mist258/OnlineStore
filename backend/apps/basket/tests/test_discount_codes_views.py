@@ -21,3 +21,13 @@ class TestDiscountCodeView:
         response = api_client.get(url)
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
+        
+    def test_get_apply_discount_with_order(self, api_client, discount_code, order):
+        url = reverse('basket:basket_discount_with_order', kwargs={'code': discount_code.code, 'order_id': order.id})
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['code'] == discount_code.code
+        assert response.data['is_valid'] is True
+        assert response.data['appy_discount'] == discount_code.apply_discount(order.get_order_amount())

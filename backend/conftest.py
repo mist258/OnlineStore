@@ -9,7 +9,8 @@ from apps.supplies.models import Supply
 from apps.basket.models import Basket, BasketItem
 from apps.basket.models import DiscountCode
 import uuid
-
+import datetime
+import pytz
 
 @pytest.fixture(scope="session", autouse=True)
 def apply_migrations(django_db_setup, django_db_blocker):
@@ -101,4 +102,11 @@ def supply(product):
 
 @pytest.fixture
 def discount_code():
-    return DiscountCode.objects.create(code="SAVE10", amount=10.0, is_percentage=False)
+    return DiscountCode.objects.create(
+        code="SAVE10", 
+        description="Save 10%",
+        discount_percent=10,
+        active=True,
+        valid_from=datetime.datetime(2023, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+        valid_to=datetime.datetime(2028, 1, 1, 0, 0, 0, tzinfo=pytz.UTC)
+    )

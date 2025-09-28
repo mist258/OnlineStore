@@ -144,14 +144,14 @@ class DiscountCodeView(generics.RetrieveAPIView):
     permission_classes = (AllowAny,)
     
     def get(self, request, *args, **kwargs):
-        code = request.query_params.get('code', None)
+        code = kwargs.get('code', None)
         if not code:
             return Response({"error": "Code parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             discount = DiscountCode.objects.get(code=code)
-            order_id = kwargs.net('order_id', None)
-            order = get_object_or_error(Order, id=order_id) if order_id else None
+            order_id = kwargs.get('order_id', None)
+            order = get_object_or_error(Order, object_id=order_id) if order_id else None
             data = {
                 "code": discount.code,
                 "description": discount.description,
