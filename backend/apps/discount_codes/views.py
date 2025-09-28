@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
@@ -46,17 +46,18 @@ class GetDiscountCodeView(generics.RetrieveAPIView):
             return Response({"error": "Invalid or expired discount code"}, status=status.HTTP_404_NOT_FOUND)
 
 
-@method_decorator(name='post', decorator=swagger_auto_schema(
-    operation_id='create_discount_code_to_basket',
-    responses={200: DiscountCodesSerializer()},
-))
-class CreateDiscountCodeView(generics.CreateAPIView):
+class CreateDiscountCodeView(viewsets.GenericViewSet):
     """
     Apply a discount code to the active basket.
     """
     permission_classes = (IsAdminUser,)
     
-    def post(self, request, *args, **kwargs):
+    @swagger_auto_schema(
+        operation_id="create_new_order",
+        request_body=DiscountCodesSerializer,
+        responses={201: DiscountCodesSerializer()}
+    )
+    def create(self, request, *args, **kwargs):
         code = kwargs.get('code', None)
         if not code:
             return Response({"error": "Code parameter is required"}, status=status.HTTP_400_BAD_REQUEST)

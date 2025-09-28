@@ -24,3 +24,11 @@ class DiscountCodesSerializer(serializers.ModelSerializer):
         Returns True if the discount code is currently valid, else False.
         """
         return obj.is_valid()
+    
+    def get_apply_discount(self, obj):
+        """
+        Returns the discount amount applied to a given order amount.
+        Expects 'order_amount' in the serializer context.
+        """
+        order_amount = self.context.get('order_amount', 0)
+        return obj.apply_discount(order_amount)
