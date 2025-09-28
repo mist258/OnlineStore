@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "django_password_validators",
     "haystack",
+    "whoosh",
 
     # my apps
     "core",
@@ -89,8 +90,7 @@ INSTALLED_APPS = [
     "apps.reviews",
     "apps.orders",
     "apps.accessories",
-    
-  
+    "apps.search",
 
 ]
 

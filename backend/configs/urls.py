@@ -46,6 +46,7 @@ urlpatterns = [
     path("api/auth", include("apps.auth.urls")),
     path("api/auth_google", include("apps.oauth_google.urls")),
     path("api/accessories", include("apps.accessories.urls")),
+    path("api/search", include("apps.search.urls")),
     path("api/doc", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger",
     ),
     path("admin/", admin.site.urls),
