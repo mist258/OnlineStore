@@ -7,6 +7,7 @@ from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 from apps.supplies.models import Supply
 from apps.basket.models import Basket, BasketItem
+from apps.basket.models import DiscountCode
 import uuid
 
 
@@ -96,3 +97,8 @@ def order_position(product, order):
 @pytest.fixture
 def supply(product):
     return Supply.objects.create(product=product, price=100.0, quantity=10)
+
+
+@pytest.fixture
+def discount_code():
+    return DiscountCode.objects.create(code="SAVE10", amount=10.0, is_percentage=False)

@@ -7,6 +7,7 @@ from django.conf import settings
 
 from apps.products.models import Product, Accessory
 from apps.supplies.models import Supply
+from django.utils import timezone
 
 
 class DiscountCode(models.Model):
@@ -17,22 +18,23 @@ class DiscountCode(models.Model):
     description = models.TextField(blank=True)
     discount_percent = models.DecimalField(max_digits=5, decimal_places=2)
     active = models.BooleanField(default=True)
-    valid_from = models.DateTimeField()
-    valid_to = models.DateTimeField()
+    valid_from = models.DateTimeField(blank=True, null=True)
+    valid_to = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.code
 
     def is_valid(self):
-        from django.utils import timezone
         now = timezone.now()
         return self.active and self.valid_from <= now <= self.valid_to
 
     def apply_discount(self, amount):
+        
         if not self.is_valid():
             return amount
         discount_amount = (self.discount_percent / Decimal('100.00')) * amount
         return amount - discount_amount
+    
     
 class Basket(models.Model):
     """

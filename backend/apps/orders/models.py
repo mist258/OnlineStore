@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 from apps.products.models import Accessory, Product
+from apps.basket.models import DiscountCode
 from apps.users.models import UserProfileModel
 from apps.utils import get_timenow
 from django.db.models import Q, CheckConstraint
@@ -42,10 +43,23 @@ class Order(models.Model):
     )
     ttn = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
+    discount_code = models.ForeignKey(
+        DiscountCode,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True, 
+        related_name="orders"
+    )
     
     def __str__(self):
         customer_email = self.customer.email if self.customer else "No customer"
         return f"Order #{self.id} ({customer_email})"
+    
+    def get_order_amount(self):
+        total = sum(position.total_price for position in self.positions.all())
+        if self.discount_code and self.discount_code.is_valid():
+            total = self.discount_code.apply_discount(total)
+        return total
     
     def save(self, *args, **kwargs):
         if self.pk:

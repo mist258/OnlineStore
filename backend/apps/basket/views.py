@@ -5,9 +5,11 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
+from apps.orders.models import Order
 from apps.basket.models import Basket, BasketItem, DiscountCode
 from apps.basket.serializers import BasketSerializer, BasketItemSerializer, DiscountCodeSerializer
 from apps.basket.services.basket_service import get_or_create_basket
+from apps.db_utils import get_object_or_error
 import uuid
 
 
@@ -135,7 +137,7 @@ class ClearBasketView(generics.DestroyAPIView):
 @method_decorator(name='get', decorator=swagger_auto_schema(
     operation_id='get_discount_code',
 ))
-def DiscountCodeView(generics.RetrieveAPIView):
+class DiscountCodeView(generics.RetrieveAPIView):
     """
     Retrieve details about a discount code.
     """
@@ -147,11 +149,16 @@ def DiscountCodeView(generics.RetrieveAPIView):
             return Response({"error": "Code parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            discount = DiscountCode.objects.get(code=code, valid_from__lte=timezone.now(), valid_to__gte=timezone.now())
+            discount = DiscountCode.objects.get(code=code)
+            order_summary = get_object_or_error(Order, id=kwargs.get('order_id'))
             data = {
                 "code": discount.code,
                 "amount": str(discount.amount),
                 "is_percentage": discount.is_percentage,
+                "is_valid": discount.is_valid(),
+                "valid_from": discount.valid_from,
+                "valid_to": discount.valid_to,
+                "appy_discount": discount.apply_discount(order_summary.get_order_amount())
             }
             return Response(data, status=status.HTTP_200_OK)
         except DiscountCode.DoesNotExist:
