@@ -101,7 +101,8 @@ def migrate_guest_basket_to_user(guest_token, user):
                 "success": True,
                 "items_migrated": migrated_count,
                 "items_merged": merged_count,
-                "user_basket_id": user_basket.id
+                "user_basket_id": user_basket.id,
+                "discount_code": user_basket.discount_code.code if user_basket.discount_code else None
             }
             
     except Exception as e:

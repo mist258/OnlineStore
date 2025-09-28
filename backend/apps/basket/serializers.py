@@ -27,6 +27,7 @@ class BasketSerializer(serializers.ModelSerializer):
     total_price = serializers.DecimalField(
         max_digits=10, decimal_places=2, read_only=True
     )
+    discount_code = serializers.CharField(source="discount_code.code", read_only=True)
 
     class Meta:
         model = Basket
@@ -42,27 +43,3 @@ class BasketSerializer(serializers.ModelSerializer):
             "discount_code",
         ]
         read_only_fields = ["user", "created_at", "updated_at"]
-        
-        
-class DiscountCodeSerializer(serializers.ModelSerializer):
-    is_valid = serializers.SerializerMethodField()
-    apply_discount = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = DiscountCode
-        fields = [
-            "id",
-            "code",
-            "discount_percent",
-            "valid_from",
-            "valid_to",
-            "is_valid"
-            "apply_discount"
-        ]
-        read_only_fields = fields
-
-    def get_is_valid(self, obj):
-        """
-        Returns True if the discount code is currently valid, else False.
-        """
-        return obj.is_valid()

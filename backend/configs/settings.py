@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "apps.reviews",
     "apps.orders",
     "apps.basket",
+    "apps.discount_codes",
 
 ]
 
