@@ -3,4 +3,4 @@ postgresql_db
 .env
 backend/apps/*/migrations/
 __pycache__/
-
+whoosh_index/*
