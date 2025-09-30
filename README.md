@@ -116,6 +116,10 @@ this needed to display the documentation on 'Render')
 
 **/api/accessories/<int:pk>/remove_photo** - remove photo from accessory (only for superuser)
 
+## search
+
+**/api/search/items** - global seaching (for enyone)
+
 
 
 ## Installation
