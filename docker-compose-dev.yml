@@ -9,8 +9,7 @@ services:
    ports:
      - "8000:8000"
    restart: on-failure
-   command: >
-     sh -c "python manage.py && python manage.py && python manage.py runserver 0.0.0.0:8000"
+   command: python manage.py runserver 0.0.0.0:8000
 
  redis:
    image: redis:alpine
@@ -24,7 +23,7 @@ services:
      - .env
    restart: on-failure
    command: >
-     sh -c "celery -aA configs worker -l info"
+     sh -c "celery -A configs worker -l info"
 
  db:
    image: postgres:14-alpine
@@ -46,4 +45,4 @@ services:
      - PYTHONPATH=/app/backend
    depends_on:
      - db
-   command: poetry run pytest --disable-warnings -v
+   command: poetry run pytest -v

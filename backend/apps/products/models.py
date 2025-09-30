@@ -27,7 +27,7 @@ class Product(models.Model):
         db_table = "product"
         ordering = ("id",)
 
-    sku = models.CharField(max_length=50, unique=True)
+    sku = models.CharField(max_length=50, unique=True, null=False)
     name = models.CharField(max_length=100, blank=True, null=True)
     brand = models.CharField(max_length=100, blank=True, null=True)
     caffeine_type = models.CharField(max_length=18,null=True, blank=True,

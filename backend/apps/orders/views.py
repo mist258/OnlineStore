@@ -2,9 +2,11 @@ from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 
 from rest_framework import status, viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_yasg import openapi
+from django.http import Http404
 
 from core.services.novaposhta_service import NovaPoshtaService
 
@@ -29,13 +31,11 @@ class CreateOrderView(viewsets.GenericViewSet):
         responses={201: OrderWriteSerializer()}
     )
     def create(self, request, *args, **kwargs):
-        user = request.user if getattr(request, "user", None) else None
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
             order = create_order(
-                user=user,
                 data=serializer.validated_data
             )
         except ValidationError as e:
@@ -43,8 +43,8 @@ class CreateOrderView(viewsets.GenericViewSet):
         except Exception:
             return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        output_serializer = self.get_serializer(order)
-        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+        read_serializer = OrderReadSerializer(order)
+        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ListOrdersView(viewsets.ReadOnlyModelViewSet):
@@ -82,3 +82,53 @@ class TrackTTNView(APIView):
             return Response(result, status=status.HTTP_200_OK)
         else:
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+class DetailsOrderView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = OrderReadSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return Order.objects.filter(customer=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UpdateOrderView(viewsets.GenericViewSet):
+    """
+    Update order status or notes (admin only).
+    """
+    serializer_class = OrderWriteSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Order.objects.all()
+
+    def get_permissions(self):
+        if self.request.method in ['PATCH', 'PUT']:
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
+
+    @swagger_auto_schema(auto_schema=None)
+    def partial_update(self, request, *args, **kwargs):
+
+        order = self.get_object()
+
+        serializer = self.get_serializer(order, data=request.data, partial=True)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            print(">>> Serializer validation failed:", e)
+            raise
+
+        try:
+            serializer.save()
+        except Exception as e:
+            raise
+
+        read_serializer = OrderReadSerializer(order)
+
+        return Response(read_serializer.data, status=status.HTTP_200_OK)

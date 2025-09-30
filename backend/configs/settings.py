@@ -25,6 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
+# SECURITY WARNING: don' run with debug turned on in production!
 EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
 MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY")
 MAILJET_API_SECRET = os.environ.get("MAILJET_API_SECRET")
@@ -89,6 +90,8 @@ INSTALLED_APPS = [
     "apps.subscription",
     "apps.reviews",
     "apps.orders",
+    "apps.basket",
+    "apps.discount_codes",
     "apps.accessories",
     "apps.search",
 

@@ -2,27 +2,30 @@ from rest_framework import serializers
 
 from apps.products.models import Accessory, Product
 from apps.users.models import UserModel, UserProfileModel
-
-from .models import Order, OrderPosition
+from apps.products.models import Product, Accessory
+from django.db import transaction
+from apps.basket.models import Basket
+from apps.orders.models import Order, OrderPosition
 
 
 class OrderPositionWriteSerializer(serializers.Serializer):
     """
     Write serializer for order positions.
-    Only accepts supply_id or accessory_id + quantity from the client.
     """
     supply_id = serializers.IntegerField(required=False)
     accessory_id = serializers.IntegerField(required=False)
+    product_id = serializers.IntegerField(required=False)
     quantity = serializers.IntegerField(min_value=1, default=1)
 
     def validate(self, attrs):
         supply_id = attrs.get("supply_id")
         accessory_id = attrs.get("accessory_id")
+        product_id = attrs.get("product_id")
 
-        if not supply_id and not accessory_id:
-            raise serializers.ValidationError("Each position must have either 'supply_id' or 'accessory_id'.")
-        if supply_id and accessory_id:
-            raise serializers.ValidationError("Position cannot have both 'supply_id' and 'accessory_id'.")
+        if not any([supply_id, accessory_id, product_id]):
+            raise serializers.ValidationError(
+                "Each position must have either 'supply_id', 'product_id' or 'accessory_id'."
+            )
         return attrs
 
 
@@ -40,9 +43,12 @@ class OrderWriteSerializer(serializers.ModelSerializer):
     Serializer for creating/updating orders.
     Accepts billing details + positions.
     """
-    customer_data = serializers.DictField(write_only=True)
-    billing_details = BillingDetailsSerializer()
-    positions = OrderPositionWriteSerializer(many=True, write_only=True)
+    customer_data = serializers.DictField(write_only=True, required=False)
+    order_notes = serializers.CharField(required=False, allow_blank=True)
+    billing_details = BillingDetailsSerializer(required=False)
+    positions = OrderPositionWriteSerializer(many=True, write_only=True, required=False)
+    basket_id = serializers.IntegerField(required=False, write_only=True)
+    status = serializers.ChoiceField(choices=Order.STATUS_CHOICES, required=False)
 
     class Meta:
         model = Order
@@ -51,51 +57,68 @@ class OrderWriteSerializer(serializers.ModelSerializer):
             "customer_data",
             "billing_details",
             "positions",
+            "basket_id",
+            'status',
         ]
 
     def create(self, validated_data):
-        # Extract nested data
-        customer_data = validated_data.pop("customer_data", {})
-        billing_data = validated_data.pop("billing_details")
-        positions_data = validated_data.pop("positions", [])
+        try:
+            with transaction.atomic():
+                customer_data = validated_data.pop("customer_data", {})
+                billing_data = validated_data.pop("billing_details")
+                positions_data = validated_data.pop("positions", [])
+                basket_id = validated_data.pop("basket_id")
 
-        # Create snapshots
-        customer_snapshot = UserModel.objects.create_snapshot(customer_data.get("email"))
-        billing_snapshot = UserProfileModel.objects.create_snapshot(billing_data)
-        
-        # Create the order
-        order = Order.objects.create(
-            customer=customer_snapshot,
-            billing_details=billing_snapshot,
-            **validated_data
-        )
+                # Create snapshots
+                customer_snapshot = UserModel.objects.create_snapshot(
+                    customer_data.get("email")
+                )
+                billing_snapshot = UserProfileModel.objects.create_snapshot(
+                    billing_data
+                )
 
-        # Create positions (basic version, may delegate to service)
-        for pos in positions_data:
-            supply_id = pos.get("supply_id")
-            accessory_id = pos.get("accessory_id")
-            quantity = pos.get("quantity", 1)
+                # Create the order
+                order = Order.objects.create(
+                    customer=customer_snapshot,
+                    billing_details=billing_snapshot,
+                    **validated_data
+                )
 
-            OrderPosition.objects.create(
-                order=order,
-                supply_id=supply_id if supply_id else None,
-                accessory_id=accessory_id if accessory_id else None,
-                quantity=quantity
-            )
+                # Create positions from basket
+                basket = Basket.objects.get(id=basket_id)
+                for basket_item in basket.items.all():
+                    OrderPosition.objects.create(
+                        order=order,
+                        product=basket_item.product,
+                        supply=basket_item.supply,
+                        quantity=basket_item.quantity
+                    )
 
-        return order
+                return order
+        except Exception as e:
+            raise serializers.ValidationError(f"Failed to create order: {str(e)}")
 
     def update(self, instance, validated_data):
+
         billing_data = validated_data.pop("billing_details", None)
         positions_data = validated_data.pop("positions", None)
 
         if billing_data:
+            print(">>> Updating billing details:", billing_data)
             for field, value in billing_data.items():
                 setattr(instance.billing_details, field, value)
             instance.billing_details.save()
 
-        # Optional: handle positions update here if needed
-        return super().update(instance, validated_data)
+        status_val = validated_data.pop("status", None)
+        if status_val is not None:
+
+            instance.status = status_val
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        instance.save()
+        return instance
 
 
 class OrderPositionReadSerializer(serializers.ModelSerializer):

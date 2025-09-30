@@ -42,6 +42,8 @@ urlpatterns = [
     path("api/supplies", include("apps.supplies.urls")),
     path("api/services", include("apps.subscription.urls")),
     path("api/orders", include("apps.orders.urls")),
+    path("api/basket", include("apps.basket.urls")),
+    path("api/discount-codes", include("apps.discount_codes.urls")),
     path("api/users", include("apps.users.urls")),
     path("api/auth", include("apps.auth.urls")),
     path("api/auth_google", include("apps.oauth_google.urls")),

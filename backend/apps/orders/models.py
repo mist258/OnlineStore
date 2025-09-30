@@ -5,9 +5,9 @@ from django.db.models import CheckConstraint, Q
 from django.utils import timezone
 
 from apps.products.models import Accessory, Product
+from apps.basket.models import DiscountCode
 from apps.users.models import UserProfileModel
-from apps.utils import get_timenow
-
+from apps.utils import get_timenow, timezone
 from core.services.mailjet_service import SendEmail
 
 UserModel = get_user_model()
@@ -40,11 +40,23 @@ class Order(models.Model):
         related_name='orders',
     )
     ttn = models.CharField(max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(default=get_timenow)
+    created_at = models.DateTimeField(default=timezone.now)
+    discount_code = models.ForeignKey(
+        DiscountCode,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True, 
+        related_name="orders"
+    )
     
     def __str__(self):
         customer_email = self.customer.email if self.customer else "No customer"
         return f"Order #{self.id} ({customer_email})"
+    
+    def get_order_amount(self):
+        total = sum(position.total_price for position in self.positions.all())
+
+        return total
     
     def save(self, *args, **kwargs):
         if self.pk:
@@ -68,7 +80,7 @@ class OrderPosition(models.Model):
         ordering = ("id",)
         constraints = [
             CheckConstraint(
-                check=(
+                condition=(
                     (Q(product__isnull=False) & Q(accessory__isnull=True)) |
                     (Q(product__isnull=True) & Q(accessory__isnull=False))
                 ),
