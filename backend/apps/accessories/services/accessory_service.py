@@ -3,8 +3,8 @@ from typing import List
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
+from apps.accessories.serializers import AccessorySerializer
 from apps.products.models import Accessory
-from apps.products.serializers import AccessorySerializer
 
 
 class AccessoryService:

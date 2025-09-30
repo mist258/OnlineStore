@@ -2,11 +2,11 @@ from django.db.transaction import atomic
 
 from rest_framework import serializers
 
-from apps.products.models import Photo, PhotosModel, Product
+from apps.products.models import Photo, Product, ProductPhotosModel
 from apps.supplies.models import Supply
 from apps.supplies.serializers import SupplySerializer
 
-from .models import Accessory, FlavorProfile
+from .models import FlavorProfile
 
 
 class FlavourProfileSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class ProductPhotoSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        model = PhotosModel
+        model = ProductPhotosModel
         fields = ("id",
                   "photo",)
 
@@ -50,7 +50,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ("id",
                   "sku",
                   "name",
-                  "brend",
+                  "brand",
                   "caffeine_type",
                   "sort",
                   "roast",
@@ -97,21 +97,3 @@ class ProductSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-
-class AccessorySerializer(serializers.ModelSerializer):
-    photos = PhotoSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Accessory
-        fields = ("id",
-                  "name",
-                  "sku",
-                  "description",
-                  "brand",
-                  "price",
-                  "category",
-                  "quantity",
-                  "photos")
-
-        read_only_fields = ("id",)

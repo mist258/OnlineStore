@@ -5,16 +5,17 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.products.models import Accessory, FlavorProfile, PhotosModel, Product
+from apps.accessories.models import Accessory
+from apps.accessories.serializers import AccessorySerializer
+from apps.products.models import FlavorProfile, Product, ProductPhotosModel
 
 from core.pagination import PagePagination
-from core.views import UpdateDestroyAPIView
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 
 from .filters import CoffeeProductFilter
-from .serializers import AccessorySerializer, FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
+from .serializers import FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -27,11 +28,11 @@ class ProductListView(generics.ListAPIView):
         shows the entire list of products
         (available to anyone)
     """
-    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles").all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = CoffeeProductFilter
+    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles")
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -44,7 +45,7 @@ class ProductByIdView(generics.RetrieveAPIView):
         get product by id
         (available to anyone)
     """
-    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles").all()
+    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles")
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
 
@@ -117,56 +118,17 @@ class DeleteProductView(generics.GenericAPIView):
 
     def delete(self, request, *args, **kwargs):
         product = self.get_object()
+        flavours = product.flavor_profiles.all()
+        for flavour in flavours:
+            if flavour.products.count() == 1:
+                flavour.delete()
         product.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@method_decorator(name="get", decorator=swagger_auto_schema(
-    operation_id='get_all_flavours',
-    responses={200: ProductSerializer(many=True)},
-))
-@method_decorator(name="post", decorator=swagger_auto_schema(
-    operation_id='add_flavours',
-    responses={200: FlavourProfileSerializer()},
-))
-class ListCreateFlavourProfileView(generics.ListCreateAPIView):
-    """
-        get: show the entire list of flavour
-        post: create a new flavour
-        (available to superuser)
-    """
-
-    queryset = FlavorProfile.objects.all()
-    serializer_class = FlavourProfileSerializer
-
-
-@method_decorator(name="put", decorator=swagger_auto_schema(
-    operation_id='update_flavour_by_id',
-    responses={200: FlavourProfileSerializer()},
-))
-@method_decorator(name="delete", decorator=swagger_auto_schema(
-    operation_id='delete_flavour_by_id'
-))
-class UpdateDestroyFlavourProfileView(UpdateDestroyAPIView):
-    """
-        delete: delete the flavour by id
-        put: update the flavour by id
-        (available to superuser)
-    """
-    queryset = FlavorProfile.objects.all()
-    serializer_class = FlavourProfileSerializer
-    http_method_names = ("put", "delete")
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
 
 
 @method_decorator(name="put", decorator=swagger_auto_schema(
     operation_id='add_photo_to_product',
-    responses={200: ProductSerializer()},
 ))
 class AddPhotoToProduct(generics.GenericAPIView):
     """
@@ -196,7 +158,7 @@ class DeletePhotoFromProduct(generics.GenericAPIView):
         delete a photo from the product by id
         (available to superuser)
     """
-    queryset = PhotosModel.objects.all()
+    queryset = ProductPhotosModel.objects.all()
 
     def delete(self, request, *args, **kwargs):
         photo = self.get_object()
@@ -206,50 +168,6 @@ class DeletePhotoFromProduct(generics.GenericAPIView):
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-@method_decorator(name='get', decorator=swagger_auto_schema(
-    security=[],
-    operation_id='get_all_accessories',
-    responses={200: AccessorySerializer(many=True)},
-))
-class AccessoryListView(generics.ListAPIView):
-    """
-        shows the entire list of accessories
-        (available to anyone)
-    """
-    queryset = Accessory.objects.prefetch_related('photos_url').all()
-    serializer_class = AccessorySerializer
-    filter_backends = [OrderingFilter]
-    permission_classes = (AllowAny,)
-
-
-@method_decorator(name='post', decorator=swagger_auto_schema(
-    operation_id='add_accessory',
-    responses={200: AccessorySerializer()},
-))
-class AccessoryCreateView(generics.CreateAPIView):
-    """
-        create a new accessory
-        (available to superuser)
-    """
-    queryset = Accessory.objects.all()
-    serializer_class = AccessorySerializer
-
-    
-@method_decorator(name='get', decorator=swagger_auto_schema(
-    security=[],
-    operation_id='get_accessory_by_id',
-    responses={200: AccessorySerializer(many=True)},
-))
-class AccessoryByIdView(generics.RetrieveAPIView):
-    """
-        get accessory by id
-        (available to anyone)
-    """
-    queryset = Accessory.objects.prefetch_related('photos_url').all()
-    serializer_class = AccessorySerializer
-    permission_classes = (AllowAny,)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

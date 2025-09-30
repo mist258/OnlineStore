@@ -1,12 +1,13 @@
-import re
-
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.db.transaction import atomic
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from core.services.email_service import EmailService
+from apps.orders.serializers import OrderReadSerializer
+
+from core.services.mailjet_service import SendEmail
 
 from .models import UserProfileModel
 
@@ -14,6 +15,9 @@ UserModel = get_user_model()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    """
+        Serializer for user profile
+    """
     class Meta:
         model = UserProfileModel
         fields = (
@@ -32,12 +36,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+        Serializer for creating new users
+    """
     profile = UserProfileSerializer()
 
     class Meta:
         model = UserModel
         fields = (
             "id",
+            "avatar",
             "email",
             "password",
             "is_superuser",
@@ -73,18 +81,15 @@ class UserSerializer(serializers.ModelSerializer):
         profile = validated_data.pop("profile")
         user = UserModel.objects.create_user(**validated_data)
         UserProfileModel.objects.create(**profile, user=user)
-        EmailService.greeting_registration_email(user)
+        SendEmail.registration_greeting_email(user)
         return user
 
-    def validate(self, attrs):
-        password = attrs.get("password")
-
-        pattern = r"^[A-Za-z\d@$!%*?&]{8,}$"
-
-        if not re.fullmatch(pattern, password):
-            raise ValidationError('Password must contain at least 8 characters, '
-                                  '1 special symbol, 1 letter, 1 number')
-        return attrs
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except ValidationError as e:
+            raise serializers.ValidationError(e)
+        return value
 
 
 class UpdateUserInfoSerializer(serializers.ModelSerializer):
@@ -111,6 +116,30 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
             for key, value in profile_data.items():
                 setattr(profile, key, value)
             profile.save()
-        EmailService.updated_info_notification_email(instance)
+        SendEmail.profile_update_notification(instance)
         return instance
 
+
+class UserAvatarSerializer(serializers.ModelSerializer):
+    """
+        serializer for uploading avatar to user profile
+    """
+    class Meta:
+        model = UserModel
+        fields = ("avatar",)
+
+class UserOwnProfileInformationSerializer(serializers.ModelSerializer):
+    """
+        for the user to view their own account information
+        and created orders
+    """
+    profile = UserProfileSerializer(read_only=True)
+    orders = OrderReadSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = UserModel
+        fields = (
+            "email",
+            "profile",
+            "orders",
+        )

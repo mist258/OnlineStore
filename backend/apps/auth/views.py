@@ -12,8 +12,8 @@ from rest_framework.views import APIView
 
 from apps.auth.serializers import ChangePasswordFromProfileSerializer, EmailSerializer, PasswordSerializer
 
-from core.services.email_service import EmailService
 from core.services.jwt_services import JWTService, RecoveryToken
+from core.services.mailjet_service import SendEmail
 
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -62,7 +62,7 @@ class RequestRecoveryPasswordView(generics.GenericAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         user = get_object_or_404(UserModel, **serializer.data)
-        EmailService.send_recovery_email(user)
+        SendEmail.password_reset_request(user)
         return Response({"Details": "Email successfully sent to user"},
                         status.HTTP_200_OK)
 
@@ -96,7 +96,7 @@ class ChangePasswordView(generics.GenericAPIView):
      name="put", decorator=swagger_auto_schema(
                       operation_id="change_password_via_profile")
 )
-class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
+class ChangePasswordFromProfileView(generics.GenericAPIView):
     """
         change password from profile
         (available for authenticated users)
@@ -116,7 +116,7 @@ class ChangePasswordFromProfileView(generics.GenericAPIView): # todo
                              status.HTTP_400_BAD_REQUEST)
         user.set_password(serializer.data["new_password"])
         user.save()
-        EmailService.password_changed_notification_email(user)
+        SendEmail.change_password_notification(user)
         return Response(
                      {"Details": "Your password has been changed successfully."},
                      status.HTTP_200_OK)

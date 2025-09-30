@@ -26,6 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don' run with debug turned on in production!
+EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
+MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY")
+MAILJET_API_SECRET = os.environ.get("MAILJET_API_SECRET")
+
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") == "True"
 
 ALLOWED_HOSTS = [
@@ -40,6 +45,15 @@ AUTH_USER_MODEL = "users.UserModel"
 
 GOOGLE_OAUTH_CLIENT_ID=os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_OAUTH_CLIENT_SECRET=os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
+
+# Haystack
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),  # Directory to store Whoosh index
+    },
+}
 
 # Application definition
 
@@ -61,8 +75,10 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "django_celery_results",
     "import_export",
-    "anymail",
-
+    "phonenumber_field",
+    "django_password_validators",
+    "haystack",
+    "whoosh",
 
     # my apps
     "core",
@@ -76,6 +92,8 @@ INSTALLED_APPS = [
     "apps.orders",
     "apps.basket",
     "apps.discount_codes",
+    "apps.accessories",
+    "apps.search",
 
 ]
 
@@ -114,6 +132,18 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+    {
+        'NAME': 'django_password_validators.password_character_requirements.password_validation.PasswordCharacterValidator',
+        'OPTIONS': {
+            'min_length_digit': 4,
+            'min_length_alpha': 2,
+            'min_length_special': 1,
+            'min_length_lower': 1,
+            'min_length_upper': 1,
+            'special_characters': "~!@#$%^&*()_+{}\":;'[]"
+        }
+    },
+
 ]
 
 

@@ -1,8 +1,8 @@
 # core/services/novaposhta_service.py
 
-import requests
+from typing import Any, Dict, List
 
-from typing import Dict, Any, List
+import requests
 
 
 class NovaPoshtaService:

@@ -5,8 +5,6 @@ from rest_framework.response import Response
 
 from apps.products.serializers import ProductSerializer
 
-from core.views import UpdateDestroyAPIView
-
 from drf_yasg.utils import swagger_auto_schema
 
 from ..products.models import Product
@@ -46,22 +44,14 @@ class AddSupplyToProduct(generics.GenericAPIView):
 @method_decorator(name='patch', decorator=swagger_auto_schema(
     operation_id="partial_update_supply_from_product",
 ))
-class UpdateDestroySupplyFromProduct(UpdateDestroyAPIView):
+class UpdateDestroySupplyFromProduct(generics.RetrieveUpdateDestroyAPIView):
     """
         update a supplies from the product
         (available to superuser)
     """
     queryset = Supply.objects.all()
     serializer_class = SupplySerializer
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+    allowed_methods = ("put", "patch", "delete")
 
 
 

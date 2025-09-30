@@ -4,10 +4,21 @@ from uuid import uuid1
 from core.exceptions.photo_extension_exception import PhotoExtensionException
 
 
-def upload_product_photo(instance, file:str) -> str:
-    extension = file.split('.')[-1]
+class PhotoService:
 
-    if extension not in ['jpg', 'jpeg', 'png']:
-        raise PhotoExtensionException
+    @staticmethod
+    def upload_product_photo(instance, file: str) -> str:
+        extension = file.split('.')[-1]
 
-    return os.path.join('upload_photos', f'{uuid1()}.{extension}')
+        if extension not in ['jpg', 'jpeg', 'png']:
+            raise PhotoExtensionException
+
+        return os.path.join('upload_photos', f'{uuid1()}.{extension}')
+
+    @staticmethod
+    def upload_avatar(instance, file: str) -> str:
+        extension = file.split('.')[-1]
+
+        if extension not in ['jpg', 'jpeg', 'png']:
+            raise PhotoExtensionException
+        return os.path.join('avatars', f'{uuid1()}.{extension}')

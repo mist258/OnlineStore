@@ -1,16 +1,14 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import CheckConstraint, Q
 from django.utils import timezone
 
 from apps.products.models import Accessory, Product
 from apps.basket.models import DiscountCode
 from apps.users.models import UserProfileModel
-from apps.utils import get_timenow
-from django.db.models import Q, CheckConstraint
-from django.core.exceptions import ValidationError
-from django.utils import timezone
-
-from core.services.email_service import EmailService
+from apps.utils import get_timenow, timezone
+from core.services.mailjet_service import SendEmail
 
 UserModel = get_user_model()
 
@@ -64,7 +62,7 @@ class Order(models.Model):
         if self.pk:
             old_status = Order.objects.get(pk=self.pk).status
             if old_status != self.status:
-                EmailService.send_order_status_email(
+                SendEmail.order_status_notification(
                     order_id=self.id,
                     status=self.status,
                     customer_email=self.customer.email,

@@ -1,11 +1,11 @@
-from apps.orders.services import get_order_by_id
-
-from django.dispatch import receiver
 from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
 from apps.orders.models import Order
-from core.services.email_service import EmailService
-from backend.apps.orders.tasks.order_np_tasks import np_ttn_check_and_update
+from apps.orders.services.order_service import get_order_by_id
+
 from backend.apps.orders.tasks.order_email_tasks import send_order_status_email
+from backend.apps.orders.tasks.order_np_tasks import np_ttn_check_and_update
 
 
 @receiver(pre_save, sender=Order)

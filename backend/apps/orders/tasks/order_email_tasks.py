@@ -1,11 +1,12 @@
+from core.services.mailjet_service import SendEmail
+
 from celery import shared_task
-from core.services.email_service import EmailService
 
 
 @shared_task(bind=True, max_retries=3, retry_backoff=True)
 def send_order_status_email(self, order_id, status, customer_email, first_name, last_name):
     try:
-        EmailService.send_order_status_email(
+        SendEmail.order_status_notification(
             order_id=order_id,
             status=status,
             customer_email=customer_email,

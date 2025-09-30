@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import UpdateUserInfoSerializer, UserSerializer
+from .serializers import UpdateUserInfoSerializer, UserAvatarSerializer, UserOwnProfileInformationSerializer, UserSerializer
 
 UserModel = get_user_model()
 
@@ -36,19 +36,25 @@ class CreateUserView(generics.CreateAPIView):
         operation_id="get_own_info", responses={200: UserSerializer()}
     ),
 )
-class GetMyInfoView(generics.GenericAPIView):
+class GetProfileInfoView(generics.GenericAPIView):
     """
-    get own info
-    (allow for authenticated users)
+        get own info about profile and orders
+        (allow for authenticated users)
     """
 
     queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserOwnProfileInformationSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, *args, **kwargs):
         user = self.request.user
-        serializer = UserSerializer(user)
+
+        if user.is_staff or user.is_superuser:
+            serializer = UserSerializer(user)
+            return Response(serializer.data,
+                            status=status.HTTP_200_OK)
+
+        serializer = UserOwnProfileInformationSerializer(user)
         return Response(serializer.data,
                         status.HTTP_200_OK)
 
@@ -90,7 +96,7 @@ class DeleteUserView(generics.DestroyAPIView):
                         status.HTTP_204_NO_CONTENT)
 
 
-@method_decorator(name="put", decorator=swagger_auto_schema(
+@method_decorator(name="patch", decorator=swagger_auto_schema(
     operation_id="update_user's_info",
     responses={200: UserSerializer()}
     ),
@@ -112,4 +118,46 @@ class UpdateUsersInfoView(generics.UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+@method_decorator(name="get", decorator=swagger_auto_schema(
+    operation_id="get_user_info_for_autofill_form",
+    responses={200: UserSerializer()}
+))
+class UserInfoForAutofillOrdersForm(generics.GenericAPIView):
+    """
+        this info for autofilling form when user place an order
+        (for authenticated users)
+    """
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data,
+                        status.HTTP_200_OK)
+
+
+@method_decorator(name="put", decorator=swagger_auto_schema(
+    operation_id="add_photo_to_profile",
+    responses={200: UserAvatarSerializer()}
+))
+class AddProfileAvatarView(generics.UpdateAPIView):
+    """
+        add avatar to user's profile
+        (allow for authenticated users)
+    """
+    serializer_class = UserAvatarSerializer
+    permission_classes = (IsAuthenticated,)
+    http_method_names = ("put",)
+
+    def get_object(self):
+        return self.request.user
+
+    def perform_update(self, serializer):
+        user = self.get_object()
+        user.avatar.delete()
+        super().perform_update(serializer)
 
