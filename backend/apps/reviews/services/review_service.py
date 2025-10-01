@@ -4,7 +4,7 @@ from django.db import IntegrityError, transaction
 
 from apps.reviews.models import Review
 
-from backend.apps.db_utils import get_object_or_error
+from apps.db_utils import get_object_or_error
 
 UserModel = get_user_model()
 

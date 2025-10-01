@@ -4,7 +4,7 @@ from apps.users.models import UserModel, UserProfileModel
 
 import pytest
 
-from backend.apps.orders.services.order_position_service import (
+from apps.orders.services.order_position_service import (
     create_order_position,
     delete_order_position,
     get_order_position_by_id,

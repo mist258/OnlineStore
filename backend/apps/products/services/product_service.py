@@ -3,7 +3,7 @@ from django.db import IntegrityError, transaction
 
 from apps.products.models import FlavorProfile, Product
 
-from backend.apps.db_utils import get_object_or_error
+from apps.db_utils import get_object_or_error
 
 
 @transaction.atomic

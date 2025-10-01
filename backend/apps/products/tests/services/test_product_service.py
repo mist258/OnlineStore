@@ -2,7 +2,7 @@ from apps.products.models import Product
 
 import pytest
 
-from backend.apps.products.services.product_service import create_product, delete_product, get_product_by_id, update_product
+from apps.products.services.product_service import create_product, delete_product, get_product_by_id, update_product
 
 
 @pytest.mark.django_db
@@ -10,7 +10,7 @@ def test_create_product():
     data = {
         "sku": "espresso_228",
         "name": "Espresso",
-        "brend": "Jacobs",
+        "brand": "Jacobs",
         "roast": "Dark",
         "caffeine_type": "Decaf",
         "sort": "Arabica",
@@ -21,7 +21,7 @@ def test_create_product():
 
     assert product.sku == "espresso_228"
     assert product.name == "Espresso"
-    assert product.brend == "Jacobs"
+    assert product.brand == "Jacobs"
     assert product.roast == "Dark"
     assert product.caffeine_type == "Decaf"
     assert product.sort == "Arabica"
@@ -43,7 +43,7 @@ def test_update_product():
     product = Product.objects.create(
         sku="espresso_228",
         name="Latte",
-        brend="Jacobs",
+        brand="Jacobs",
         caffeine_type="Decaf",
         sort="Robusta",
         roast="Medium",
@@ -52,7 +52,7 @@ def test_update_product():
     update_data = {
         "sku": "espresso_420",
         "name": "Updated Latte",
-        "brend": "Nescafe",
+        "brand": "Nescafe",
         "caffeine_type": "Regular",
         "sort": "Arabica",
         "roast": "Light", 
@@ -63,7 +63,7 @@ def test_update_product():
 
     assert updated.sku == "espresso_420"
     assert updated.name == "Updated Latte"
-    assert updated.brend == "Nescafe"
+    assert updated.brand == "Nescafe"
     assert updated.caffeine_type == "Regular"
     assert updated.sort == "Arabica"
     assert updated.roast == "Light"
