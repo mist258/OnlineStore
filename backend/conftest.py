@@ -1,16 +1,19 @@
-import pytest
+import datetime
+import uuid
+
 from django.core.management import call_command
+
 from rest_framework.test import APIClient
 
-from apps.users.models import UserModel, UserProfileModel
+from apps.basket.models import Basket, BasketItem, DiscountCode
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 from apps.supplies.models import Supply
-from apps.basket.models import Basket, BasketItem
-from apps.basket.models import DiscountCode
-import uuid
-import datetime
+from apps.users.models import UserModel, UserProfileModel
+
+import pytest
 import pytz
+
 
 @pytest.fixture(scope="session", autouse=True)
 def apply_migrations(django_db_setup, django_db_blocker):

@@ -1,8 +1,6 @@
 from django.urls import path
-from .views import (
-    GetDiscountCodeView,
-    CreateDiscountCodeView
-)
+
+from .views import CreateDiscountCodeView, GetDiscountCodeView
 
 app_name = 'discount_codes'
 

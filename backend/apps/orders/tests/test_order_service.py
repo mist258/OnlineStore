@@ -1,8 +1,8 @@
-from apps.users.models import UserModel, UserProfileModel
-from apps.orders.models import Order
 from apps.basket.models import Basket, BasketItem
-from apps.products.models import Product, Accessory
+from apps.orders.models import Order
+from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
+from apps.users.models import UserModel, UserProfileModel
 
 import pytest
 

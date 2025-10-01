@@ -1,6 +1,6 @@
-from apps.users.models import UserModel, UserProfileModel
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
+from apps.users.models import UserModel, UserProfileModel
 
 import pytest
 

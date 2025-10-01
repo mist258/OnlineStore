@@ -1,11 +1,6 @@
 from django.urls import path
-from .views import (
-    ActiveBasketView,
-    AddBasketItemView,
-    UpdateBasketItemView,
-    DeleteBasketItemView,
-    ClearBasketView,
-)
+
+from .views import ActiveBasketView, AddBasketItemView, ClearBasketView, DeleteBasketItemView, UpdateBasketItemView
 
 app_name = 'basket'
 

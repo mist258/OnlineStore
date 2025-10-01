@@ -1,12 +1,16 @@
-import pytest
-from django.urls import reverse
 from unittest.mock import patch
+
+from django.urls import reverse
+
 from rest_framework import status
-from apps.users.models import UserModel, UserProfileModel
+
+from apps.basket.models import Basket, BasketItem
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 from apps.supplies.models import Supply
-from apps.basket.models import Basket, BasketItem
+from apps.users.models import UserModel, UserProfileModel
+
+import pytest
 
 
 @pytest.mark.django_db

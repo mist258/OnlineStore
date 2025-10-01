@@ -1,5 +1,5 @@
-from apps.users.models import UserModel
 from apps.reviews.models import Review
+from apps.users.models import UserModel
 
 import pytest
 

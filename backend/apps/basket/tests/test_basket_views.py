@@ -1,11 +1,14 @@
-import pytest
 from django.urls import reverse
-from rest_framework.test import APIClient
+
 from rest_framework import status
-from apps.users.models import UserModel
+from rest_framework.test import APIClient
+
 from apps.basket.models import Basket, BasketItem
-from apps.products.models import Product, Accessory
+from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
+from apps.users.models import UserModel
+
+import pytest
 
 
 @pytest.mark.django_db

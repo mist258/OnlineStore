@@ -4,10 +4,10 @@ from django.db import models
 from django.db.models import CheckConstraint, Q
 from django.utils import timezone
 
-from apps.products.models import Accessory, Product
 from apps.basket.models import DiscountCode
+from apps.products.models import Accessory, Product
 from apps.users.models import UserProfileModel
-from apps.utils import get_timenow, timezone
+
 from core.services.mailjet_service import SendEmail
 
 UserModel = get_user_model()

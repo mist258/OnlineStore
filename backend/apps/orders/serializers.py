@@ -1,11 +1,11 @@
+from django.db import transaction
+
 from rest_framework import serializers
 
-from apps.products.models import Accessory, Product
-from apps.users.models import UserModel, UserProfileModel
-from apps.products.models import Product, Accessory
-from django.db import transaction
 from apps.basket.models import Basket
 from apps.orders.models import Order, OrderPosition
+from apps.products.models import Accessory, Product
+from apps.users.models import UserModel, UserProfileModel
 
 
 class OrderPositionWriteSerializer(serializers.Serializer):

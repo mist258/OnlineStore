@@ -1,17 +1,19 @@
-import pytest
 from django.core.exceptions import ValidationError
-from apps.users.models import UserModel
+
 from apps.basket.models import Basket, BasketItem, DiscountCode
-from apps.products.models import Product, Accessory
-from apps.supplies.models import Supply
 from apps.basket.services.basket_service import (
     add_product_to_basket,
-    remove_product_from_basket,
+    clear_basket,
     get_basket_total,
     get_or_create_basket,
     migrate_guest_basket_to_user,
-    clear_basket
+    remove_product_from_basket,
 )
+from apps.products.models import Accessory, Product
+from apps.supplies.models import Supply
+from apps.users.models import UserModel
+
+import pytest
 
 
 @pytest.mark.django_db

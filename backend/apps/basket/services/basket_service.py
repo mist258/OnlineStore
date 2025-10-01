@@ -1,13 +1,14 @@
+import logging
+import uuid
+from uuid import UUID
+
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.utils import timezone
-from apps.db_utils import get_object_or_error
 
 from apps.basket.models import Basket, BasketItem
+from apps.db_utils import get_object_or_error
 from apps.products.models import Product
-import uuid
-from uuid import UUID
-import logging
 
 logger = logging.getLogger(__name__)
 
