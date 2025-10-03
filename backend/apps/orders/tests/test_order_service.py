@@ -6,7 +6,7 @@ from apps.users.models import UserModel, UserProfileModel
 
 import pytest
 
-from backend.apps.orders.services.order_service import create_order, delete_order, get_order_by_id, update_order
+from apps.orders.services.order_service import create_order, delete_order, get_order_by_id, update_order
 
 '''
 1. Make migrations

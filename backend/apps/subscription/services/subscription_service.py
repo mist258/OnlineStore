@@ -3,7 +3,7 @@ from django.db import IntegrityError, transaction
 
 from apps.subscription.models import Subscription
 
-from backend.apps.db_utils import get_object_or_error
+from apps.db_utils import get_object_or_error
 
 
 @transaction.atomic

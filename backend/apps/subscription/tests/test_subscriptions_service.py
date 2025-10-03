@@ -2,7 +2,7 @@ from apps.subscription.models import Subscription
 
 import pytest
 
-from backend.apps.subscription.services.subscription_service import (
+from apps.subscription.services.subscription_service import (
     create_subscription,
     delete_subscription,
     get_subscription_by_id,

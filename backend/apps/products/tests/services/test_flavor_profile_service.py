@@ -2,7 +2,7 @@ from apps.products.models import FlavorProfile
 
 import pytest
 
-from backend.apps.products.services.flavor_profile_service import (
+from apps.products.services.flavor_profile_service import (
     create_flavor_profile,
     delete_flavor_profile,
     get_flavor_profile_by_id,

@@ -3,7 +3,7 @@ from apps.users.models import UserModel
 
 import pytest
 
-from backend.apps.reviews.services.review_service import create_review, delete_review, get_review_by_id, update_review
+from apps.reviews.services.review_service import create_review, delete_review, get_review_by_id, update_review
 
 
 @pytest.mark.django_db
