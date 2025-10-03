@@ -1,9 +1,8 @@
 from apps.reviews.models import Review
+from apps.reviews.services.review_service import create_review, delete_review, get_review_by_id, update_review
 from apps.users.models import UserModel
 
 import pytest
-
-from apps.reviews.services.review_service import create_review, delete_review, get_review_by_id, update_review
 
 
 @pytest.mark.django_db

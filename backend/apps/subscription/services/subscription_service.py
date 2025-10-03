@@ -1,9 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.subscription.models import Subscription
-
 from apps.db_utils import get_object_or_error
+from apps.subscription.models import Subscription
 
 
 @transaction.atomic

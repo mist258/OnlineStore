@@ -1,8 +1,7 @@
 from apps.products.models import Product
+from apps.products.services.product_service import create_product, delete_product, get_product_by_id, update_product
 
 import pytest
-
-from apps.products.services.product_service import create_product, delete_product, get_product_by_id, update_product
 
 
 @pytest.mark.django_db

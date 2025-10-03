@@ -1,12 +1,11 @@
 from apps.basket.models import Basket, BasketItem
 from apps.orders.models import Order
+from apps.orders.services.order_service import create_order, delete_order, get_order_by_id, update_order
 from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
 from apps.users.models import UserModel, UserProfileModel
 
 import pytest
-
-from apps.orders.services.order_service import create_order, delete_order, get_order_by_id, update_order
 
 '''
 1. Make migrations

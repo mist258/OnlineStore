@@ -1,9 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.products.models import Photo, Product
-
 from apps.db_utils import get_object_or_error
+from apps.products.models import Photo, Product
 
 
 @transaction.atomic

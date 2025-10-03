@@ -1,15 +1,14 @@
 from apps.orders.models import Order, OrderPosition
-from apps.products.models import Product
-from apps.users.models import UserModel, UserProfileModel
-
-import pytest
-
 from apps.orders.services.order_position_service import (
     create_order_position,
     delete_order_position,
     get_order_position_by_id,
     update_order_position,
 )
+from apps.products.models import Product
+from apps.users.models import UserModel, UserProfileModel
+
+import pytest
 
 
 @pytest.mark.django_db

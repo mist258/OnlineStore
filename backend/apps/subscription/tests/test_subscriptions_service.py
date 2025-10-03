@@ -1,13 +1,12 @@
 from apps.subscription.models import Subscription
-
-import pytest
-
 from apps.subscription.services.subscription_service import (
     create_subscription,
     delete_subscription,
     get_subscription_by_id,
     update_subscription,
 )
+
+import pytest
 
 
 @pytest.mark.django_db

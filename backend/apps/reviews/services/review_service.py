@@ -2,9 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.reviews.models import Review
-
 from apps.db_utils import get_object_or_error
+from apps.reviews.models import Review
 
 UserModel = get_user_model()
 
