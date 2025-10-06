@@ -31,7 +31,6 @@ requests = "^2.32.4"
 django-mailjet = "^0.3.1"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "^8.1.0"}
 django-password-validators = "^1.7.3"
-django-haystack = "^3.3.0"
 whoosh = "^2.7.4"
 drf-haystack = "^1.9.1"
 
