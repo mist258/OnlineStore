@@ -35,7 +35,7 @@ def create_product(data: dict) -> Product:
         product = Product.objects.create(
             sku=sku,
             name=name,
-            brend=brand,
+            brand=brand,
             caffeine_type=data.get("caffeine_type"),
             sort=sort,
             roast=roast,
@@ -64,7 +64,7 @@ def update_product(product_id: int, data: dict) -> Product:
     
     product.sku = data.get("sku", product.sku)
     product.name = data.get("name", product.name)
-    product.brend = data.get("brend", product.brend)
+    product.brand = data.get("brand", product.brand)
     product.caffeine_type = data.get("caffeine_type", product.caffeine_type)
     product.sort = data.get("sort", product.sort)
     product.roast = data.get("roast", product.roast)

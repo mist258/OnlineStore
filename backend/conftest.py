@@ -10,6 +10,9 @@ from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 from apps.supplies.models import Supply
 from apps.users.models import UserModel, UserProfileModel
+from apps.favorites.services.favorites_service import FavoritesService
+from apps.accessories.models import Accessory
+
 
 import pytest
 import pytz
@@ -20,16 +23,13 @@ def apply_migrations(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("migrate", run_syncdb=True, verbosity=2)
         
-
 @pytest.fixture
 def uuid_token():
     return str(uuid.uuid4())
 
-
 @pytest.fixture
 def api_client():
     return APIClient()
-
 
 @pytest.fixture
 def admin_user(db):
@@ -39,7 +39,6 @@ def admin_user(db):
         is_staff=True,
         is_superuser=True
     )
-
 
 @pytest.fixture
 def user():
@@ -70,16 +69,13 @@ def product():
     product = Product.objects.create(name='Test Product')
     return product
 
-
 @pytest.fixture
 def basket(user):
     return Basket.objects.create(user=user)
 
-
 @pytest.fixture
 def guest_basket():
     return Basket.objects.create(guest_token=str(uuid.uuid4()))
-
 
 @pytest.fixture
 def order(user, user_profile):
@@ -87,7 +83,6 @@ def order(user, user_profile):
         customer=user,
         billing_details=user_profile
     )
-
 
 @pytest.fixture
 def order_position(product, order):
@@ -97,11 +92,9 @@ def order_position(product, order):
         quantity=2
     )
     
-    
 @pytest.fixture
 def supply(product):
     return Supply.objects.create(product=product, price=100.0, quantity=10)
-
 
 @pytest.fixture
 def discount_code():
@@ -113,3 +106,16 @@ def discount_code():
         valid_from=datetime.datetime(2023, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
         valid_to=datetime.datetime(2028, 1, 1, 0, 0, 0, tzinfo=pytz.UTC)
     )
+    
+@pytest.fixture
+def favorites(user):
+    return FavoritesService.get_or_create_favorites(user)
+
+@pytest.fixture
+def accessory():
+    return Accessory.objects.create(
+            sku='4984984',
+            name='Test Accessory',
+            price=29.99,
+            quantity=100
+        )

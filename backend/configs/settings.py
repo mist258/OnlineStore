@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     "apps.discount_codes",
     "apps.accessories",
     "apps.search",
+    "apps.favorites",
 
 ]
 

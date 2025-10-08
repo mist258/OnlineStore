@@ -45,4 +45,4 @@ services:
      - PYTHONPATH=/app/backend
    depends_on:
      - db
-   command: poetry run pytest -v
+   command: poetry run pytest --ds=configs.settings -vv --reuse-db
