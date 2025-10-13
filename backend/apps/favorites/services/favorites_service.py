@@ -3,9 +3,9 @@ from typing import Optional, Union
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
+from apps.favorites.models import FavoriteItem, Favorites
 from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
-from apps.favorites.models import Favorites, FavoriteItem
 
 User = get_user_model()
 

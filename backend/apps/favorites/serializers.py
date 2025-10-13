@@ -1,8 +1,10 @@
 from rest_framework import serializers
-from apps.products.serializers import ProductSerializer
+
 from apps.accessories.serializers import AccessorySerializer
+from apps.products.serializers import ProductSerializer
 from apps.supplies.serializers import SupplySerializer
-from .models import Favorites, FavoriteItem
+
+from .models import FavoriteItem, Favorites
 
 
 class FavoriteItemSerializer(serializers.ModelSerializer):

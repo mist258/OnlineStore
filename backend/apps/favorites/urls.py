@@ -1,10 +1,6 @@
 from django.urls import path
-from apps.favorites.views import (
-    FavoritesView,
-    ToggleFavoriteView,
-    CheckFavoriteView,
-    FavoritesCountView,
-)
+
+from apps.favorites.views import CheckFavoriteView, FavoritesCountView, FavoritesView, ToggleFavoriteView
 
 urlpatterns = [
     path("", FavoritesView.as_view(), name="favorites-list"),

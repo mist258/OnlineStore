@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+
 from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
 

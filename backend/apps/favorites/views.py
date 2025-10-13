@@ -1,10 +1,10 @@
-from rest_framework.views import APIView
+from rest_framework import permissions, status
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from apps.db_utils import get_object_or_error
+from rest_framework.views import APIView
 
+from apps.db_utils import get_object_or_error
 from apps.favorites.services.favorites_service import FavoritesService
-from apps.products.models import Product, Accessory
+from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
 
 

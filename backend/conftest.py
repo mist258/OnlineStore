@@ -5,14 +5,13 @@ from django.core.management import call_command
 
 from rest_framework.test import APIClient
 
-from apps.basket.models import Basket, BasketItem, DiscountCode
+from apps.accessories.models import Accessory
+from apps.basket.models import Basket, DiscountCode
+from apps.favorites.services.favorites_service import FavoritesService
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 from apps.supplies.models import Supply
 from apps.users.models import UserModel, UserProfileModel
-from apps.favorites.services.favorites_service import FavoritesService
-from apps.accessories.models import Accessory
-
 
 import pytest
 import pytz
