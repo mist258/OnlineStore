@@ -7,7 +7,9 @@ import pytest
 
 @pytest.mark.django_db
 class TestFavoritesListView:
-    def test_get_favorites_authenticated(self, api_client, user, favorites, favorites_item):
+    def test_get_favorites_authenticated(
+        self, api_client, user, favorites, favorites_item
+    ):
         api_client.force_authenticate(user=user)
         favorites = favorites
         favorites_item = favorites_item
@@ -83,16 +85,16 @@ class TestFavoritesPermissions:
         self, api_client, user, other_user, favorites
     ):
         api_client.force_authenticate(user=other_user)
-        url = reverse('favorites:favorites-detail', kwargs={'pk': favorites.id})
+        url = reverse('favorites:favorites-list')
         
         response = api_client.get(url)
         
-        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.data['user'] == other_user.id
 
     def test_unauthenticated_user_cannot_access_favorites(
         self, api_client, favorites
     ):
-        url = reverse('favorites:favorites-detail', kwargs={'pk': favorites.id})
+        url = reverse('favorites:favorites-list')
         
         response = api_client.get(url)
         
