@@ -7,6 +7,8 @@ from apps.favorites.services.favorites_service import FavoritesService
 from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
 
+from typing import Optional
+
 
 class FavoritesView(APIView):
     """
@@ -29,7 +31,7 @@ class FavoritesView(APIView):
             }
             for item in items
         ]
-        return Response({"count": len(data), "items": data})
+        return Response({"count": len(data), "items": data, "user": request.user.id})
 
     def delete(self, request):
         """
@@ -62,7 +64,7 @@ class ToggleFavoriteView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        item = get_object_or_error(model_map[item_type], id=item_id)
+        item = get_object_or_error(model_map[item_type], object_id=item_id)
         favorites = FavoritesService.get_or_create_favorites(request.user)
 
         favorite_item, added = FavoritesService.toggle_item_in_favorites(favorites, item)
@@ -72,7 +74,7 @@ class ToggleFavoriteView(APIView):
                 "item_type": item_type,
                 "added": added,
             },
-            status=status.HTTP_200_OK,
+            status=status.HTTP_201_CREATED if added else status.HTTP_200_OK,
         )
 
 
@@ -95,7 +97,7 @@ class CheckFavoriteView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        item = get_object_or_error(model_map[item_type], id=item_id)
+        item = get_object_or_error(model_map[item_type], object_id=item_id)
         favorites = FavoritesService.get_or_create_favorites(request.user)
         exists = FavoritesService.check_if_item_in_favorites(favorites, item)
 

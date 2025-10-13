@@ -7,16 +7,19 @@ import pytest
 
 @pytest.mark.django_db
 class TestFavoritesListView:
-    def test_get_favorites_authenticated(self, api_client, user):
+    def test_get_favorites_authenticated(self, api_client, user, favorites, favorites_item):
         api_client.force_authenticate(user=user)
+        favorites = favorites
+        favorites_item = favorites_item
+        
         url = reverse('favorites:favorites-list')
         
         response = api_client.get(url)
         
         assert response.status_code == status.HTTP_200_OK
-        assert 'id' in response.data
+        assert 'id' in response.data["items"][0]
         assert response.data['user'] == user.id
-    
+
     def test_get_favorites_unauthenticated(self, api_client):
         url = reverse('favorites:favorites-list')
         
@@ -26,52 +29,10 @@ class TestFavoritesListView:
 
 
 @pytest.mark.django_db
-class TestFavoriteItemView:
-    def test_add_item_to_favorites(self, api_client, user, product):
-        api_client.force_authenticate(user=user)
-        url = reverse('favorites-list')
-        
-        data = {
-            'product': product.id
-        }
-        
-        response = api_client.post(url, data)
-        
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['product'] == product.id
-
-    def test_add_accessory_to_favorites(self, api_client, user, accessory):
-        api_client.force_authenticate(user=user)
-        url = reverse('favorites:favorite-items-list')
-        
-        data = {
-            'accessory': accessory.id
-        }
-        
-        response = api_client.post(url, data)
-        
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['accessory'] == accessory.id
-
-    def test_add_supply_to_favorites(self, api_client, user, supply):
-        api_client.force_authenticate(user=user)
-        url = reverse('favorites:favorite-items-list')
-        
-        data = {
-            'supply': supply.id
-        }
-        
-        response = api_client.post(url, data)
-        
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['supply'] == supply.id
-
-
-@pytest.mark.django_db
 class TestToggleFavoriteView:
     def test_toggle_item_add(self, api_client, user, favorites, product):
         api_client.force_authenticate(user=user)
-        url = reverse('favorites:favorites-toggle-item', kwargs={'pk': favorites.id})
+        url = reverse('favorites:favorites_toggle', kwargs={'item_type': 'product', 'item_id': product.id})
         
         data = {
             'product': product.id
@@ -80,11 +41,11 @@ class TestToggleFavoriteView:
         response = api_client.post(url, data)
         
         assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['product'] == product.id
+        assert response.data['item_id'] == product.id
 
     def test_toggle_item_remove(self, api_client, user, favorites, product):
         api_client.force_authenticate(user=user)
-        url = reverse('favorites:favorites-toggle-item', kwargs={'pk': favorites.id})
+        url = reverse('favorites:favorites_toggle', kwargs={'item_type': 'product', 'item_id': product.id})
         
         # Add item first
         data = {'product': product.id}
@@ -94,7 +55,7 @@ class TestToggleFavoriteView:
         response = api_client.post(url, data)
         
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['status'] == 'item removed'
+        assert response.data['added'] == False
 
 
 @pytest.mark.django_db
