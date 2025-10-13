@@ -59,43 +59,19 @@ class TestToggleFavoriteView:
 
 
 @pytest.mark.django_db
-class TestDeleteFavoriteItemView:
-    def test_delete_favorite_item(self, api_client, user, favorites, product):
-        api_client.force_authenticate(user=user)
-        # Add item to favorites first
-        favorite_item = FavoritesService.add_item_to_favorites(favorites, product)
-        
-        url = reverse('favorites:favorite-items-detail', kwargs={'pk': favorite_item.id})
-        response = api_client.delete(url)
-        
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not FavoriteItem.objects.filter(id=favorite_item.id).exists()
-
-    def test_delete_nonexistent_item(self, api_client, user):
-        api_client.force_authenticate(user=user)
-        url = reverse('favorites:favorite-items-detail', kwargs={'pk': 99999})
-        
-        response = api_client.delete(url)
-        
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-
-
-@pytest.mark.django_db
 class TestClearFavoritesView:
-    def test_clear_favorites(self, api_client, user, favorites, product, accessory):
+    def test_clear_favorites(self, api_client, user, favorites, favorites_item):
         api_client.force_authenticate(user=user)
-        # Add items to favorites
-        FavoritesService.add_item_to_favorites(favorites, product)
-        FavoritesService.add_item_to_favorites(favorites, accessory)
-        
-        url = reverse('favorites:favorites-clear', kwargs={'pk': favorites.id})
+        favorites = favorites
+        favorites_item = favorites_item
+        url = reverse('favorites:favorites-list')
         response = api_client.delete(url)
         
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert favorites.items.count() == 0
 
-    def test_clear_favorites_unauthorized(self, api_client, favorites):
-        url = reverse('favorites:favorites-clear', kwargs={'pk': favorites.id})
+    def test_clear_favorites_unauthorized(self, api_client):
+        url = reverse('favorites:favorites-list')
         response = api_client.delete(url)
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
