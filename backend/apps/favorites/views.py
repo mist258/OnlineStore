@@ -1,17 +1,20 @@
+from typing import Optional
+
 from django.utils.decorators import method_decorator
-from rest_framework.views import APIView
+
+from rest_framework import permissions, status
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from rest_framework.views import APIView
 
 from apps.db_utils import get_object_or_error
 from apps.favorites.services.favorites_service import FavoritesService
 from apps.products.models import Accessory, Product
 from apps.supplies.models import Supply
-from .serializers import FavoritesSerializer, FavoriteItemSerializer
 
-from typing import Optional
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
+from .serializers import FavoriteItemSerializer, FavoritesSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

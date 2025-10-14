@@ -1,7 +1,8 @@
-from apps.favorites.models import Favorites, FavoriteItem
+from apps.favorites.models import FavoriteItem, Favorites
 from apps.favorites.services.favorites_service import FavoritesService
 
 import pytest
+
 
 @pytest.mark.django_db
 class TestFavoritesService:
