@@ -88,7 +88,6 @@ INSTALLED_APPS = [
     "apps.products",
     "apps.supplies",
     "apps.subscription",
-    "apps.reviews",
     "apps.orders",
     "apps.basket",
     "apps.discount_codes",
