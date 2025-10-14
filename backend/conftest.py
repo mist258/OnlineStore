@@ -111,6 +111,10 @@ def favorites(user):
     return FavoritesService.get_or_create_favorites(user)
 
 @pytest.fixture
+def favorites_item(favorites, product):
+    return FavoritesService.add_item_to_favorites(favorites, product)
+
+@pytest.fixture
 def accessory():
     return Accessory.objects.create(
             sku='4984984',

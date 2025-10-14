@@ -1,14 +1,7 @@
-from django.contrib.auth import get_user_model
-from django.test import TestCase
-
-from apps.favorites.models import FavoriteItem, Favorites
+from apps.favorites.models import Favorites, FavoriteItem
 from apps.favorites.services.favorites_service import FavoritesService
-from apps.products.models import Accessory, Product
-from apps.supplies.models import Supply
 
 import pytest
-
-User = get_user_model()
 
 @pytest.mark.django_db
 class TestFavoritesService:
