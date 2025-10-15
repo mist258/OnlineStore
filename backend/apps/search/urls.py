@@ -1,13 +1,8 @@
-from django.urls import include, path
-
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
 from .views import GlobalItemSearchView
 
-router = DefaultRouter()
-router.register(r'items', GlobalItemSearchView, basename='global_search')
-
 urlpatterns = [
-    path('/', include(router.urls)),
+    path('/items/', GlobalItemSearchView.as_view({'get': 'list'}), name='global_search_items'),
 
 ]
