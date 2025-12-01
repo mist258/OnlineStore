@@ -5,6 +5,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://coffelanecoffeshop.vercel.app",
+    "https://coffelane.vercel.app"
 ]
 
 FRONTEND_BASE_URL = (
