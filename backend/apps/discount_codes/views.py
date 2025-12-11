@@ -3,12 +3,13 @@ import uuid
 from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from apps.db_utils import get_object_or_error
 from apps.discount_codes.models import DiscountCode
-from apps.discount_codes.serializers import DiscountCodesSerializer
+from apps.discount_codes.serializers import DiscountCodesSerializer, AdminDiscountCodesSerializer
 from apps.orders.models import Order
 
 from drf_yasg.utils import swagger_auto_schema
@@ -50,29 +51,22 @@ class GetDiscountCodeView(generics.RetrieveAPIView):
 
 class CreateDiscountCodeView(viewsets.GenericViewSet):
     """
-    Apply a discount code to the active basket.
+    Create a discount code from the admin panel.
     """
     permission_classes = (IsAdminUser,)
-    
+    serializer_class = AdminDiscountCodesSerializer
+
     @swagger_auto_schema(
-        operation_id="create_new_order",
-        request_body=DiscountCodesSerializer,
-        responses={201: DiscountCodesSerializer()}
+        operation_id="create_discount_code",
+        request_body=AdminDiscountCodesSerializer,
+        responses={201: AdminDiscountCodesSerializer},
     )
-    def create(self, request, *args, **kwargs):
-        code = kwargs.get('code', None)
-        if not code:
-            return Response({"error": "Code parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            discount = DiscountCode.objects.get(code=code)
-            if not discount.is_valid():
-                return Response({"error": "Discount code is not valid"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            discount.save()
-            
-            serializer = DiscountCodesSerializer(discount)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except DiscountCode.DoesNotExist:
-            return Response({"error": "Invalid or expired discount code"}, status=status.HTTP_404_NOT_FOUND)
-        
+    @action(detail=False, methods=["post"], url_path="create")
+    def create_discount_code(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        discount = serializer.save()
+        return Response(
+            AdminDiscountCodesSerializer(discount).data,
+            status=status.HTTP_201_CREATED
+        )

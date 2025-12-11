@@ -1,7 +1,5 @@
 from django.urls import reverse
-
 from rest_framework import status
-from rest_framework.test import APIClient
 
 import pytest
 
@@ -48,7 +46,7 @@ class TestDiscountCodeView:
         
         response = api_client.post(url, data, format='json')
         
-        assert response.status_code == status.HTTP_403_FORBIDDEN    
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
         
     def test_create_discount_code_authenticated(self, api_client, admin_user):
         api_client.force_authenticate(user=admin_user)
@@ -57,7 +55,7 @@ class TestDiscountCodeView:
         data = {
             'code': 'NEWCODE',
             'description': 'New Discount Code',
-            'discount_percent': 15,
+            'discount_percent': '15.00',
             'valid_from': '2024-01-01T00:00:00Z',
             'valid_to': '2024-12-31T23:59:59Z',
             'active': True

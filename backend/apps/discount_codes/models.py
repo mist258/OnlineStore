@@ -16,7 +16,7 @@ class DiscountCode(models.Model):
     valid_to = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return self.code
+        return str(self.code)
 
     def is_valid(self):
         now = timezone.now()

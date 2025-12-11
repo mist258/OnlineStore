@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.http import Http404
 
 from rest_framework import status, viewsets
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -20,7 +20,7 @@ class CreateOrderView(viewsets.GenericViewSet):
     Create a new order (authenticated users only).
     """
     serializer_class = OrderWriteSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     queryset = Order.objects.all()
 
     @swagger_auto_schema(

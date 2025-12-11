@@ -29,7 +29,7 @@ class TestCreateOrderView:
                 'first_name': 'John',
                 'last_name': 'Doe',
                 'country': 'US',
-                'phone_number': '+1234567890'
+                'phone_number': '+380985755044'
             }
         }
         
@@ -39,6 +39,8 @@ class TestCreateOrderView:
         assert response.data['customer'] == user.id
         assert len(response.data['positions']) == 1
 
+    def test_create_order_unauthenticated(self, api_client):
+        url = reverse('orders:create_order')
 
 @pytest.mark.django_db
 class TestOrderDetailsView:

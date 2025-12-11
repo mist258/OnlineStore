@@ -49,35 +49,19 @@ class AddBasketItemView(generics.CreateAPIView):
     serializer_class = BasketItemSerializer
     permission_classes = (AllowAny,)  # Allow both auth and guest users
 
-    def perform_create(self, serializer):
-        # Check if user is properly authenticated
-        if self.request.user.is_authenticated:
-            # Authenticated user path
-            basket = get_or_create_basket(request=self.request)
-            serializer.save(basket=basket, user=self.request.user)
-        else:
-            # Guest user path
-            response = Response()  # Create response to handle cookies
-            basket = get_or_create_basket(request=self.request, response=response)
-            serializer.save(basket=basket)
-            
-            # If new guest token was created, we need to set the cookie
-            # This requires overriding the create method instead
-
     def create(self, request, *args, **kwargs):
         """Override to handle guest cookie setting"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         response = Response()
         
         if request.user.is_authenticated:
-            # Standard authenticated flow
-            basket = get_or_create_basket(request=request)
+            serializer.save()
         else:
             # Guest flow with cookie handling
-            basket = get_or_create_basket(request=request, response=response)
-        
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(basket=basket)
+            # basket = get_or_create_basket(request=request, response=response)
+            response.status_code = 401
+            return response
         
         response.data = serializer.data
         response.status_code = status.HTTP_201_CREATED

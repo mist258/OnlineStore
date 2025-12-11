@@ -4,3 +4,4 @@ postgresql_db
 backend/apps/*/migrations/
 __pycache__/
 whoosh_index/*
+frontend/*

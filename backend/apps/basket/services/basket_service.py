@@ -9,8 +9,16 @@ from django.utils import timezone
 from apps.basket.models import Basket, BasketItem
 from apps.db_utils import get_object_or_error
 from apps.products.models import Product
+from apps.supplies.models import Supply
+from apps.accessories.models import Accessory
 
 logger = logging.getLogger(__name__)
+
+
+class BasketItemCreationError(Exception):
+    """Custom domain-level error for basket item creation."""
+    pass
+
 
 def migrate_guest_basket_to_user(guest_token, user):
     """
@@ -109,30 +117,27 @@ def migrate_guest_basket_to_user(guest_token, user):
     except Exception as e:
         logger.error(f"Error migrating guest basket {guest_token} to user {user.id}: {str(e)}")
         return {"success": False, "reason": f"Migration failed: {str(e)}"}
-    
-    
+
+
 @transaction.atomic
-def add_product_to_basket(basket_id: int, product_id: int, quantity: int = 1) -> BasketItem:
-    if basket_id is None or product_id is None:
-        raise ValidationError("Both 'basket_id' and 'product_id' are required.")
-
-    basket = get_object_or_error(Basket, object_id=basket_id)
-    product = get_object_or_error(Product, object_id=product_id)
-
-    try:
-        item, created = BasketItem.objects.get_or_create(
+def add_item_to_basket(basket: Basket, accessory: Accessory, product: Product, supply: Supply, quantity: int = 1) -> BasketItem:
+    try:    
+        basket_item = BasketItem.objects.create(
             basket=basket,
+            accessory=accessory,
             product=product,
-            defaults={"quantity": quantity}
+            supply=supply,
+            quantity=quantity
         )
-        if not created:
-            item.quantity += quantity
-            item.save()
-    except IntegrityError as e:
-        raise ValidationError(f"Database error during basket item creation: {str(e)}")
+    
+        return basket_item
+    except IntegrityError:
+        # Database-level integrity failure
+        raise BasketItemCreationError("Failed to create BasketItem due to database constraints.")
 
-    return item
-
+    except Exception as e:
+        # Catch only truly unexpected errors
+        raise BasketItemCreationError(f"Unexpected error during BasketItem creation: {str(e)}")
 
 @transaction.atomic
 def remove_product_from_basket(item_id: int) -> None:
@@ -169,38 +174,39 @@ def get_or_create_basket(request, response=None):
         )
         
         # Optional: Handle guest-to-user migration
-        guest_token = request.COOKIES.get("guest_token")
-        if guest_token:
-            migrate_guest_basket_to_user(guest_token, request.user)
+        # guest_token = request.COOKIES.get("guest_token")
+        # if guest_token:
+        #     migrate_guest_basket_to_user(guest_token, request.user)
         
         return basket
-    
-    # Guest logic
-    guest_token = request.COOKIES.get("guest_token")
-    
-    if guest_token:
-        try:
-            uuid.UUID(guest_token)  # Validate format
-            basket, _ = Basket.objects.get_or_create(
-                guest_token=guest_token, 
-                is_active=True
-            )
-        except (ValueError, ValidationError):
-            # Invalid token, create new
-            guest_token = str(uuid.uuid4())
-            basket = Basket.objects.create(guest_token=guest_token)
-            if response:
-                response.set_cookie("guest_token", guest_token, 
-                                  httponly=True, max_age=60*60*24*30)
     else:
-        # No token, create new guest basket
-        guest_token = str(uuid.uuid4())
-        basket = Basket.objects.create(guest_token=guest_token)
-        if response:
-            response.set_cookie("guest_token", guest_token,
-                              httponly=True, max_age=60*60*24*30)
+        pass
+    # Guest logic
+    # guest_token = request.COOKIES.get("guest_token")
     
-    return basket
+    # if guest_token:
+    #     try:
+    #         uuid.UUID(guest_token)  # Validate format
+    #         basket, _ = Basket.objects.get_or_create(
+    #             guest_token=guest_token, 
+    #             is_active=True
+    #         )
+    #     except (ValueError, ValidationError):
+    #         # Invalid token, create new
+    #         guest_token = str(uuid.uuid4())
+    #         basket = Basket.objects.create(guest_token=guest_token)
+    #         if response:
+    #             response.set_cookie("guest_token", guest_token, 
+    #                               httponly=True, max_age=60*60*24*30)
+    # else:
+    #     # No token, create new guest basket
+    #     guest_token = str(uuid.uuid4())
+    #     basket = Basket.objects.create(guest_token=guest_token)
+    #     if response:
+    #         response.set_cookie("guest_token", guest_token,
+    #                           httponly=True, max_age=60*60*24*30)
+    
+    # return basket
 
 
 @transaction.atomic

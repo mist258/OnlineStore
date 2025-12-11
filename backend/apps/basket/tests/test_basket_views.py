@@ -35,20 +35,25 @@ class TestActiveBasketView:
 
 @pytest.mark.django_db
 class TestAddBasketItemView:
-    def test_add_item_authenticated(self, api_client, user, product):
+    def test_add_item_authenticated(self, api_client, user, accessory, product, supply, basket):
         api_client.force_authenticate(user=user)
         url = reverse('basket:basket_add')
         
         data = {
-            'product': product.id,
+            #'accessory_id': accessory.id,
+            'product_id': product.id,
+            'supply_id': supply.id,
+            'basket_id': basket.id,
             'quantity': 2
         }
         
-        response = api_client.post(url, data)
-        
+        response = api_client.post(url, data, format='json')
+        print(f"============= {response.data}")
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data['quantity'] == 2
-        assert response.data['product'] == product.id
+        assert response.data['product_id'] == product.id
+        assert response.data['supply_id'] == supply.id
+        assert response.data['basket_id'] == basket.id
 
     def test_add_item_guest(self, api_client, product):
         url = reverse('basket:basket_add')

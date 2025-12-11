@@ -70,7 +70,7 @@ def create_order(data: dict) -> Order:
         raise ValidationError("Basket is required to create order.")
     
     if not basket_items.exists():
-        raise ValidationError("Basket must contain at least one item to create an order.")
+        raise ValidationError(f"Basket must contain at least one item to create an order. Basket:: {basket}")
     
     if not customer_email:
         raise ValidationError("Anonymous orders must include customer_email.")
@@ -79,11 +79,6 @@ def create_order(data: dict) -> Order:
     if not customer:
         customer = UserModel.objects.check_and_create_anonymous_user(email=customer_email)
         
-    # Validate positions data
-    if not basket_items.exists():
-        raise ValidationError("Basket must contain at least one item to create an order.")
-    
-
     try:
         # Handle provided billing details
         if billing_details:
@@ -117,7 +112,7 @@ def create_order(data: dict) -> Order:
             position_total = 0
 
             if not supply and not accessory:
-                raise ValidationError("Each position must have either 'supply' or 'accessory'.")
+                raise ValidationError(f"Each position must have either 'supply' or 'accessory'. Basket: {basket_items}")
 
             # Check stock and calculate position total for PRODUCT
             if supply and supply.quantity < quantity and product:

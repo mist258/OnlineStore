@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 
 from apps.basket.models import Basket, BasketItem, DiscountCode
 from apps.basket.services.basket_service import (
-    add_product_to_basket,
+    add_item_to_basket,
     clear_basket,
     get_basket_total,
     get_or_create_basket,
@@ -25,7 +25,7 @@ def test_add_product_to_basket():
     supply = Supply.objects.create(product=product, price=100.0, quantity=10)
 
     # Test adding product
-    basket_item = add_product_to_basket(basket.id, product.id, quantity=2)
+    basket_item = add_item_to_basket(basket.id, product.id, quantity=2)
 
     # Assertions
     assert basket_item.basket == basket
@@ -180,7 +180,7 @@ def test_add_invalid_product():
 
     # Act + Assert: try to add a product that does not exist
     with pytest.raises(ValidationError) as excinfo:
-        add_product_to_basket(basket.id, 99999)  # invalid product ID
+        add_item_to_basket(basket.id, 99999)  # invalid product ID
 
     # Extra check: confirm the error message if your service raises one
     assert "Product with id 99999 not found." in str(excinfo.value)
