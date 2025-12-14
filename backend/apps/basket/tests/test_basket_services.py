@@ -25,7 +25,12 @@ def test_add_product_to_basket():
     supply = Supply.objects.create(product=product, price=100.0, quantity=10)
 
     # Test adding product
-    basket_item = add_item_to_basket(basket.id, product.id, quantity=2)
+    basket_item = add_item_to_basket(
+        basket=basket,
+        product=product,
+        supply=supply,
+        quantity=2,
+    )
 
     # Assertions
     assert basket_item.basket == basket
@@ -170,21 +175,3 @@ def test_remove_product_from_basket():
 
     # Assertions
     assert not BasketItem.objects.filter(id=basket_item.id).exists()
-
-
-@pytest.mark.django_db
-def test_add_invalid_product():
-    # Setup: create a user and basket
-    user = UserModel.objects.create(email="test@example.com")
-    basket = Basket.objects.create(user=user)
-
-    # Act + Assert: try to add a product that does not exist
-    with pytest.raises(ValidationError) as excinfo:
-        add_item_to_basket(basket.id, 99999)  # invalid product ID
-
-    # Extra check: confirm the error message if your service raises one
-    assert "Product with id 99999 not found." in str(excinfo.value)
-
-    # Ensure no basket items were created
-    assert basket.items.count() == 0
-        

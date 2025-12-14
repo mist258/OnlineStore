@@ -11,6 +11,7 @@ from apps.db_utils import get_object_or_error
 from apps.products.models import Product
 from apps.supplies.models import Supply
 from apps.accessories.models import Accessory
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +121,13 @@ def migrate_guest_basket_to_user(guest_token, user):
 
 
 @transaction.atomic
-def add_item_to_basket(basket: Basket, accessory: Accessory, product: Product, supply: Supply, quantity: int = 1) -> BasketItem:
+def add_item_to_basket(
+        basket: Optional[Basket] = None,
+        accessory: Optional[Accessory] = None,
+        product: Optional[Product] = None,
+        supply: Optional[Supply] = None,
+        quantity: int = 1
+        ) -> BasketItem:
     try:    
         basket_item = BasketItem.objects.create(
             basket=basket,

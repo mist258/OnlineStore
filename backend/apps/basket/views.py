@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from apps.basket.models import Basket, BasketItem, DiscountCode
-from apps.basket.serializers import BasketItemSerializer, BasketSerializer
+from apps.basket.serializers import BasketItemSerializer, BasketSerializer, BasketItemUpdateSerializer
 from apps.basket.services.basket_service import get_or_create_basket
 from apps.db_utils import get_object_or_error
 from apps.orders.models import Order
@@ -81,13 +81,15 @@ class UpdateBasketItemView(generics.UpdateAPIView):
     Update the quantity or product of an item inside the basket.
     Works for both authenticated users and guests.
     """
-    serializer_class = BasketItemSerializer
-    permission_classes = (AllowAny,)  # guests allowed too
+    serializer_class = BasketItemUpdateSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_url_kwarg = "basket_item_id"
 
     def get_queryset(self):
-        basket = get_or_create_basket(self.request)
-        return BasketItem.objects.filter(basket=basket)
-
+        return BasketItem.objects.filter(
+            id=self.kwargs["basket_item_id"],
+            basket_id=self.kwargs["basket_id"]
+        )
 
 @method_decorator(name='delete', decorator=swagger_auto_schema(
     operation_id='delete_basket_item',
@@ -96,13 +98,16 @@ class DeleteBasketItemView(generics.DestroyAPIView):
     """
     Remove a specific item from the basket.
     """
-    serializer_class = BasketItemSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
+    lookup_url_kwarg = "basket_item_id"
     
     def get_queryset(self):
         """Filter items to only those in the user's basket"""
-        basket = get_or_create_basket(self.request)
-        return BasketItem.objects.filter(basket=basket)
+        
+        return BasketItem.objects.filter(
+            id=self.kwargs['basket_item_id'],
+            basket_id=self.kwargs['basket_id']
+        )
 
 
 @method_decorator(name='delete', decorator=swagger_auto_schema(
@@ -112,12 +117,11 @@ class ClearBasketView(generics.DestroyAPIView):
     """
     Clear all items from the active basket.
     """
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
+    
+    def get_queryset(self):
+        return Basket.objects.filter(
+            id=self.kwargs['pk']
+        )
 
-    def delete(self, request, *args, **kwargs):
-        basket = get_or_create_basket(request)
-        basket.items.all().delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-        
+    

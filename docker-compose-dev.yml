@@ -27,6 +27,7 @@ services:
 
  db:
    image: postgres:14-alpine
+   command: postgres -c unix_socket_directories=''
    env_file:
      - .env
    volumes:

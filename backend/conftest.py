@@ -6,7 +6,7 @@ from django.core.management import call_command
 from rest_framework.test import APIClient
 
 from apps.accessories.models import Accessory
-from apps.basket.models import Basket, DiscountCode
+from apps.basket.models import Basket, DiscountCode, BasketItem
 from apps.favorites.services.favorites_service import FavoritesService
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
@@ -26,9 +26,11 @@ import pytz
 def uuid_token():
     return str(uuid.uuid4())
 
+
 @pytest.fixture
 def api_client():
     return APIClient()
+
 
 @pytest.fixture
 def admin_user(db):
@@ -39,12 +41,14 @@ def admin_user(db):
         is_superuser=True
     )
 
+
 @pytest.fixture
 def user():
     return UserModel.objects.create_user(
         email='test@example.com',
         password='testpass123'
     )
+
 
 @pytest.fixture
 def user_profile(user):
@@ -55,6 +59,7 @@ def user_profile(user):
         country='US',
         phone_number='+1234567890'
     )
+
 
 @pytest.fixture
 def other_user():
@@ -68,13 +73,26 @@ def product():
     product = Product.objects.create(name='Test Product')
     return product
 
+
 @pytest.fixture
 def basket(user):
     return Basket.objects.create(user=user)
 
+
+@pytest.fixture
+def basket_item(basket, product, supply):
+    return BasketItem.objects.create(
+        basket=basket,
+        product=product,
+        supply=supply,
+        quantity=2,
+    )
+
+    
 @pytest.fixture
 def guest_basket():
     return Basket.objects.create(guest_token=str(uuid.uuid4()))
+
 
 @pytest.fixture
 def order(user, user_profile):
@@ -82,6 +100,7 @@ def order(user, user_profile):
         customer=user,
         billing_details=user_profile
     )
+    
 
 @pytest.fixture
 def order_position(product, order):
@@ -90,10 +109,12 @@ def order_position(product, order):
         product=product,
         quantity=2
     )
-    
+
+
 @pytest.fixture
 def supply(product):
     return Supply.objects.create(product=product, price=100.0, quantity=10)
+
 
 @pytest.fixture
 def discount_code():
@@ -105,14 +126,17 @@ def discount_code():
         valid_from=datetime.datetime(2023, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
         valid_to=datetime.datetime(2028, 1, 1, 0, 0, 0, tzinfo=pytz.UTC)
     )
-    
+
+
 @pytest.fixture
 def favorites(user):
     return FavoritesService.get_or_create_favorites(user)
 
+
 @pytest.fixture
 def favorites_item(favorites, product):
     return FavoritesService.add_item_to_favorites(favorites, product)
+
 
 @pytest.fixture
 def accessory():

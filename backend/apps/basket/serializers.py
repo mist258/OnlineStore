@@ -134,7 +134,29 @@ class BasketItemSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"error": str(e)})
 
 
+class BasketItemUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BasketItem
+        fields = [
+            "quantity",
+        ]
+        
+    def validate_quantity(self, value):
+        item = self.instance
 
+        if item.supply and value > item.supply.quantity:
+            raise serializers.ValidationError(
+                f"Only {item.supply.quantity} items available."
+            )
+
+        if item.accessory and value > item.accessory.quantity:
+            raise serializers.ValidationError(
+                f"Only {item.accessory.quantity} accessories available."
+            )
+
+        return value
+    
+    
 class BasketSerializer(serializers.ModelSerializer):
     items = BasketItemSerializer(many=True, read_only=True)
     total_price = serializers.DecimalField(

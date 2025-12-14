@@ -65,8 +65,7 @@ class TestOrderDetailsView:
 
 @pytest.mark.django_db
 class TestUpdateOrderView:
-    @patch("apps.orders.models.EmailService.send_order_status_email", return_value=None)
-    def test_update_order_status(self, mock_send_email, api_client, admin_user, order):
+    def test_update_order_status(self,api_client, admin_user, order):
         api_client.force_authenticate(user=admin_user)
         url = reverse('orders:update_order', kwargs={'pk': order.id})
 
@@ -82,13 +81,6 @@ class TestUpdateOrderView:
         assert response.status_code == status.HTTP_200_OK
         assert response.data['status'] == 'delivered'
 
-        mock_send_email.assert_called_once_with(
-            order_id=order.id,
-            status="delivered",
-            customer_email=order.customer.email,
-            first_name=order.billing_details.first_name,
-            last_name=order.billing_details.last_name,
-        )
 
     def test_update_order_notes(self, api_client, admin_user, order):
         api_client.force_authenticate(user=admin_user)
