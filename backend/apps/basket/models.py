@@ -10,10 +10,10 @@ class Basket(models.Model):
     """
     Represents a user's shopping basket (cart).
     """
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="baskets",
+        related_name="basket",
         null=True, blank=True
     )
     discount_code = models.ForeignKey(
@@ -21,7 +21,7 @@ class Basket(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="baskets"
+        related_name="basket"
     )
     guest_token = models.UUIDField(null=True, blank=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)

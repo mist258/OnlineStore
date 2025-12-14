@@ -35,8 +35,6 @@ class BasketItemSerializer(serializers.ModelSerializer):
         allow_null=True
     )
 
-    basket_id = serializers.IntegerField()
-
     class Meta:
         model = BasketItem
         fields = [
@@ -48,7 +46,6 @@ class BasketItemSerializer(serializers.ModelSerializer):
             "accessory_name",
             "quantity",
             "total_price",
-            "basket_id",
         ]
 
     def validate(self, attrs):
@@ -65,7 +62,7 @@ class BasketItemSerializer(serializers.ModelSerializer):
         supply = attrs.get("supply")
         accessory = attrs.get("accessory")
         quantity = attrs.get("quantity") or 1
-        basket_id = attrs.get("basket_id")
+        basket, _ = Basket.objects.get_or_create(user=user)
 
         # 1️⃣ Validate combination rules
         if not accessory and not supply:
@@ -81,14 +78,6 @@ class BasketItemSerializer(serializers.ModelSerializer):
         if not accessory and not (product and supply):
             raise serializers.ValidationError({
                 "error": "Provide either accessory_id OR product_id + supply_id."
-            })
-
-        # 2️⃣ Validate basket ownership
-        try:
-            basket = Basket.objects.get(id=basket_id, user=user)
-        except Basket.DoesNotExist:
-            raise serializers.ValidationError({
-                "basket_id": "Basket not found or does not belong to user."
             })
 
         # 3️⃣ Validate supply belongs to product
@@ -169,7 +158,6 @@ class BasketSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
-            "guest_token",
             "is_active",
             "created_at",
             "updated_at",

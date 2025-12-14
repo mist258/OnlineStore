@@ -5,7 +5,6 @@ from apps.basket.services.basket_service import (
     add_item_to_basket,
     clear_basket,
     get_basket_total,
-    get_or_create_basket,
     migrate_guest_basket_to_user,
     remove_product_from_basket,
 )
@@ -132,27 +131,6 @@ def test_clear_basket():
     basket.refresh_from_db()
     assert basket.items.count() == 0
     assert basket.is_active is False
-
-
-@pytest.mark.django_db
-def test_get_or_create_basket():
-    # Setup
-    user = UserModel.objects.create(email="test@example.com")
-
-    # Test with authenticated user
-    class MockRequest:
-        def __init__(self, user):
-            self.user = user
-            self.COOKIES = {}
-
-    request = MockRequest(user)
-    
-    # Test basket creation
-    basket = get_or_create_basket(request)
-
-    # Assertions
-    assert basket.user == user
-    assert basket.is_active is True
 
 
 @pytest.mark.django_db

@@ -8,7 +8,6 @@ from rest_framework.response import Response
 
 from apps.basket.models import Basket, BasketItem, DiscountCode
 from apps.basket.serializers import BasketItemSerializer, BasketSerializer, BasketItemUpdateSerializer
-from apps.basket.services.basket_service import get_or_create_basket
 from apps.db_utils import get_object_or_error
 from apps.orders.models import Order
 
@@ -22,19 +21,14 @@ from drf_yasg.utils import swagger_auto_schema
 class ActiveBasketView(generics.GenericAPIView):
     serializer_class = BasketSerializer
     permission_classes = (AllowAny,)
-
+    
     def get(self, request, *args, **kwargs):
-        # Create response object
-        response = Response()
-        
-        # Service handles all auth/guest logic and cookie setting
-        basket = get_or_create_basket(request, response)
-        
-        # Serialize and return
-        serializer = BasketSerializer(basket)
-        response.data = serializer.data
-        response.status_code = status.HTTP_200_OK
-        return response
+        basket, created = Basket.objects.get_or_create(
+            user=request.user
+        )
+
+        serializer = self.get_serializer(basket)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @method_decorator(name='post', decorator=swagger_auto_schema(
@@ -86,9 +80,10 @@ class UpdateBasketItemView(generics.UpdateAPIView):
     lookup_url_kwarg = "basket_item_id"
 
     def get_queryset(self):
+        basket = Basket.objects.get(user=self.request.user)
         return BasketItem.objects.filter(
             id=self.kwargs["basket_item_id"],
-            basket_id=self.kwargs["basket_id"]
+            basket=basket
         )
 
 @method_decorator(name='delete', decorator=swagger_auto_schema(
@@ -103,10 +98,11 @@ class DeleteBasketItemView(generics.DestroyAPIView):
     
     def get_queryset(self):
         """Filter items to only those in the user's basket"""
-        
+        basket = Basket.objects.get(user=self.request.user)
+
         return BasketItem.objects.filter(
             id=self.kwargs['basket_item_id'],
-            basket_id=self.kwargs['basket_id']
+            basket=basket
         )
 
 

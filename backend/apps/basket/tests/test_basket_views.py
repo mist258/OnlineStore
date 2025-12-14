@@ -34,7 +34,6 @@ class TestAddBasketItemView:
             # 'accessory_id': accessory.id,
             'product_id': product.id,
             'supply_id': supply.id,
-            'basket_id': basket.id,
             'quantity': 2
         }
         
@@ -44,7 +43,6 @@ class TestAddBasketItemView:
         assert response.data['quantity'] == 2
         assert response.data['product_id'] == product.id
         assert response.data['supply_id'] == supply.id
-        assert response.data['basket_id'] == basket.id
 
 
 @pytest.mark.django_db
@@ -53,11 +51,9 @@ class TestUpdateBasketItemView:
         api_client.force_authenticate(user=user)
         
         data = {
-            'basket_id': basket.id,
             'quantity': 3
         }
         url = reverse('basket:basket_update', kwargs={
-            'basket_id': basket.id,
             'basket_item_id': basket_item.id
         })
         
@@ -68,7 +64,6 @@ class TestUpdateBasketItemView:
         
         # check out of stock
         data = {
-            'basket_id': basket.id,
             'quantity': 12
         }
         
@@ -81,17 +76,10 @@ class TestUpdateBasketItemView:
 class TestDeleteBasketItemView:
     def test_delete_item_authenticated(self, api_client, user, basket, basket_item):
         api_client.force_authenticate(user=user)
-        
-        data = {
-            'basket_id': basket.id,
-            'basket_item_id': basket_item.id
-        }
-
         url = reverse('basket:basket_delete', kwargs={
-            'basket_id': basket.id,
             'basket_item_id': basket_item.id,
         })
-        response = api_client.delete(url, data)
+        response = api_client.delete(url)
         
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not BasketItem.objects.filter(id=basket_item.id).exists()

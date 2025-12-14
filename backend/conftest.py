@@ -67,7 +67,8 @@ def other_user():
         email='other@example.com',
         password='othertestpass123'
     )
-        
+
+
 @pytest.fixture
 def product():
     product = Product.objects.create(name='Test Product')

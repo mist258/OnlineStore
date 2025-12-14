@@ -65,7 +65,7 @@ class TestOrderDetailsView:
 
 @pytest.mark.django_db
 class TestUpdateOrderView:
-    def test_update_order_status(self,api_client, admin_user, order):
+    def test_update_order_status(self, api_client, admin_user, order):
         api_client.force_authenticate(user=admin_user)
         url = reverse('orders:update_order', kwargs={'pk': order.id})
 

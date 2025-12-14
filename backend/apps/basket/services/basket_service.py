@@ -171,52 +171,6 @@ def get_basket_total(basket_id: int) -> float:
 
 
 @transaction.atomic
-def get_or_create_basket(request, response=None):
-    """Handle both authenticated and guest users consistently"""
-    
-    if request.user.is_authenticated:
-        basket, _ = Basket.objects.get_or_create(
-            user=request.user, 
-            is_active=True
-        )
-        
-        # Optional: Handle guest-to-user migration
-        # guest_token = request.COOKIES.get("guest_token")
-        # if guest_token:
-        #     migrate_guest_basket_to_user(guest_token, request.user)
-        
-        return basket
-    else:
-        pass
-    # Guest logic
-    # guest_token = request.COOKIES.get("guest_token")
-    
-    # if guest_token:
-    #     try:
-    #         uuid.UUID(guest_token)  # Validate format
-    #         basket, _ = Basket.objects.get_or_create(
-    #             guest_token=guest_token, 
-    #             is_active=True
-    #         )
-    #     except (ValueError, ValidationError):
-    #         # Invalid token, create new
-    #         guest_token = str(uuid.uuid4())
-    #         basket = Basket.objects.create(guest_token=guest_token)
-    #         if response:
-    #             response.set_cookie("guest_token", guest_token, 
-    #                               httponly=True, max_age=60*60*24*30)
-    # else:
-    #     # No token, create new guest basket
-    #     guest_token = str(uuid.uuid4())
-    #     basket = Basket.objects.create(guest_token=guest_token)
-    #     if response:
-    #         response.set_cookie("guest_token", guest_token,
-    #                           httponly=True, max_age=60*60*24*30)
-    
-    # return basket
-
-
-@transaction.atomic
 def attach_guest_basket_to_user(user, guest_token):
     try:
         guest_basket = Basket.objects.get(guest_token=guest_token, is_active=True)
