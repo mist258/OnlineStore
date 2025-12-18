@@ -27,6 +27,8 @@ class AccessorySerializer(serializers.ModelSerializer):
                   "price",
                   "category",
                   "quantity",
-                  "accessory_photos",)
+                  "accessory_photos",
+                  "is_special"
+                  )
 
         read_only_fields = ("id",)

@@ -58,7 +58,9 @@ class ProductSerializer(serializers.ModelSerializer):
                   "supplies",
                   "product_photos",
                   "photos_url",
-                  "flavor_profiles",)
+                  "flavor_profiles",
+                  "is_special"
+                  )
 
         read_only_fields = ("id",)
 
