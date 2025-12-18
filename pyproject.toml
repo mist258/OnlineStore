@@ -33,6 +33,7 @@ django-phonenumber-field = {extras = ["phonenumbers"], version = "^8.1.0"}
 django-password-validators = "^1.7.3"
 whoosh = "^2.7.4"
 drf-haystack = "^1.9.1"
+djangorestframework-stubs = "^3.16.6"
 
 
 

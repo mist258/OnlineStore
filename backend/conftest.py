@@ -6,7 +6,7 @@ from django.core.management import call_command
 from rest_framework.test import APIClient
 
 from apps.accessories.models import Accessory
-from apps.basket.models import Basket, DiscountCode, BasketItem
+from apps.basket.models import Basket, BasketItem, DiscountCode
 from apps.favorites.services.favorites_service import FavoritesService
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
@@ -15,7 +15,6 @@ from apps.users.models import UserModel, UserProfileModel
 
 import pytest
 import pytz
-
 
 # @pytest.fixture(scope="session", autouse=True)
 # def apply_migrations(django_db_setup, django_db_blocker):

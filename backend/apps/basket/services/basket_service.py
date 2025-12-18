@@ -1,17 +1,17 @@
 import logging
 import uuid
+from typing import Optional
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
+from apps.accessories.models import Accessory
 from apps.basket.models import Basket, BasketItem
 from apps.db_utils import get_object_or_error
 from apps.products.models import Product
 from apps.supplies.models import Supply
-from apps.accessories.models import Accessory
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 

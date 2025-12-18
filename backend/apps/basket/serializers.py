@@ -1,9 +1,11 @@
 from rest_framework import serializers
-from apps.basket.models import Basket, BasketItem, DiscountCode
-from apps.products.models import Product
+
 from apps.accessories.models import Accessory
+from apps.basket.models import Basket, BasketItem, DiscountCode
+from apps.basket.services.basket_service import BasketItemCreationError, add_item_to_basket
+from apps.products.models import Product
 from apps.supplies.models import Supply
-from apps.basket.services.basket_service import add_item_to_basket, BasketItemCreationError
+
 
 class BasketItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)

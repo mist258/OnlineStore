@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from apps.db_utils import get_object_or_error
 from apps.discount_codes.models import DiscountCode
-from apps.discount_codes.serializers import DiscountCodesSerializer, AdminDiscountCodesSerializer
+from apps.discount_codes.serializers import AdminDiscountCodesSerializer, DiscountCodesSerializer
 from apps.orders.models import Order
 
 from drf_yasg.utils import swagger_auto_schema
