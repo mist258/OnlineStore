@@ -5,14 +5,7 @@ from .views import CreateDiscountCodeView, GetDiscountCodeView
 app_name = 'discount_codes'
 
 urlpatterns = [
-    path("/<str:code>/", GetDiscountCodeView.as_view(), name="get_discount_code"),
-    path("/<str:code>/<int:order_id>/", GetDiscountCodeView.as_view(), name="get_discount_code_with_order"),
-    path("create/", CreateDiscountCodeView.as_view({'post': 'create_discount_code'}), name="create_discount_code"),
+    path('/<str:code>/', GetDiscountCodeView.as_view(), name="get_discount_code"),
+    path('/<str:code>/<int:order_id>/', GetDiscountCodeView.as_view(), name="get_discount_code_with_order"),
+    path('/create/', CreateDiscountCodeView.as_view({'post': 'create'}), name="create_discount_code"),
  ]
-
- 
-
-
-
-
-

@@ -56,13 +56,7 @@ class CreateDiscountCodeView(viewsets.GenericViewSet):
     permission_classes = (IsAdminUser,)
     serializer_class = AdminDiscountCodesSerializer
 
-    @swagger_auto_schema(
-        operation_id="create_discount_code",
-        request_body=AdminDiscountCodesSerializer,
-        responses={201: AdminDiscountCodesSerializer},
-    )
-    @action(detail=False, methods=["post"], url_path="create")
-    def create_discount_code(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         discount = serializer.save()

@@ -128,7 +128,7 @@ def add_item_to_basket(
         supply: Optional[Supply] = None,
         quantity: int = 1
         ) -> BasketItem:
-    try:    
+    try:
         basket_item = BasketItem.objects.create(
             basket=basket,
             accessory=accessory,

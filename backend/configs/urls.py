@@ -51,7 +51,7 @@ urlpatterns = [
     path("api/search", include("apps.search.urls")),
     path("api/doc", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger",
     ),
-    path("admin/", admin.site.urls),
+    path("admin/", admin.site.urls),    
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
