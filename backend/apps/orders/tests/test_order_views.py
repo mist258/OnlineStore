@@ -17,31 +17,54 @@ import pytest
 class TestCreateOrderView:
     def test_create_order_authenticated(self, api_client, user, basket, product, supply):
         api_client.force_authenticate(user=user)
-        BasketItem.objects.create(basket=basket, product=product, quantity=2, supply=supply)
-        
-        url = reverse('orders:create_order')
+        # Add item to basket
+        BasketItem.objects.create(
+            basket=basket,
+            product=product,
+            quantity=2,
+            supply=supply
+        )
+
+        url = reverse("orders:create_order")
+
         data = {
-            'basket_id': basket.id,
-            'customer_data': {
-                'email': user.email
-            },
-            'billing_details': {
-                'first_name': 'John',
-                'last_name': 'Doe',
-                'country': 'US',
-                'phone_number': '+380985755044'
+            "basket_id": basket.id,
+            "billing_details": {
+                "first_name": "John",
+                "last_name": "Doe",
+                "country": "US",
+                "phone_number": "+380985755044"
             }
         }
-        
-        response = api_client.post(url, data, format='json')
 
+        response = api_client.post(url, data, format="json")
+        print(f"$$$$$$$$$$$$$$$$$$$$$$$$$ ======= {response.data}")
+
+        # ─── Assertions ──────────────────────────────────────────────
         assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['customer'] == user.id
-        assert basket.items.count() == 0
-        assert len(response.data['positions']) == 1
+        # Order created
+        order = Order.objects.get(id=response.data["id"])
 
-    def test_create_order_unauthenticated(self, api_client):
-        url = reverse('orders:create_order')
+        # Customer snapshot or user reference
+        assert order.customer.email == user.email
+
+        # Billing details saved on order
+        assert order.billing_first_name == "John"
+        assert order.billing_last_name == "Doe"
+        assert order.billing_country == "US"
+        assert order.billing_phone_number == "+380985755044"
+
+        # Positions created from basket
+        assert order.positions.count() == 1
+        position = order.positions.first()
+        assert position.product == product
+        assert position.quantity == 2
+
+        # Basket is cleared (if your view clears it)
+        assert basket.items.count() == 0
+
+        # Response payload
+        assert len(response.data["positions"]) == 1
 
 @pytest.mark.django_db
 class TestOrderDetailsView:

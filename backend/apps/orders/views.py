@@ -13,6 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 from .models import Order
 from .serializers import OrderReadSerializer, OrderWriteSerializer
 from .services.order_service import create_order
+from apps.basket.services.basket_service import clear_basket
 
 
 class CreateOrderView(viewsets.GenericViewSet):
@@ -20,7 +21,7 @@ class CreateOrderView(viewsets.GenericViewSet):
     Create a new order (authenticated users only).
     """
     serializer_class = OrderWriteSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     queryset = Order.objects.all()
 
     @swagger_auto_schema(
@@ -31,18 +32,10 @@ class CreateOrderView(viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        try:
-            order = create_order(
-                data=serializer.validated_data
-            )
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
-            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        read_serializer = OrderReadSerializer(order)
-        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+        serializer.save()
+        
+        clear_basket(basket_id=serializer.validated_data['basket_id'])
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ListOrdersView(viewsets.ReadOnlyModelViewSet):

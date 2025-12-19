@@ -56,8 +56,6 @@ def create_order(data: dict) -> Order:
     '''
     # Initialize variables
     order_notes = data.get("order_notes", "")
-    customer_email = data.get("customer_data", {}).get("email")
-    customer = UserModel.objects.filter(email=customer_email).first() if customer_email else None
     
     billing_details = data.get("billing_details")
     billing_details_snapshot = None

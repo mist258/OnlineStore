@@ -34,11 +34,6 @@ class Order(models.Model):
         on_delete=models.CASCADE, 
         related_name='orders',
     )
-    billing_details = models.OneToOneField(
-        UserProfileModel, 
-        on_delete=models.CASCADE, 
-        related_name='orders',
-    )
     ttn = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     discount_code = models.ForeignKey(
@@ -48,6 +43,23 @@ class Order(models.Model):
         blank=True, 
         related_name="orders"
     )
+    
+    # =========================
+    # Billing details (embedded)
+    # =========================
+    billing_first_name = models.CharField(max_length=100, default="Smith")
+    billing_last_name = models.CharField(max_length=100, default="John")
+    billing_company_name = models.CharField(max_length=255, blank=True, null=True, default="Microsoft")
+
+    billing_country = models.CharField(max_length=100, default="Ukraine")
+    billing_state = models.CharField(max_length=100, blank=True, null=True, default="Odessa")
+    billing_region = models.CharField(max_length=100, blank=True, null=True, default="Odessa Region")
+
+    billing_street_name = models.CharField(max_length=255, blank=True, null=True, default="Champagne Lane")
+    billing_apartment_number = models.CharField(max_length=50, blank=True, null=True, default="7")
+    billing_zip_code = models.CharField(max_length=20, blank=True, null=True, default="65063")
+
+    billing_phone_number = models.CharField(max_length=30, default="380991112233")
     
     def __str__(self):
         customer_email = self.customer.email if self.customer else "No customer"

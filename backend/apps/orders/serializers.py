@@ -38,87 +38,8 @@ class BillingDetailsSerializer(serializers.ModelSerializer):
         exclude = ["user"]  # snapshot usually doesn't link back to User
 
 
-class OrderWriteSerializer(serializers.ModelSerializer):
-    """
-    Serializer for creating/updating orders.
-    Accepts billing details + positions.
-    """
-    customer_data = serializers.DictField(write_only=True, required=False)
-    order_notes = serializers.CharField(required=False, allow_blank=True)
-    billing_details = BillingDetailsSerializer(required=False)
-    positions = OrderPositionWriteSerializer(many=True, write_only=True, required=False)
-    basket_id = serializers.IntegerField(required=False, write_only=True)
-    status = serializers.ChoiceField(choices=Order.STATUS_CHOICES, required=False)
-
-    class Meta:
-        model = Order
-        fields = [
-            "order_notes",
-            "customer_data",
-            "billing_details",
-            "positions",
-            "basket_id",
-            'status',
-        ]
-
-    def create(self, validated_data):
-        try:
-            with transaction.atomic():
-                customer_data = validated_data.pop("customer_data", {})
-                billing_data = validated_data.pop("billing_details")
-                positions_data = validated_data.pop("positions", [])
-                basket_id = validated_data.pop("basket_id")
-
-                # Create snapshots
-                customer_snapshot = UserModel.objects.create_snapshot(
-                    customer_data.get("email")
-                )
-                billing_snapshot = UserProfileModel.objects.create_snapshot(
-                    billing_data
-                )
-
-                # Create the order
-                order = Order.objects.create(
-                    customer=customer_snapshot,
-                    billing_details=billing_snapshot,
-                    **validated_data
-                )
-
-                # Create positions from basket
-                basket = Basket.objects.get(id=basket_id)
-                for basket_item in basket.items.all():
-                    OrderPosition.objects.create(
-                        order=order,
-                        product=basket_item.product,
-                        supply=basket_item.supply,
-                        quantity=basket_item.quantity
-                    )
-
-                return order
-        except Exception as e:
-            raise serializers.ValidationError(f"Failed to create order: {str(e)}")
-
-    def update(self, instance, validated_data):
-
-        billing_data = validated_data.pop("billing_details", None)
-        positions_data = validated_data.pop("positions", None)
-
-        if billing_data:
-            print(">>> Updating billing details:", billing_data)
-            for field, value in billing_data.items():
-                setattr(instance.billing_details, field, value)
-            instance.billing_details.save()
-
-        status_val = validated_data.pop("status", None)
-        if status_val is not None:
-
-            instance.status = status_val
-
-        for field, value in validated_data.items():
-            setattr(instance, field, value)
-
-        instance.save()
-        return instance
+from django.db import transaction
+from rest_framework import serializers
 
 
 class OrderPositionReadSerializer(serializers.ModelSerializer):
@@ -159,6 +80,120 @@ class OrderPositionReadSerializer(serializers.ModelSerializer):
                 "total_price": obj.total_price,
             }
         return None
+    
+    
+class OrderWriteSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating/updating orders.
+    Accepts billing details + positions.
+    """
+
+    billing_details = BillingDetailsSerializer(write_only=True)
+    order_notes = serializers.CharField(required=False, allow_blank=True)
+    positions = OrderPositionReadSerializer(many=True, read_only=True)
+    basket_id = serializers.IntegerField(required=True, write_only=True)
+    status = serializers.ChoiceField(
+        choices=Order.STATUS_CHOICES,
+        required=False
+    )
+
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "order_notes",
+            "basket_id",
+            "status",
+            "billing_details",
+            "positions"
+        ]
+
+    def create(self, validated_data):
+        try:
+            with transaction.atomic():
+                customer = self.context['request'].user
+                billing_data = validated_data.pop("billing_details")
+                basket_id = validated_data.pop("basket_id")
+
+                # Map billing_details → Order fields
+                order = Order.objects.create(
+                    customer=customer,
+
+                    billing_first_name=billing_data["first_name"],
+                    billing_last_name=billing_data["last_name"],
+                    billing_company_name=billing_data.get("company_name"),
+
+                    billing_country=billing_data["country"],
+                    billing_state=billing_data.get("state"),
+                    billing_region=billing_data.get("region"),
+
+                    billing_street_name=billing_data.get("street_name"),
+                    billing_apartment_number=billing_data.get("apartment_number"),
+                    billing_zip_code=billing_data.get("zip_code"),
+
+                    billing_phone_number=billing_data["phone_number"],
+
+                    **validated_data
+                )
+
+                # Create positions from basket
+                basket = Basket.objects.filter(id=basket_id).first()
+                if not basket:
+                    raise serializers.ValidationError(
+                        f"Failed to find a basket by id={basket_id}"
+                    )
+
+                if not basket.items.exists():
+                    raise serializers.ValidationError(
+                        "Failed to create an order from basket — it's empty."
+                    )
+
+                for basket_item in basket.items.all():
+                    # check quantity before creating order position
+                    if basket_item.accessory and basket_item.quantity > basket_item.accessory.quantity:
+                        raise serializers.ValidationError(
+                            f"The product={basket_item.accessory.name} has only {basket_item.accessory.quantity} from required {basket_item.quantity}"
+                        )
+                        
+                    if basket_item.product and basket_item.quantity > basket_item.supply.quantity:
+                        raise serializers.ValidationError(
+                            f"The product={basket_item.product.name} has only {basket_item.supply.quantity} from required {basket_item.quantity}"
+                        )
+                        
+                    OrderPosition.objects.create(
+                        order=order,
+                        product=basket_item.product,
+                        quantity=basket_item.quantity
+                    )
+
+                return order
+
+        except Exception as e:
+            raise serializers.ValidationError(
+                f"Failed to create order: {str(e)}"
+            )
+
+
+    def update(self, instance, validated_data):
+
+        billing_data = validated_data.pop("billing_details", None)
+
+        if billing_data:
+            print(">>> Updating billing details:", billing_data)
+            for field, value in billing_data.items():
+                setattr(instance.billing_details, field, value)
+            instance.billing_details.save()
+
+        status_val = validated_data.pop("status", None)
+        if status_val is not None:
+
+            instance.status = status_val
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        instance.save()
+        return instance
 
 
 class OrderReadSerializer(serializers.ModelSerializer):
