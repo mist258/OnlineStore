@@ -7,7 +7,7 @@ from django.utils import timezone
 from apps.basket.models import DiscountCode
 from apps.products.models import Accessory, Product
 from apps.users.models import UserProfileModel
-
+from apps.supplies.models import Supply
 from core.services.mailjet_service import SendEmail
 
 UserModel = get_user_model()
@@ -47,20 +47,19 @@ class Order(models.Model):
     # =========================
     # Billing details (embedded)
     # =========================
-    billing_first_name = models.CharField(max_length=100, default="Smith")
-    billing_last_name = models.CharField(max_length=100, default="John")
-    billing_company_name = models.CharField(max_length=255, blank=True, null=True, default="Microsoft")
+    first_name = models.CharField(max_length=100, default="Smith")
+    last_name = models.CharField(max_length=100, default="John")
+    company_name = models.CharField(max_length=255, blank=True, null=True, default="Microsoft")
+    country = models.CharField(max_length=100, default="Ukraine")
+    state = models.CharField(max_length=100, blank=True, null=True, default="Odessa")
+    region = models.CharField(max_length=100, blank=True, null=True, default="Odessa Region")
+    street_name = models.CharField(max_length=255, blank=True, null=True, default="Champagne Lane")
+    apartment_number = models.CharField(max_length=50, blank=True, null=True, default="7")
+    zip_code = models.CharField(max_length=20, blank=True, null=True, default="65063")
+    phone_number = models.CharField(max_length=30, default="380991112233")
 
-    billing_country = models.CharField(max_length=100, default="Ukraine")
-    billing_state = models.CharField(max_length=100, blank=True, null=True, default="Odessa")
-    billing_region = models.CharField(max_length=100, blank=True, null=True, default="Odessa Region")
+    # =========================
 
-    billing_street_name = models.CharField(max_length=255, blank=True, null=True, default="Champagne Lane")
-    billing_apartment_number = models.CharField(max_length=50, blank=True, null=True, default="7")
-    billing_zip_code = models.CharField(max_length=20, blank=True, null=True, default="65063")
-
-    billing_phone_number = models.CharField(max_length=30, default="380991112233")
-    
     def __str__(self):
         customer_email = self.customer.email if self.customer else "No customer"
         return f"Order #{self.id} ({customer_email})"
@@ -126,7 +125,7 @@ class OrderPosition(models.Model):
         on_delete=models.PROTECT,
         related_name='accessory_positions'
     )
-    
+
     def clean(self):
         if not self.product and not self.accessory:
             raise ValidationError("Either product or accessory must be set.")
@@ -137,3 +136,12 @@ class OrderPosition(models.Model):
         product = self.product or self.accessory
         return f"{self.quantity}x {product.name} in Order #{self.order.id}"
 
+
+    def post_save(self, *args, **kwargs):
+        if self.product:
+            self.product.supplies.quantity -= self.quantity
+            self.product.supplies.save()
+        elif self.accessory:
+            self.accessory.supplies.quantity -= self.quantity
+            self.accessory.supplies.save()
+        super().save(*args, **kwargs)

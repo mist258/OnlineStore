@@ -12,8 +12,6 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .models import Order
 from .serializers import OrderReadSerializer, OrderWriteSerializer
-from .services.order_service import create_order
-from apps.basket.services.basket_service import clear_basket
 
 
 class CreateOrderView(viewsets.GenericViewSet):
@@ -34,7 +32,6 @@ class CreateOrderView(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
-        clear_basket(basket_id=serializer.validated_data['basket_id'])
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -50,7 +47,7 @@ class ListOrdersView(viewsets.ReadOnlyModelViewSet):
         if self.request.method in ['GET']:
             self.permission_classes = [IsAuthenticated,]  # Change to IsAdminUser if needed
         return super().get_permissions()
-    
+
 
 class TrackTTNView(APIView):
     """
@@ -73,8 +70,8 @@ class TrackTTNView(APIView):
             return Response(result, status=status.HTTP_200_OK)
         else:
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
-        
-        
+
+
 class DetailsOrderView(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderReadSerializer
     permission_classes = (IsAuthenticated,)

@@ -18,6 +18,7 @@ class TestCreateOrderView:
     def test_create_order_authenticated(self, api_client, user, basket, product, supply):
         api_client.force_authenticate(user=user)
         # Add item to basket
+        supply_quantity_before = supply.quantity
         BasketItem.objects.create(
             basket=basket,
             product=product,
@@ -49,17 +50,18 @@ class TestCreateOrderView:
         assert order.customer.email == user.email
 
         # Billing details saved on order
-        assert order.billing_first_name == "John"
-        assert order.billing_last_name == "Doe"
-        assert order.billing_country == "US"
-        assert order.billing_phone_number == "+380985755044"
-
+        assert order.first_name == "John"
+        assert order.last_name == "Doe"
+        assert order.country == "US"
+        assert order.phone_number == "+380985755044"
+        
         # Positions created from basket
         assert order.positions.count() == 1
         position = order.positions.first()
         assert position.product == product
         assert position.quantity == 2
-
+        supply.refresh_from_db()
+        assert supply.quantity == supply_quantity_before - 2
         # Basket is cleared (if your view clears it)
         assert basket.items.count() == 0
 
