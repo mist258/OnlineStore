@@ -77,8 +77,8 @@ class Order(models.Model):
                     order_id=self.id,
                     status=self.status,
                     customer_email=self.customer.email,
-                    first_name=self.billing_details.first_name,
-                    last_name=self.billing_details.last_name
+                    first_name=self.first_name,
+                    last_name=self.last_name
                 )
             
         super().save(*args, **kwargs)

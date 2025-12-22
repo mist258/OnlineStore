@@ -43,6 +43,8 @@ class AdminDiscountCodesSerializer(serializers.ModelSerializer):
         fields = [
             "code",
             "discount_percent",
+            "description",
+            "active",
             "valid_from",
             "valid_to",
         ]
@@ -51,6 +53,8 @@ class AdminDiscountCodesSerializer(serializers.ModelSerializer):
             "discount_percent": {"required": True},
             "valid_from": {"required": True},
             "valid_to": {"required": True},
+            "description": {"required": False},
+            "active": { "required": False},
         }
 
     def validate(self, attrs):

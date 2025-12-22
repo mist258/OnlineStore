@@ -15,7 +15,7 @@ import pytest
 
 @pytest.mark.django_db
 class TestCreateOrderView:
-    def test_create_order_authenticated(self, api_client, user, basket, product, supply):
+    def test_create_order_product_authenticated(self, api_client, user, basket, product, supply, discount_code):
         api_client.force_authenticate(user=user)
         # Add item to basket
         supply_quantity_before = supply.quantity
@@ -29,18 +29,17 @@ class TestCreateOrderView:
         url = reverse("orders:create_order")
 
         data = {
-            "basket_id": basket.id,
             "billing_details": {
                 "first_name": "John",
                 "last_name": "Doe",
                 "country": "US",
                 "phone_number": "+380985755044"
-            }
+            },
+            "discount_code": "SAVE50"
         }
 
         response = api_client.post(url, data, format="json")
-        print(f"$$$$$$$$$$$$$$$$$$$$$$$$$ ======= {response.data}")
-
+        print(f"@@@@@@@@@@ response.data: {response.data}")
         # ─── Assertions ──────────────────────────────────────────────
         assert response.status_code == status.HTTP_201_CREATED
         # Order created
@@ -54,6 +53,7 @@ class TestCreateOrderView:
         assert order.last_name == "Doe"
         assert order.country == "US"
         assert order.phone_number == "+380985755044"
+        assert order.discount_code.name == "SAVE50"
         
         # Positions created from basket
         assert order.positions.count() == 1
@@ -62,12 +62,60 @@ class TestCreateOrderView:
         assert position.quantity == 2
         supply.refresh_from_db()
         assert supply.quantity == supply_quantity_before - 2
-        # Basket is cleared (if your view clears it)
         assert basket.items.count() == 0
 
         # Response payload
         assert len(response.data["positions"]) == 1
 
+    def test_create_order_accessory_authenticated(self, api_client, user, basket, accessory):
+            api_client.force_authenticate(user=user)
+            # Add item to basket
+            supply_quantity_before = accessory.quantity
+            BasketItem.objects.create(
+                basket=basket,
+                accessory=accessory,
+                quantity=2,
+            )
+
+            url = reverse("orders:create_order")
+
+            data = {
+                "billing_details": {
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "country": "US",
+                    "phone_number": "+380985755044"
+                }
+            }
+
+            response = api_client.post(url, data, format="json")
+
+            # ─── Assertions ──────────────────────────────────────────────
+            assert response.status_code == status.HTTP_201_CREATED
+            # Order created
+            order = Order.objects.get(id=response.data["id"])
+
+            # Customer snapshot or user reference
+            assert order.customer.email == user.email
+
+            # Billing details saved on order
+            assert order.first_name == "John"
+            assert order.last_name == "Doe"
+            assert order.country == "US"
+            assert order.phone_number == "+380985755044"
+            
+            # Positions created from basket
+            assert order.positions.count() == 1
+            position = order.positions.first()
+            assert position.accessory == accessory
+            assert position.quantity == 2
+            accessory.refresh_from_db()
+            assert accessory.quantity == supply_quantity_before - 2
+            assert basket.items.count() == 0
+
+            # Response payload
+            assert len(response.data["positions"]) == 1
+            
 @pytest.mark.django_db
 class TestOrderDetailsView:
     def test_get_order_details(self, api_client, user, order):
@@ -101,9 +149,6 @@ class TestUpdateOrderView:
 
         response = api_client.patch(url, data, format='json')
 
-        print(f'Response data: {response.data}')
-        print(f'Response status: {response.status_code}')
-
         assert response.status_code == status.HTTP_200_OK
         assert response.data['status'] == 'delivered'
 
@@ -116,11 +161,31 @@ class TestUpdateOrderView:
             'order_notes': 'Please deliver after 6 PM'
         }
         
-        response = api_client.patch(url, data)
+        response = api_client.patch(url, data, format='json')
         
         assert response.status_code == status.HTTP_200_OK
         assert response.data['order_notes'] == 'Please deliver after 6 PM'
-    
+
+    def test_update_order_billing_details(self, api_client, admin_user, order):
+        api_client.force_authenticate(user=admin_user)
+        url = reverse('orders:update_order', kwargs={'pk': order.id})
+        
+        data = {
+            "billing_details": {
+                "first_name": "Alice",
+                "last_name": "Smith",
+                "country": "UK",
+                "phone_number": "+441234567890"
+            }
+        }
+        
+        response = api_client.patch(url, data, format='json')
+        print(f"@@@@@@@@@@ response.data: {response.data}")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['first_name'] == 'Alice'
+        assert response.data['last_name'] == 'Smith'
+        assert response.data['country'] == 'UK'
+        assert response.data['phone_number'] == '+441234567890'    
     
 @pytest.mark.django_db
 class TestOrderPermissions:

@@ -12,10 +12,11 @@ from apps.users.models import UserModel, UserProfileModel
 
 
 @transaction.atomic
-def create_order_from_basket(*, customer, basket, billing_data, notes=None) -> Order:
+def create_order_from_basket(*, customer, basket, billing_data, discount_code, notes=None) -> Order:
         order = Order.objects.create(
             customer=customer,
             order_notes=notes,
+            discount_code=discount_code
             **billing_data,
         )
 

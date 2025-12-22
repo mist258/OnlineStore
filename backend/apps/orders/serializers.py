@@ -7,6 +7,7 @@ from apps.orders.models import Order, OrderPosition
 from apps.products.models import Accessory, Product
 from apps.users.models import UserModel, UserProfileModel
 from apps.orders.services.order_service import create_order_from_basket
+from apps.discount_codes.models import DiscountCode
 
 
 class OrderPositionWriteSerializer(serializers.Serializer):
@@ -85,13 +86,14 @@ class OrderWriteSerializer(serializers.ModelSerializer):
     Accepts billing details + positions.
     """
 
-    billing_details = BillingDetailsSerializer(write_only=True)
+    billing_details = BillingDetailsSerializer(write_only=True, required=False)
     order_notes = serializers.CharField(required=False, allow_blank=True)
     positions = OrderPositionReadSerializer(many=True, read_only=True)
     status = serializers.ChoiceField(
         choices=Order.STATUS_CHOICES,
         required=False
     )
+    created_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Order
@@ -100,49 +102,49 @@ class OrderWriteSerializer(serializers.ModelSerializer):
             "order_notes",
             "status",
             "billing_details",
-            "positions"
+            "positions",
+            "ttn",
+            "discount_code",
+            "created_at",
+                
         ]
 
     def validate(self, attrs):
-        user = self.context["request"].user
+        discount_code = DiscountCode.objects.get(code=attrs.get("discount_code", None))
+        if self.instance:
+            return attrs
 
+        user = self.context["request"].user
         basket = Basket.objects.filter(user=user).first()
+
         if not basket:
             raise serializers.ValidationError("Basket does not exist")
 
         if not basket.items.exists():
             raise serializers.ValidationError("Basket is empty")
 
-        # cache basket for create()
         self._basket = basket
+        self._discount_code = discount_code
         return attrs
 
     def create(self, validated_data):
         user = self.context["request"].user
-        billing_data = validated_data.pop("billing_details")
+        billing_data = validated_data.pop("billing_details", None)
 
         return create_order_from_basket(
             customer=user,
             basket=self._basket,
             billing_data=billing_data,
+            discount_code=self._discount_code,
             notes=validated_data.get("order_notes"),
         )
 
-
     def update(self, instance, validated_data):
-
         billing_data = validated_data.pop("billing_details", None)
 
         if billing_data:
-            print(">>> Updating billing details:", billing_data)
             for field, value in billing_data.items():
-                setattr(instance.billing_details, field, value)
-            instance.billing_details.save()
-
-        status_val = validated_data.pop("status", None)
-        if status_val is not None:
-
-            instance.status = status_val
+                setattr(instance, field, value)
 
         for field, value in validated_data.items():
             setattr(instance, field, value)
@@ -156,7 +158,6 @@ class OrderReadSerializer(serializers.ModelSerializer):
     Read-only serializer for orders.
     Includes nested billing details and positions.
     """
-    billing_details = BillingDetailsSerializer(read_only=True)
     positions = OrderPositionReadSerializer(read_only=True, many=True)
     
     class Meta:
@@ -166,8 +167,20 @@ class OrderReadSerializer(serializers.ModelSerializer):
             "order_notes",
             "status",
             "customer",
-            "billing_details",
             "positions",
+            "ttn",
+            "discount_code",
+            "created_at",
+            "first_name",
+            "last_name",
+            "company_name",
+            "country",
+            "state",
+            "region",
+            "street_name",
+            "apartment_number",
+            "zip_code",
+            "phone_number",
         ]
         read_only_fields = fields
 

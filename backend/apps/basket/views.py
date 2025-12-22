@@ -20,7 +20,7 @@ from drf_yasg.utils import swagger_auto_schema
 ))
 class ActiveBasketView(generics.GenericAPIView):
     serializer_class = BasketSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     
     def get(self, request, *args, **kwargs):
         basket, created = Basket.objects.get_or_create(
@@ -41,21 +41,15 @@ class AddBasketItemView(generics.CreateAPIView):
     Works for both authenticated users and guests.
     """
     serializer_class = BasketItemSerializer
-    permission_classes = (AllowAny,)  # Allow both auth and guest users
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
         """Override to handle guest cookie setting"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         response = Response()
-        
-        if request.user.is_authenticated:
-            serializer.save()
-        else:
-            # Guest flow with cookie handling
-            # basket = get_or_create_basket(request=request, response=response)
-            response.status_code = 401
-            return response
+    
+        serializer.save()
         
         response.data = serializer.data
         response.status_code = status.HTTP_201_CREATED

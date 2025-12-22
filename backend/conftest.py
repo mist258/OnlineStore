@@ -95,10 +95,9 @@ def guest_basket():
 
 
 @pytest.fixture
-def order(user, user_profile):
+def order(user):
     return Order.objects.create(
-        customer=user,
-        billing_details=user_profile
+        customer=user
     )
     
 
@@ -119,9 +118,9 @@ def supply(product):
 @pytest.fixture
 def discount_code():
     return DiscountCode.objects.create(
-        code="SAVE10", 
-        description="Save 10%",
-        discount_percent=10,
+        code="SAVE50", 
+        description="Save 50%",
+        discount_percent=50,
         active=True,
         valid_from=datetime.datetime(2023, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
         valid_to=datetime.datetime(2028, 1, 1, 0, 0, 0, tzinfo=pytz.UTC)

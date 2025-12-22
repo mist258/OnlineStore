@@ -32,7 +32,7 @@ class TestDiscountCodeView:
         assert response.data['code'] == discount_code.code
         assert response.data['is_valid'] is True
         assert response.data['appy_discount'] == discount_code.apply_discount(order.get_order_amount())
-        
+
     def test_create_discount_code_unauthenticated(self, api_client):
         url = reverse('discount_codes:create_discount_code')
         
