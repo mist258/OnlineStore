@@ -37,6 +37,7 @@ class TestCreateOrderView:
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data['customer'] == user.id
+        assert basket.items.count() == 0
         assert len(response.data['positions']) == 1
 
     def test_create_order_unauthenticated(self, api_client):

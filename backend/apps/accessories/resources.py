@@ -28,7 +28,11 @@ class AccessoryResource(resources.ModelResource):
         attribute='quantity',
         column_name='Quantity'
     )
-
+    is_special = fields.Field(
+        attribute='is_special',
+        column_name='IS_SPECIAL'
+    )
+    
     class Meta:
         model = Accessory
         import_id_fields = ('sku',)
@@ -39,4 +43,5 @@ class AccessoryResource(resources.ModelResource):
             'description',
             'price',
             'quantity',
+            'is_special'
         )

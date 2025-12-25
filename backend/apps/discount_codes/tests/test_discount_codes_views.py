@@ -49,7 +49,7 @@ class TestDiscountCodeView:
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         
-    def test_create_discount_code_authenticated(self, api_client, admin_user):
+    def test_create_discount_code_authenticated(self, api_client, admin_user, user):
         api_client.force_authenticate(user=admin_user)
         url = reverse('discount_codes:create_discount_code')
 

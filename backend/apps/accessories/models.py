@@ -19,6 +19,7 @@ class Accessory(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2,
                                 validators=[v.MinValueValidator(Decimal("0.00"))])
     category = models.CharField(max_length=100, blank=True, null=True)
+    is_special = models.BooleanField(default=False)
     quantity = models.PositiveIntegerField(blank=False,
                                            validators=[v.MinValueValidator(0)])
 

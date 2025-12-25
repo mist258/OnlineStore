@@ -37,6 +37,7 @@ class Product(models.Model):
     roast = models.CharField(max_length=13, blank=True, null=True,
                              choices=RoastLevelChoices.choices)
     description = models.TextField(blank=True)
+    is_special = models.BooleanField(default=False)
     flavor_profiles = models.ManyToManyField(
         FlavorProfile,
         related_name='products', blank=True
