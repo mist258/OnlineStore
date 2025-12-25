@@ -16,7 +16,8 @@ class DiscountCodesSerializer(serializers.ModelSerializer):
             "valid_from",
             "valid_to",
             "is_valid",
-            "apply_discount"
+            "apply_discount",
+            "code",
         ]
         read_only_fields = fields
 
