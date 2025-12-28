@@ -63,12 +63,26 @@ class AdminDiscountCodesSerializer(serializers.ModelSerializer):
         """
         code = attrs.get("code")
 
-        if DiscountCode.objects.filter(code=code).exists():
-            raise serializers.ValidationError(
-                {"code": "This discount code already exists."}
-            )
+        # Check for duplicate code only when creating or if code is being changed
+        if code:
+            if self.instance:
+                # During update, exclude current instance from duplicate check
+                if DiscountCode.objects.filter(code=code).exclude(pk=self.instance.pk).exists():
+                    raise serializers.ValidationError(
+                        {"code": "This discount code already exists."}
+                    )
+            else:
+                # During create
+                if DiscountCode.objects.filter(code=code).exists():
+                    raise serializers.ValidationError(
+                        {"code": "This discount code already exists."}
+                    )
 
-        if attrs["valid_from"] >= attrs["valid_to"]:
+        # Only validate date range if both dates are provided
+        valid_from = attrs.get("valid_from")
+        valid_to = attrs.get("valid_to")
+        
+        if valid_from and valid_to and valid_from >= valid_to:
             raise serializers.ValidationError(
                 {"valid_to": "valid_to must be later than valid_from."}
             )
