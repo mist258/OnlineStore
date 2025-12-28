@@ -16,7 +16,7 @@ def create_order_from_basket(*, customer, basket, billing_data, discount_code, n
         order = Order.objects.create(
             customer=customer,
             order_notes=notes,
-            discount_code=discount_code
+            discount_code=discount_code,
             **billing_data,
         )
 

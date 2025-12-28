@@ -120,3 +120,17 @@ class UpdateOrderView(viewsets.GenericViewSet):
         read_serializer = OrderReadSerializer(order)
 
         return Response(read_serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteOrderView(viewsets.GenericViewSet):
+    """
+    Delete an order (admin only).
+    """
+    serializer_class = OrderReadSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Order.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        order = self.get_object()
+        order.delete()
+        return Response({"message": "Order deleted successfully"}, status=status.HTTP_204_NO_CONTENT)

@@ -110,7 +110,10 @@ class OrderWriteSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        discount_code = DiscountCode.objects.get(code=attrs.get("discount_code", None))
+        discount_code = None
+        discount_code_value = attrs.get("discount_code", None)
+        if discount_code_value is not None:
+            discount_code = DiscountCode.objects.get(code=discount_code_value)
         if self.instance:
             return attrs
 

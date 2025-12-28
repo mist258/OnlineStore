@@ -35,11 +35,10 @@ class TestCreateOrderView:
                 "country": "US",
                 "phone_number": "+380985755044"
             },
-            "discount_code": "SAVE50"
+            "discount_code": discount_code.id
         }
 
         response = api_client.post(url, data, format="json")
-        print(f"@@@@@@@@@@ response.data: {response.data}")
         # ─── Assertions ──────────────────────────────────────────────
         assert response.status_code == status.HTTP_201_CREATED
         # Order created
@@ -53,7 +52,7 @@ class TestCreateOrderView:
         assert order.last_name == "Doe"
         assert order.country == "US"
         assert order.phone_number == "+380985755044"
-        assert order.discount_code.name == "SAVE50"
+        assert order.discount_code.code == "SAVE50"
         
         # Positions created from basket
         assert order.positions.count() == 1
@@ -89,7 +88,6 @@ class TestCreateOrderView:
             }
 
             response = api_client.post(url, data, format="json")
-
             # ─── Assertions ──────────────────────────────────────────────
             assert response.status_code == status.HTTP_201_CREATED
             # Order created
@@ -240,3 +238,40 @@ class TestOrderValidation:
         response = api_client.post(url, data, format='json')
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+class TestDeleteOrderView:
+    def test_delete_order_as_admin(self, api_client, admin_user, order):
+        api_client.force_authenticate(user=admin_user)
+        url = reverse('orders:delete_order', kwargs={'pk': order.id})
+        
+        response = api_client.delete(url)
+        
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Order.objects.filter(id=order.id).exists()
+
+    def test_delete_order_as_regular_user(self, api_client, user, order):
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:delete_order', kwargs={'pk': order.id})
+        
+        response = api_client.delete(url)
+        
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert Order.objects.filter(id=order.id).exists()
+
+    def test_delete_nonexistent_order(self, api_client, admin_user):
+        api_client.force_authenticate(user=admin_user)
+        url = reverse('orders:delete_order', kwargs={'pk': 99999})
+        
+        response = api_client.delete(url)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_delete_order_unauthenticated(self, api_client, order):
+        url = reverse('orders:delete_order', kwargs={'pk': order.id})
+        
+        response = api_client.delete(url)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert Order.objects.filter(id=order.id).exists()
