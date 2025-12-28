@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from apps.db_utils import get_object_or_error
 from apps.discount_codes.models import DiscountCode
-from apps.discount_codes.serializers import AdminDiscountCodesSerializer, DiscountCodesSerializer
+from apps.discount_codes.serializers import AdminDiscountCodesSerializer, DiscountCodesSerializer, DiscountCodeUpdateSerializer
 from apps.orders.models import Order
 
 from drf_yasg.utils import swagger_auto_schema
@@ -87,7 +87,7 @@ class DiscountCodeViewSet(viewsets.GenericViewSet):
             )
         
         partial = request.method == 'PATCH'
-        serializer = self.get_serializer(discount, data=request.data, partial=partial)
+        serializer = DiscountCodeUpdateSerializer(discount, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         discount = serializer.save()
         

@@ -36,6 +36,23 @@ class DiscountCodesSerializer(serializers.ModelSerializer):
         return obj.apply_discount(order_amount)
 
 
+class DiscountCodeUpdateSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(required=False)
+    discount_percent = serializers.DecimalField(max_digits=5, decimal_places=2, required=False)
+    active = serializers.BooleanField(required=False)
+    valid_from = serializers.DateTimeField(required=False)
+    valid_to = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = DiscountCode
+        fields = [
+            "description",
+            "discount_percent",
+            "active",
+            "valid_from",
+            "valid_to",
+        ]
+
 class AdminDiscountCodesSerializer(serializers.ModelSerializer):
 
     class Meta:

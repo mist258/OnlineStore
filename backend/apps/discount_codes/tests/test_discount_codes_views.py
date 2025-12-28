@@ -37,12 +37,12 @@ class TestDiscountCodeView:
         url = reverse('discount_codes:create_discount_code')
         
         data = {
-            'code': 'NEWCODE',
-            'description': 'New Discount Code',
-            'discount_percent': 15,
-            'valid_from': '2024-01-01T00:00:00Z',
-            'valid_to': '2024-12-31T23:59:59Z',
-            'active': True
+            "code": "NEWCODE",
+            "description": "New Discount Code",
+            "discount_percent": 15,
+            "valid_from": "2024-01-01T00:00:00Z",
+            "valid_to": "2024-12-31T23:59:59Z",
+            "active": True
         }
         
         response = api_client.post(url, data, format='json')
