@@ -12,7 +12,6 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .models import Order
 from .serializers import OrderReadSerializer, OrderWriteSerializer
-from .services.order_service import create_order
 
 
 class CreateOrderView(viewsets.GenericViewSet):
@@ -20,7 +19,7 @@ class CreateOrderView(viewsets.GenericViewSet):
     Create a new order (authenticated users only).
     """
     serializer_class = OrderWriteSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     queryset = Order.objects.all()
 
     @swagger_auto_schema(
@@ -31,18 +30,9 @@ class CreateOrderView(viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        try:
-            order = create_order(
-                data=serializer.validated_data
-            )
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
-            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        read_serializer = OrderReadSerializer(order)
-        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+        serializer.save()
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ListOrdersView(viewsets.ReadOnlyModelViewSet):
@@ -57,7 +47,7 @@ class ListOrdersView(viewsets.ReadOnlyModelViewSet):
         if self.request.method in ['GET']:
             self.permission_classes = [IsAuthenticated,]  # Change to IsAdminUser if needed
         return super().get_permissions()
-    
+
 
 class TrackTTNView(APIView):
     """
@@ -80,8 +70,8 @@ class TrackTTNView(APIView):
             return Response(result, status=status.HTTP_200_OK)
         else:
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
-        
-        
+
+
 class DetailsOrderView(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderReadSerializer
     permission_classes = (IsAuthenticated,)
@@ -130,3 +120,17 @@ class UpdateOrderView(viewsets.GenericViewSet):
         read_serializer = OrderReadSerializer(order)
 
         return Response(read_serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteOrderView(viewsets.GenericViewSet):
+    """
+    Delete an order (admin only).
+    """
+    serializer_class = OrderReadSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Order.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        order = self.get_object()
+        order.delete()
+        return Response({"message": "Order deleted successfully"}, status=status.HTTP_204_NO_CONTENT)

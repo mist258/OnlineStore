@@ -6,7 +6,7 @@ from apps.orders.services.order_position_service import (
     update_order_position,
 )
 from apps.products.models import Product
-from apps.users.models import UserModel, UserProfileModel
+from apps.users.models import UserModel
 
 import pytest
 
@@ -14,13 +14,8 @@ import pytest
 @pytest.mark.django_db
 def test_create_order_position():
     customer = UserModel.objects.create(email="alice@example.com")
-    billing_details = UserProfileModel.objects.create(
-        user=customer,
-        first_name="Alice",
-        last_name="Smith",
-    )
     product = Product.objects.create(name="Espresso", roast="Dark", caffeine_type="regular")
-    order = Order.objects.create(customer=customer, billing_details=billing_details)
+    order = Order.objects.create(customer=customer)
 
     data = {
         "quantity": 3,
@@ -38,13 +33,8 @@ def test_create_order_position():
 @pytest.mark.django_db
 def test_get_order_position_by_id():
     customer = UserModel.objects.create(email="bob@example.com")
-    billing_details = UserProfileModel.objects.create(
-        user=customer,
-        first_name="Alice",
-        last_name="Smith",
-    )
     product = Product.objects.create(name="Latte", roast="Medium", caffeine_type="decaf")
-    order = Order.objects.create(customer=customer, billing_details=billing_details)
+    order = Order.objects.create(customer=customer)
 
     position = OrderPosition.objects.create(quantity=2, product=product, order=order)
     found = get_order_position_by_id(position.id)
@@ -58,12 +48,7 @@ def test_get_order_position_by_id():
 def test_update_order_position():
     customer = UserModel.objects.create(email="carol@example.com")
     product = Product.objects.create(name="Mocha", roast="Light", caffeine_type="regular")
-    billing_details = UserProfileModel.objects.create(
-        user=customer,
-        first_name="Alice",
-        last_name="Smith",
-    )
-    order = Order.objects.create(customer=customer, billing_details=billing_details)
+    order = Order.objects.create(customer=customer)
     position = OrderPosition.objects.create(quantity=1, product=product, order=order)
 
     update_data = {
@@ -79,12 +64,7 @@ def test_update_order_position():
 def test_delete_order_position():
     customer = UserModel.objects.create(email="dave@example.com")
     product = Product.objects.create(name="Cappuccino", roast="Dark", caffeine_type="decaf")
-    billing_details = UserProfileModel.objects.create(
-        user=customer,
-        first_name="Alice",
-        last_name="Smith",
-    )
-    order = Order.objects.create(customer=customer, billing_details=billing_details)
+    order = Order.objects.create(customer=customer)
 
     position = OrderPosition.objects.create(quantity=2, product=product, order=order)
     delete_order_position(position.id)

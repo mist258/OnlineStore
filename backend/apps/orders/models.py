@@ -7,7 +7,7 @@ from django.utils import timezone
 from apps.basket.models import DiscountCode
 from apps.products.models import Accessory, Product
 from apps.users.models import UserProfileModel
-
+from apps.supplies.models import Supply
 from core.services.mailjet_service import SendEmail
 
 UserModel = get_user_model()
@@ -34,11 +34,6 @@ class Order(models.Model):
         on_delete=models.CASCADE, 
         related_name='orders',
     )
-    billing_details = models.OneToOneField(
-        UserProfileModel, 
-        on_delete=models.CASCADE, 
-        related_name='orders',
-    )
     ttn = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     discount_code = models.ForeignKey(
@@ -49,6 +44,22 @@ class Order(models.Model):
         related_name="orders"
     )
     
+    # =========================
+    # Billing details (embedded)
+    # =========================
+    first_name = models.CharField(max_length=100, default="Smith")
+    last_name = models.CharField(max_length=100, default="John")
+    company_name = models.CharField(max_length=255, blank=True, null=True, default="Microsoft")
+    country = models.CharField(max_length=100, default="Ukraine")
+    state = models.CharField(max_length=100, blank=True, null=True, default="Odessa")
+    region = models.CharField(max_length=100, blank=True, null=True, default="Odessa Region")
+    street_name = models.CharField(max_length=255, blank=True, null=True, default="Champagne Lane")
+    apartment_number = models.CharField(max_length=50, blank=True, null=True, default="7")
+    zip_code = models.CharField(max_length=20, blank=True, null=True, default="65063")
+    phone_number = models.CharField(max_length=30, default="380991112233")
+
+    # =========================
+
     def __str__(self):
         customer_email = self.customer.email if self.customer else "No customer"
         return f"Order #{self.id} ({customer_email})"
@@ -66,8 +77,8 @@ class Order(models.Model):
                     order_id=self.id,
                     status=self.status,
                     customer_email=self.customer.email,
-                    first_name=self.billing_details.first_name,
-                    last_name=self.billing_details.last_name
+                    first_name=self.first_name,
+                    last_name=self.last_name
                 )
             
         super().save(*args, **kwargs)
@@ -114,7 +125,7 @@ class OrderPosition(models.Model):
         on_delete=models.PROTECT,
         related_name='accessory_positions'
     )
-    
+
     def clean(self):
         if not self.product and not self.accessory:
             raise ValidationError("Either product or accessory must be set.")
@@ -125,3 +136,12 @@ class OrderPosition(models.Model):
         product = self.product or self.accessory
         return f"{self.quantity}x {product.name} in Order #{self.order.id}"
 
+
+    def post_save(self, *args, **kwargs):
+        if self.product:
+            self.product.supplies.quantity -= self.quantity
+            self.product.supplies.save()
+        elif self.accessory:
+            self.accessory.supplies.quantity -= self.quantity
+            self.accessory.supplies.save()
+        super().save(*args, **kwargs)

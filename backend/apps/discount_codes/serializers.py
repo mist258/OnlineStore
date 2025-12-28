@@ -17,7 +17,7 @@ class DiscountCodesSerializer(serializers.ModelSerializer):
             "valid_to",
             "is_valid",
             "apply_discount",
-            "code",
+            "code"
         ]
         read_only_fields = fields
 
@@ -36,6 +36,23 @@ class DiscountCodesSerializer(serializers.ModelSerializer):
         return obj.apply_discount(order_amount)
 
 
+class DiscountCodeUpdateSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(required=False)
+    discount_percent = serializers.DecimalField(max_digits=5, decimal_places=2, required=False)
+    active = serializers.BooleanField(required=False)
+    valid_from = serializers.DateTimeField(required=False)
+    valid_to = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = DiscountCode
+        fields = [
+            "description",
+            "discount_percent",
+            "active",
+            "valid_from",
+            "valid_to",
+        ]
+
 class AdminDiscountCodesSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -43,6 +60,8 @@ class AdminDiscountCodesSerializer(serializers.ModelSerializer):
         fields = [
             "code",
             "discount_percent",
+            "description",
+            "active",
             "valid_from",
             "valid_to",
         ]
@@ -51,6 +70,8 @@ class AdminDiscountCodesSerializer(serializers.ModelSerializer):
             "discount_percent": {"required": True},
             "valid_from": {"required": True},
             "valid_to": {"required": True},
+            "description": {"required": False},
+            "active": { "required": False},
         }
 
     def validate(self, attrs):
@@ -59,12 +80,26 @@ class AdminDiscountCodesSerializer(serializers.ModelSerializer):
         """
         code = attrs.get("code")
 
-        if DiscountCode.objects.filter(code=code).exists():
-            raise serializers.ValidationError(
-                {"code": "This discount code already exists."}
-            )
+        # Check for duplicate code only when creating or if code is being changed
+        if code:
+            if self.instance:
+                # During update, exclude current instance from duplicate check
+                if DiscountCode.objects.filter(code=code).exclude(pk=self.instance.pk).exists():
+                    raise serializers.ValidationError(
+                        {"code": "This discount code already exists."}
+                    )
+            else:
+                # During create
+                if DiscountCode.objects.filter(code=code).exists():
+                    raise serializers.ValidationError(
+                        {"code": "This discount code already exists."}
+                    )
 
-        if attrs["valid_from"] >= attrs["valid_to"]:
+        # Only validate date range if both dates are provided
+        valid_from = attrs.get("valid_from")
+        valid_to = attrs.get("valid_to")
+        
+        if valid_from and valid_to and valid_from >= valid_to:
             raise serializers.ValidationError(
                 {"valid_to": "valid_to must be later than valid_from."}
             )
