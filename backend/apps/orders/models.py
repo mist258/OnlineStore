@@ -6,8 +6,9 @@ from django.utils import timezone
 
 from apps.basket.models import DiscountCode
 from apps.products.models import Accessory, Product
-from apps.users.models import UserProfileModel
 from apps.supplies.models import Supply
+from apps.users.models import UserProfileModel
+
 from core.services.mailjet_service import SendEmail
 
 UserModel = get_user_model()

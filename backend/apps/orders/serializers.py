@@ -3,11 +3,11 @@ from django.db import transaction
 from rest_framework import serializers
 
 from apps.basket.models import Basket
+from apps.discount_codes.models import DiscountCode
 from apps.orders.models import Order, OrderPosition
+from apps.orders.services.order_service import create_order_from_basket
 from apps.products.models import Accessory, Product
 from apps.users.models import UserModel, UserProfileModel
-from apps.orders.services.order_service import create_order_from_basket
-from apps.discount_codes.models import DiscountCode
 
 
 class OrderPositionWriteSerializer(serializers.Serializer):
