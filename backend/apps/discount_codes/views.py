@@ -1,10 +1,7 @@
-import uuid
-
 from django.utils.decorators import method_decorator
 
-from rest_framework import generics, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework import status, viewsets
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from apps.db_utils import get_object_or_error

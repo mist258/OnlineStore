@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.utils.decorators import method_decorator
 
 from rest_framework import permissions, status
@@ -14,7 +12,7 @@ from apps.supplies.models import Supply
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import FavoriteItemSerializer, FavoritesSerializer
+from .serializers import FavoritesSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

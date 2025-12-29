@@ -1,9 +1,7 @@
 import logging
-import uuid
 from typing import Optional
 from uuid import UUID
 
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 

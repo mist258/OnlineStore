@@ -1,7 +1,6 @@
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction
+from django.db import transaction
 
-from apps.basket.models import Basket, BasketItem
+from apps.basket.models import BasketItem
 from apps.products.models import Product
 
 from backend.apps.db_utils import get_object_or_error

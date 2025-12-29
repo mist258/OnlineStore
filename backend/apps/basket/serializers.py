@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.accessories.models import Accessory
-from apps.basket.models import Basket, BasketItem, DiscountCode
+from apps.basket.models import Basket, BasketItem
 from apps.basket.services.basket_service import BasketItemCreationError, add_item_to_basket
 from apps.products.models import Product
 from apps.supplies.models import Supply

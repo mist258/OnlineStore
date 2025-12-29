@@ -2,13 +2,9 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import F
 
-from apps.basket.models import Basket, BasketItem
-from apps.basket.services.basket_service import clear_basket
 from apps.db_utils import get_object_or_error
 from apps.orders.models import Order, OrderPosition
-from apps.products.models import Accessory, Product
-from apps.supplies.models import Supply
-from apps.users.models import UserModel, UserProfileModel
+from apps.users.models import UserModel
 
 
 @transaction.atomic

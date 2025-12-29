@@ -1,15 +1,11 @@
-import uuid
-
 from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.basket.models import Basket, BasketItem, DiscountCode
+from apps.basket.models import Basket, BasketItem
 from apps.basket.serializers import BasketItemSerializer, BasketItemUpdateSerializer, BasketSerializer
-from apps.db_utils import get_object_or_error
-from apps.orders.models import Order
 
 from drf_yasg.utils import swagger_auto_schema
 

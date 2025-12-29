@@ -1,8 +1,7 @@
-from django.core.exceptions import ValidationError
 from django.http import Http404
 
 from rest_framework import status, viewsets
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
