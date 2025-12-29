@@ -135,6 +135,8 @@ class TestOrderDetailsView:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+
+
 @pytest.mark.django_db
 class TestUpdateOrderView:
     def test_update_order_status(self, api_client, admin_user, order):
@@ -275,3 +277,97 @@ class TestDeleteOrderView:
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
         assert Order.objects.filter(id=order.id).exists()
+
+
+@pytest.mark.django_db
+class TestListUserOrdersView:
+    """
+    Test suite for the ListUserOrdersView endpoint that retrieves only user's orders.
+    """
+    
+    def test_list_user_orders_authenticated_user(self, api_client, user, order):
+        """Test that authenticated user can list their own orders."""
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['data']) == 1
+        assert response.data['data'][0]['id'] == order.id
+        assert response.data['data'][0]['customer'] == user.id
+    
+    def test_list_user_orders_returns_only_user_orders(self, api_client, user, other_user):
+        """Test that user only sees their own orders, not other users' orders."""
+        # Create orders for both users
+        user_order = Order.objects.create(customer=user)
+        other_user_order = Order.objects.create(customer=other_user)
+        
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['data']) == 1
+        assert response.data['data'][0]['id'] == user_order.id
+        assert response.data['data'][0]['customer'] == user.id
+        
+        # Verify other user's order is not included
+        order_ids = [order['id'] for order in response.data['data']]
+        assert other_user_order.id not in order_ids
+    
+    def test_list_user_orders_multiple_orders(self, api_client, user):
+        """Test that user can see all of their multiple orders."""
+        order1 = Order.objects.create(customer=user, status='pending')
+        order2 = Order.objects.create(customer=user, status='processing')
+        order3 = Order.objects.create(customer=user, status='shipped')
+        
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['data']) == 3
+        
+        order_ids = [order['id'] for order in response.data['data']]
+        assert order1.id in order_ids
+        assert order2.id in order_ids
+        assert order3.id in order_ids
+    
+    def test_list_user_orders_empty_list(self, api_client, user):
+        """Test that user with no orders gets an empty list."""
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['data']) == 0
+    
+    def test_list_user_orders_unauthenticated(self, api_client):
+        """Test that unauthenticated users cannot access the endpoint."""
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    
+    def test_list_user_orders_response_structure(self, api_client, user, order):
+        """Test that the response contains correct order data."""
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert 'data' in response.data
+        assert 'current_page' in response.data
+        assert 'total_items' in response.data
+        assert 'total_pages' in response.data
+        
+        order_data = response.data['data'][0]
+        assert 'id' in order_data
+        assert 'customer' in order_data
+        assert 'status' in order_data
