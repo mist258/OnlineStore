@@ -37,6 +37,7 @@ class Order(models.Model):
     )
     ttn = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
     discount_code = models.ForeignKey(
         DiscountCode,
         on_delete=models.SET_NULL,
@@ -66,7 +67,7 @@ class Order(models.Model):
         return f"Order #{self.id} ({customer_email})"
     
     def get_order_amount(self):
-        total = sum(position.total_price for position in self.positions.all())
+        total = sum(position.evaluate_total_price for position in self.positions.all()) * (1 - (self.discount_code.discount_percent / 100) if self.discount_code else 1)
 
         return total
     
@@ -100,12 +101,12 @@ class OrderPosition(models.Model):
             )
         ]
 
-    quantity = models.IntegerField(default=1)
-    total_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2, 
-        default=0.00
+    price = models.DecimalField(
+        max_digits=8, 
+        decimal_places=2,
+        default=0.00,
     )
+    quantity = models.IntegerField(default=1)
     date = models.DateTimeField(default=timezone.now)
     order = models.ForeignKey(
         Order,
@@ -137,12 +138,7 @@ class OrderPosition(models.Model):
         product = self.product or self.accessory
         return f"{self.quantity}x {product.name} in Order #{self.order.id}"
 
-
-    def post_save(self, *args, **kwargs):
-        if self.product:
-            self.product.supplies.quantity -= self.quantity
-            self.product.supplies.save()
-        elif self.accessory:
-            self.accessory.supplies.quantity -= self.quantity
-            self.accessory.supplies.save()
-        super().save(*args, **kwargs)
+    @property
+    def evaluate_total_price(self):
+        """Calculate total price for this position using stored price"""
+        return self.price * self.quantity

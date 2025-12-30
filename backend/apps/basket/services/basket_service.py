@@ -126,14 +126,45 @@ def add_item_to_basket(
         supply: Optional[Supply] = None,
         quantity: int = 1
         ) -> BasketItem:
+    """
+    Add an item to the basket or increment quantity if it already exists.
+    
+    Args:
+        basket: The basket to add the item to
+        accessory: Optional accessory to add
+        product: Optional product to add
+        supply: Optional supply to add
+        quantity: Quantity to add (default: 1)
+    
+    Returns:
+        BasketItem: The created or updated basket item
+    
+    Raises:
+        BasketItemCreationError: If item creation/update fails
+    """
     try:
-        basket_item = BasketItem.objects.create(
+        # Try to get existing item with same product/accessory/supply combination
+        basket_item, created = BasketItem.objects.get_or_create(
             basket=basket,
             accessory=accessory,
             product=product,
             supply=supply,
-            quantity=quantity
+            defaults={'quantity': quantity}
         )
+        
+        # If item already exists, increment quantity
+        if not created:
+            basket_item.quantity += quantity
+            basket_item.save()
+            logger.info(
+                f"Updated BasketItem {basket_item.id} in Basket {basket.id}. "
+                f"New quantity: {basket_item.quantity}"
+            )
+        else:
+            logger.info(
+                f"Created new BasketItem {basket_item.id} in Basket {basket.id}. "
+                f"Quantity: {basket_item.quantity}"
+            )
     
         return basket_item
     except IntegrityError:

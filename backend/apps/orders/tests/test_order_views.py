@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from decimal import Decimal
 
 from django.urls import reverse
 
@@ -114,6 +115,38 @@ class TestCreateOrderView:
             # Response payload
             assert len(response.data["positions"]) == 1
             
+    def test_create_order_insufficient_stock(self, api_client, user, basket, product, supply):
+        """Test that creating order with insufficient stock returns 400 Bad Request."""
+        api_client.force_authenticate(user=user)
+        
+        # Set supply quantity to 1
+        supply.quantity = 1
+        supply.save()
+        
+        # Add item to basket with quantity 2 (more than available)
+        BasketItem.objects.create(
+            basket=basket,
+            product=product,
+            quantity=2,
+            supply=supply
+        )
+
+        url = reverse("orders:create_order")
+        data = {
+            "billing_details": {
+                "first_name": "John",
+                "last_name": "Doe",
+                "country": "US",
+                "phone_number": "+380985755044"
+            }
+        }
+
+        response = api_client.post(url, data, format="json")
+        
+        # Should return 400 Bad Request, not 500 Server Error
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "Not enough stock" in str(response.data)
+
 @pytest.mark.django_db
 class TestOrderDetailsView:
     def test_get_order_details(self, api_client, user, order):
@@ -133,8 +166,6 @@ class TestOrderDetailsView:
         response = api_client.get(url)
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
-
-
 
 
 @pytest.mark.django_db
@@ -187,6 +218,7 @@ class TestUpdateOrderView:
         assert response.data['country'] == 'UK'
         assert response.data['phone_number'] == '+441234567890'    
     
+
 @pytest.mark.django_db
 class TestOrderPermissions:
     def test_guest_cannot_access_orders(self, api_client):
@@ -371,3 +403,161 @@ class TestListUserOrdersView:
         assert 'id' in order_data
         assert 'customer' in order_data
         assert 'status' in order_data
+
+
+@pytest.mark.django_db
+class TestOrderAmountInApiResponse:
+    """
+    Test suite for order_amount field in API responses.
+    Verifies that get_order_amount() is correctly returned via serializer.
+    """
+    
+    def test_order_amount_included_in_list_user_orders(self, api_client, user, product, supply):
+        """Test that order_amount is included in list user orders response."""
+        from decimal import Decimal
+        
+        order = Order.objects.create(customer=user)
+        # supply.price = 100.0, quantity = 2, so total = 200
+        OrderPosition.objects.create(
+            order=order,
+            product=product,
+            quantity=2,
+            price=supply.price
+        )
+        
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        order_data = response.data['data'][0]
+        assert 'order_amount' in order_data
+        assert order_data['order_amount'] == 200.0 or order_data['order_amount'] == Decimal('200.00')
+    
+    def test_order_amount_in_details_view(self, api_client, user, product, supply):
+        """Test that order_amount is returned in order details view."""
+        from decimal import Decimal
+        
+        order = Order.objects.create(customer=user)
+        # supply.price = 100.0, quantity = 1, so total = 100
+        OrderPosition.objects.create(
+            order=order,
+            product=product,
+            quantity=1,
+            price=supply.price
+        )
+        
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:details_order', kwargs={'pk': order.id})
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert 'order_amount' in response.data
+        assert response.data['order_amount'] == 100.0 or response.data['order_amount'] == Decimal('100.00')
+    
+    def test_order_amount_with_discount_in_api(self, api_client, user, product, supply, discount_code):
+        """Test that order_amount correctly reflects discount in API response."""
+        from decimal import Decimal
+        
+        order = Order.objects.create(customer=user, discount_code=discount_code)
+        # supply.price = 100.0, quantity = 1, so total = 100
+        OrderPosition.objects.create(
+            order=order,
+            product=product,
+            quantity=1,
+            price=supply.price
+        )
+        
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        order_data = response.data['data'][0]
+        assert 'order_amount' in order_data
+        # With 50% discount: 100 * 0.5 = 50
+        # The amount might be float or Decimal depending on calculation
+        order_amount = order_data['order_amount']
+        assert abs(float(order_amount) - 50.0) < 0.01
+    
+    def test_order_amount_multiple_positions_in_api(self, api_client, user, product, supply):
+        """Test order_amount calculation with multiple positions in API."""
+        from decimal import Decimal
+        
+        order = Order.objects.create(customer=user)
+        
+        # supply.price = 100.0
+        # position 1: 100 * 2 = 200
+        # position 2: 100 * 1 = 100
+        # total = 300
+        OrderPosition.objects.create(
+            order=order,
+            product=product,
+            quantity=2,
+            price=supply.price
+        )
+        OrderPosition.objects.create(
+            order=order,
+            product=product,
+            quantity=1,
+            price=supply.price
+        )
+        
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        order_data = response.data['data'][0]
+        assert 'order_amount' in order_data
+        # Total: 200 + 100 = 300
+        assert order_data['order_amount'] == 300.0 or order_data['order_amount'] == Decimal('300.00')
+    
+    def test_order_amount_empty_order_in_api(self, api_client, user):
+        """Test that order_amount is 0 for order with no positions."""
+        order = Order.objects.create(customer=user)
+        
+        api_client.force_authenticate(user=user)
+        url = reverse('orders:user_orders')
+        
+        response = api_client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        order_data = response.data['data'][0]
+        assert 'order_amount' in order_data
+        assert order_data['order_amount'] == 0 or order_data['order_amount'] == Decimal('0')
+    
+    def test_order_amount_in_create_order_response(self, api_client, user, basket, product, supply):
+        """Test that order_amount is included in create order response."""
+        api_client.force_authenticate(user=user)
+        
+        # Add item to basket
+        BasketItem.objects.create(
+            basket=basket,
+            product=product,
+            quantity=2,
+            supply=supply
+        )
+        
+        url = reverse("orders:create_order")
+        
+        data = {
+            "billing_details": {
+                "first_name": "John",
+                "last_name": "Doe",
+                "country": "US",
+                "phone_number": "+380985755044"
+            }
+        }
+        
+        response = api_client.post(url, data, format="json")
+        
+        assert response.status_code == status.HTTP_201_CREATED
+        assert 'order_amount' in response.data
+        # Verify order_amount is a valid number
+        from decimal import Decimal
+        assert isinstance(response.data['order_amount'], (int, float)) or isinstance(response.data['order_amount'], Decimal)

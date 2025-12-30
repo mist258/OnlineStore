@@ -18,10 +18,10 @@ def create_order_from_basket(*, customer, basket, billing_data, discount_code, n
 
         for item in basket.items.select_related(
             "product",
-            "accessory"
-        ).prefetch_related(
-            "product__supplies"
+            "accessory",
+            "supply"
         ):
+            price = 0
 
             if item.product:
                 supplies = item.supply
@@ -46,14 +46,17 @@ def create_order_from_basket(*, customer, basket, billing_data, discount_code, n
                 accessory.quantity = F("quantity") - item.quantity
                 accessory.save(update_fields=["quantity"])
 
-            OrderPosition.objects.create(
+            position = OrderPosition.objects.create(
                 order=order,
                 product=item.product,
                 accessory=item.accessory,
-                quantity=item.quantity,
-                total_price=item.quantity * price
+                quantity=item.quantity
             )
 
+            # setting the price field
+            position.price = price
+            position.save(update_fields=["price"])
+            
         basket.items.all().delete()
 
         return order
