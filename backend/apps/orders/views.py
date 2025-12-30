@@ -40,12 +40,34 @@ class ListOrdersView(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Order.objects.prefetch_related()
     serializer_class = OrderReadSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
 
     def get_permissions(self):
         if self.request.method in ['GET']:
-            self.permission_classes = [IsAuthenticated,]  # Change to IsAdminUser if needed
+            self.permission_classes = [IsAdminUser,] 
         return super().get_permissions()
+
+
+class ListUserOrdersView(viewsets.ReadOnlyModelViewSet):
+    """
+    List user orders. Regular users see only their own orders, admins see all orders.
+    """
+    serializer_class = OrderReadSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(customer=user)
+    
+    def get_permissions(self):
+        if self.request.method in ['GET']:
+            self.permission_classes = [IsAuthenticated,] 
+        return super().get_permissions()
+    
+    def list_user_orders(self, request, *args, **kwargs):
+        """Custom action to list user's orders with pagination."""
+        return self.list(request, *args, **kwargs)
+    
 
 
 class TrackTTNView(APIView):
