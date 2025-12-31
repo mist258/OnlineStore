@@ -31,7 +31,7 @@ class ProductResource(resources.ModelResource):
         attribute='caffeine_type',
         column_name='Caffeine/Decaffeinated'
     )
-
+    
     class Meta:
         model = Product
         import_id_fields = ('sku',)

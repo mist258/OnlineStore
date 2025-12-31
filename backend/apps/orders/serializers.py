@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from apps.basket.models import Basket
 from apps.discount_codes.models import DiscountCode
@@ -49,7 +50,6 @@ class OrderPositionReadSerializer(serializers.ModelSerializer):
         model = OrderPosition
         fields = [
             "id",
-            "quantity",
             "product",
             "accessory",
         ]
@@ -60,8 +60,9 @@ class OrderPositionReadSerializer(serializers.ModelSerializer):
             return {
                 "id": obj.product.id,
                 "name": obj.product.name,
+                "price": obj.price,
                 "quantity": obj.quantity,
-                "total_price": obj.total_price,
+                "total_price": obj.evaluate_total_price,
             }
         return None
 
@@ -70,9 +71,9 @@ class OrderPositionReadSerializer(serializers.ModelSerializer):
             return {
                 "id": obj.accessory.id,
                 "name": obj.accessory.name,
-                "price": obj.accessory.price,
+                "price": obj.price,
                 "quantity": obj.quantity,
-                "total_price": obj.total_price,
+                "total_price": obj.evaluate_total_price,
             }
         return None
     
@@ -91,6 +92,7 @@ class OrderWriteSerializer(serializers.ModelSerializer):
         required=False
     )
     created_at = serializers.DateTimeField(read_only=True)
+    order_amount = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Order
@@ -103,7 +105,7 @@ class OrderWriteSerializer(serializers.ModelSerializer):
             "ttn",
             "discount_code",
             "created_at",
-                
+            "order_amount",
         ]
 
     def validate(self, attrs):
@@ -131,13 +133,17 @@ class OrderWriteSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         billing_data = validated_data.pop("billing_details", None)
 
-        return create_order_from_basket(
-            customer=user,
-            basket=self._basket,
-            billing_data=billing_data,
-            discount_code=self._discount_code,
-            notes=validated_data.get("order_notes"),
-        )
+        try:
+            return create_order_from_basket(
+                customer=user,
+                basket=self._basket,
+                billing_data=billing_data,
+                discount_code=self._discount_code,
+                notes=validated_data.get("order_notes"),
+            )
+        except DjangoValidationError as e:
+            # Convert Django ValidationError to DRF ValidationError for proper 400 response
+            raise serializers.ValidationError(str(e))
 
     def update(self, instance, validated_data):
         billing_data = validated_data.pop("billing_details", None)
@@ -151,6 +157,9 @@ class OrderWriteSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+    def get_order_amount(self, obj):
+        return obj.get_order_amount()
 
 
 class OrderReadSerializer(serializers.ModelSerializer):
@@ -159,6 +168,7 @@ class OrderReadSerializer(serializers.ModelSerializer):
     Includes nested billing details and positions.
     """
     positions = OrderPositionReadSerializer(read_only=True, many=True)
+    order_amount = serializers.SerializerMethodField()
     
     class Meta:
         model = Order
@@ -171,6 +181,7 @@ class OrderReadSerializer(serializers.ModelSerializer):
             "ttn",
             "discount_code",
             "created_at",
+            "updated_at",
             "first_name",
             "last_name",
             "company_name",
@@ -181,9 +192,34 @@ class OrderReadSerializer(serializers.ModelSerializer):
             "apartment_number",
             "zip_code",
             "phone_number",
+            "order_amount",
         ]
-        read_only_fields = fields
+        read_only_fields = [
+            "id",
+            "order_notes",
+            "status",
+            "customer",
+            "positions",
+            "ttn",
+            "discount_code",
+            "created_at",
+            "updated_at",
+            "first_name",
+            "last_name",
+            "company_name",
+            "country",
+            "state",
+            "region",
+            "street_name",
+            "apartment_number",
+            "zip_code",
+            "phone_number",
+            "order_amount",
+        ]
 
     def get_positions(self, obj):
         positions = OrderPosition.objects.filter(order=obj)
         return OrderPositionReadSerializer(positions, many=True).data
+    
+    def get_order_amount(self, obj):
+        return obj.get_order_amount()
