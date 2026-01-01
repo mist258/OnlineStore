@@ -30,5 +30,5 @@ class GoogleOAuthService:
             raise AuthenticationFailed( code=status.HTTP_401_UNAUTHORIZED ,
                                         detail="Invalid token")
 
-        user, _ = UserModel.objects.get_or_create(email=google_user['email'])
+        user = get_object_or_404(UserModel, email=email)
         return JWTService.create_pair_token(user)
