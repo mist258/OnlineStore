@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
+
+from rest_framework import serializers
 
 from apps.basket.models import Basket
 from apps.discount_codes.models import DiscountCode

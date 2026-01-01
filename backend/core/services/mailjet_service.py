@@ -111,12 +111,3 @@ class SendEmail:
         except Exception:
             raise TemplateException
 
-
-    @classmethod
-    def subscribed_notification(cls, user: UserModel):
-        try:
-            cls.__send_mailjet_email(
-
-            )
-        except Exception:
-            pass

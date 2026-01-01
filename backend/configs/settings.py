@@ -86,7 +86,6 @@ INSTALLED_APPS = [
     "apps.oauth_google",
     "apps.products",
     "apps.supplies",
-    "apps.subscription",
     "apps.orders",
     "apps.basket",
     "apps.discount_codes",
