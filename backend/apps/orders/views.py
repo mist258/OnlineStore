@@ -130,7 +130,6 @@ class UpdateOrderView(viewsets.GenericViewSet):
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as e:
-            print(">>> Serializer validation failed:", e)
             raise
 
         try:
