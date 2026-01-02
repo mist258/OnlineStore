@@ -139,6 +139,7 @@ class UserOwnProfileInformationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = (
+            "id",
             "email",
             "profile",
             "orders",
