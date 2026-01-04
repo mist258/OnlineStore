@@ -120,7 +120,7 @@ class SendEmail:
                 to_email=order.customer.email,
                 subject="Order created notification",
                 variables={"username": f"{order.first_name} {order.last_name}",
-                           "order_id": order.order_id,
+                           "order_id": order.id,
                            },
                 template_id = 7627884
             )
