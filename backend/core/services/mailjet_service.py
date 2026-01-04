@@ -111,3 +111,19 @@ class SendEmail:
         except Exception:
             raise TemplateException
 
+
+    @classmethod
+    def order_created_notification(cls, order):
+
+        try:
+            cls.__send_mailjet_email(
+                to_email=order.customer.email,
+                subject="Order created notification",
+                variables={"username": f"{order.first_name} {order.last_name}",
+                           "order_id": order.order_id,
+                           },
+                template_id = 7627884
+            )
+        except Exception:
+            raise TemplateException
+
