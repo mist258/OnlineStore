@@ -18,7 +18,7 @@ class FlavourProfileSerializer(serializers.ModelSerializer):
 
 class PhotoSerializer(serializers.ModelSerializer):
     """
-        serializer that allows add photos to a product via url
+        serializer that allows to add photos to a product via url
     """
 
     class Meta:

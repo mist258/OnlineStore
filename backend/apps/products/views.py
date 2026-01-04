@@ -45,7 +45,8 @@ class ProductByIdView(generics.RetrieveAPIView):
         get product by id
         (available to anyone)
     """
-    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles")
+    queryset = Product.objects.prefetch_related("photos_url", "product_photos", "supplies", "flavor_profiles"
+                                                )
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
 
@@ -145,6 +146,7 @@ class AddPhotoToProduct(generics.GenericAPIView):
             serializer = ProductPhotoSerializer(data={"photo": files[index]})
             serializer.is_valid(raise_exception=True)
             serializer.save(product=product)
+
         product_serializer = ProductSerializer(product)
         return Response(product_serializer.data,
                         status.HTTP_200_OK)
