@@ -19,16 +19,17 @@ REST_FRAMEWORK = {
 
     "EXCEPTION_HANDLER": "core.handlers.error_handler.error_handler",
 
-    "DEFAULT_THROTTLE_CLASSES": [
-        "core.throttles.superuser_bypass_throttle.SuperuserBypassThrottle",
-        "core.throttles.sustained_burst_throttle.AnonSustainedRateThrottle",
-        "core.throttles.sustained_burst_throttle.AnonBurstRateThrottle",
-    ],
-
-    "DEFAULT_THROTTLE_RATES": {
-        "anon_sustained": "3000/day",
-        "anon_burst": "30/min",
-        "user": "30/min",
-    }
+    ###DISABLED THROTTLING
+    # "DEFAULT_THROTTLE_CLASSES": [
+    #     "core.throttles.superuser_bypass_throttle.SuperuserBypassThrottle",
+    #     "core.throttles.sustained_burst_throttle.AnonSustainedRateThrottle",
+    #     "core.throttles.sustained_burst_throttle.AnonBurstRateThrottle",
+    # ],
+    #
+    # "DEFAULT_THROTTLE_RATES": {
+    #     "anon_sustained": "3000/day",
+    #     "anon_burst": "30/min",
+    #     "user": "30/min",
+    # }
 }
 
