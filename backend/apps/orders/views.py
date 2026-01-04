@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.services.mailjet_service import SendEmail
 from core.services.novaposhta_service import NovaPoshtaService
 
 from drf_yasg.utils import swagger_auto_schema
@@ -29,7 +30,8 @@ class CreateOrderView(viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        order = serializer.save()
+        SendEmail.order_created_notification(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
