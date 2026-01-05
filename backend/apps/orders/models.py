@@ -70,20 +70,6 @@ class Order(models.Model):
         total = sum(position.evaluate_total_price for position in self.positions.all()) * (1 - (self.discount_code.discount_percent / 100) if self.discount_code else 1)
 
         return total
-    
-    def save(self, *args, **kwargs):
-        if self.pk:
-            old_status = Order.objects.get(pk=self.pk).status
-            if old_status != self.status:
-                SendEmail.order_status_notification(
-                    order_id=self.id,
-                    status=self.status,
-                    customer_email=self.customer.email,
-                    first_name=self.first_name,
-                    last_name=self.last_name
-                )
-            
-        super().save(*args, **kwargs)
 
     
 class OrderPosition(models.Model):
