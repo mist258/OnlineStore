@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 from apps.basket.models import DiscountCode
@@ -29,11 +31,23 @@ class DiscountCodesSerializer(serializers.ModelSerializer):
     
     def get_apply_discount(self, obj):
         """
-        Returns the discount amount applied to a given order amount.
-        Expects 'order_amount' in the serializer context.
+        Returns the discount amount (savings) for a given order amount.
+        For orders: returns the actual applied discount from context.
+        For validation: calculates what discount would be if code is valid.
+        Example: if order is $100 and discount is 15%, returns $15.
         """
+        # If applied_discount is in context (from order), use that
+        applied_discount = self.context.get('applied_discount')
+        if applied_discount is not None:
+            return applied_discount
+        
+        # Otherwise calculate based on current validity
         order_amount = self.context.get('order_amount', 0)
-        return obj.apply_discount(order_amount)
+        if not obj.is_valid() or order_amount == 0:
+            return 0
+        
+        discount_amount = (obj.discount_percent / Decimal('100.00')) * Decimal(str(order_amount))
+        return discount_amount
 
 
 class DiscountCodeUpdateSerializer(serializers.ModelSerializer):

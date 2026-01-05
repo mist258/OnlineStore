@@ -7,7 +7,7 @@ from apps.discount_codes.models import DiscountCode
 from apps.orders.models import Order, OrderPosition
 from apps.orders.services.order_service import create_order_from_basket
 from apps.users.models import UserProfileModel
-
+from apps.discount_codes.serializers import DiscountCodesSerializer
 
 class OrderPositionWriteSerializer(serializers.Serializer):
     """
@@ -63,6 +63,7 @@ class OrderPositionReadSerializer(serializers.ModelSerializer):
                 "name": obj.product.name,
                 "price": obj.price,
                 "quantity": obj.quantity,
+                "images": list(obj.product.photos_url.values("url")),
                 "total_price": obj.evaluate_total_price,
             }
         return None
@@ -74,6 +75,7 @@ class OrderPositionReadSerializer(serializers.ModelSerializer):
                 "name": obj.accessory.name,
                 "price": obj.price,
                 "quantity": obj.quantity,
+                "images": list(obj.accessory.photos_url.values("url")),
                 "total_price": obj.evaluate_total_price,
             }
         return None
@@ -94,6 +96,7 @@ class OrderWriteSerializer(serializers.ModelSerializer):
     )
     created_at = serializers.DateTimeField(read_only=True)
     order_amount = serializers.SerializerMethodField(read_only=True)
+    discount_code = serializers.CharField(required=False)
 
     class Meta:
         model = Order
@@ -113,7 +116,19 @@ class OrderWriteSerializer(serializers.ModelSerializer):
         discount_code = None
         discount_code_value = attrs.get("discount_code", None)
         if discount_code_value is not None:
-            discount_code = DiscountCode.objects.get(code=discount_code_value)
+            try:
+                discount_code = DiscountCode.objects.get(code=discount_code_value)
+                # Validate that discount code is valid (active and within date range)
+                if not discount_code.is_valid():
+                    raise serializers.ValidationError(
+                        f"Discount code '{discount_code_value}' is not valid. "
+                        "It may be inactive or outside its valid date range."
+                    )
+            except DiscountCode.DoesNotExist:
+                raise serializers.ValidationError(
+                    f"Discount code '{discount_code_value}' does not exist."
+                )
+        
         if self.instance:
             return attrs
 
@@ -170,6 +185,7 @@ class OrderReadSerializer(serializers.ModelSerializer):
     """
     positions = OrderPositionReadSerializer(read_only=True, many=True)
     order_amount = serializers.SerializerMethodField()
+    discount_code = serializers.SerializerMethodField()
     
     class Meta:
         model = Order
@@ -224,3 +240,26 @@ class OrderReadSerializer(serializers.ModelSerializer):
     
     def get_order_amount(self, obj):
         return obj.get_order_amount()
+    
+    def get_discount_code(self, obj):
+        """
+        Serialize discount code with actual applied discount amount.
+        For orders, we show the historical discount that was applied,
+        not what it would be if applied now.
+        """
+        if obj.discount_code:
+            # Calculate order amount before discount
+            total_before_discount = sum(
+                position.evaluate_total_price for position in obj.positions.all()
+            )
+            # Calculate the actual discount that was applied
+            actual_discount_amount = total_before_discount - obj.get_order_amount()
+            
+            return DiscountCodesSerializer(
+                obj.discount_code, 
+                context={
+                    'order_amount': total_before_discount,
+                    'applied_discount': actual_discount_amount  # Historical discount
+                }
+            ).data
+        return None
