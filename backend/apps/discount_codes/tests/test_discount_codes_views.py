@@ -1,3 +1,5 @@
+import datetime
+
 from django.urls import reverse
 from django.utils import timezone
 
@@ -5,7 +7,6 @@ from rest_framework import status
 
 from apps.discount_codes.models import DiscountCode
 
-import datetime
 import pytest
 import pytz
 

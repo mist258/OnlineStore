@@ -4,6 +4,8 @@ Tests for discount code apply_discount field in order responses.
 These tests ensure that the apply_discount field correctly shows the discounted
 amount when retrieving orders with discount codes.
 """
+import datetime
+
 from django.urls import reverse
 from django.utils import timezone
 
@@ -13,7 +15,6 @@ from apps.basket.models import BasketItem
 from apps.discount_codes.models import DiscountCode
 from apps.orders.models import Order, OrderPosition
 
-import datetime
 import pytest
 import pytz
 

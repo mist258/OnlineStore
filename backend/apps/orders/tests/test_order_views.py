@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 from unittest.mock import patch
 
@@ -13,7 +14,6 @@ from apps.products.models import Product
 from apps.supplies.models import Supply
 from apps.users.models import UserModel, UserProfileModel
 
-import datetime
 import pytest
 import pytz
 

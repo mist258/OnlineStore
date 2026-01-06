@@ -45,7 +45,7 @@ class ListOrdersView(viewsets.ReadOnlyModelViewSet):
 
     def get_permissions(self):
         if self.request.method in ['GET']:
-            self.permission_classes = [IsAdminUser,] 
+            self.permission_classes = [IsAdminUser, ]
         return super().get_permissions()
 
 
@@ -59,16 +59,15 @@ class ListUserOrdersView(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(customer=user)
-    
+
     def get_permissions(self):
         if self.request.method in ['GET']:
-            self.permission_classes = [IsAuthenticated,] 
+            self.permission_classes = [IsAuthenticated, ]
         return super().get_permissions()
-    
+
     def list_user_orders(self, request, *args, **kwargs):
         """Custom action to list user's orders with pagination."""
         return self.list(request, *args, **kwargs)
-    
 
 
 class TrackTTNView(APIView):
