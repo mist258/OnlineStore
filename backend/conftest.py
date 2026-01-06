@@ -145,3 +145,77 @@ def accessory():
             price=29.99,
             quantity=100
         )
+
+
+@pytest.fixture
+def product_photo(product):
+    """Create a photo for a product"""
+    from apps.products.models import Photo
+    return Photo.objects.create(
+        product=product,
+        url='https://example.com/product-image-1.jpg',
+        position=0
+    )
+
+
+@pytest.fixture
+def product_photos(product):
+    """Create multiple photos for a product"""
+    from apps.products.models import Photo
+    photos = []
+    for i in range(3):
+        photo = Photo.objects.create(
+            product=product,
+            url=f'https://example.com/product-image-{i+1}.jpg',
+            position=i
+        )
+        photos.append(photo)
+    return photos
+
+
+@pytest.fixture
+def accessory_photo(accessory):
+    """Create a photo for an accessory"""
+    from apps.products.models import Photo
+    return Photo.objects.create(
+        accessory=accessory,
+        url='https://example.com/accessory-image-1.jpg',
+        position=0
+    )
+
+
+@pytest.fixture
+def accessory_photos(accessory):
+    """Create multiple photos for an accessory"""
+    from apps.products.models import Photo
+    photos = []
+    for i in range(3):
+        photo = Photo.objects.create(
+            accessory=accessory,
+            url=f'https://example.com/accessory-image-{i+1}.jpg',
+            position=i
+        )
+        photos.append(photo)
+    return photos
+
+
+@pytest.fixture
+def order_position_with_product(product, order):
+    """Create an order position with a product"""
+    return OrderPosition.objects.create(
+        order=order,
+        product=product,
+        price=100.0,
+        quantity=2
+    )
+
+
+@pytest.fixture
+def order_position_with_accessory(accessory, order):
+    """Create an order position with an accessory"""
+    return OrderPosition.objects.create(
+        order=order,
+        accessory=accessory,
+        price=29.99,
+        quantity=1
+    )

@@ -46,6 +46,7 @@ class DiscountCodeViewSet(viewsets.GenericViewSet):
             order_id = kwargs.get('order_id', None)
             order = get_object_or_error(Order, object_id=order_id) if order_id else None
             data = {
+                "id": discount.id,
                 "code": discount.code,
                 "description": discount.description,
                 "discount_percent": discount.discount_percent,

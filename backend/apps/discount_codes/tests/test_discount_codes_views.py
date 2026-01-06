@@ -1,8 +1,13 @@
 from django.urls import reverse
+from django.utils import timezone
 
 from rest_framework import status
 
+from apps.discount_codes.models import DiscountCode
+
+import datetime
 import pytest
+import pytz
 
 
 @pytest.mark.django_db
@@ -110,3 +115,117 @@ class TestDiscountCodeView:
         
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
+
+@pytest.mark.django_db
+class TestDiscountCodeValidation:
+    """Test discount code validation - active status and date range checks"""
+
+    def test_inactive_discount_code_is_invalid(self, api_client):
+        """Test that inactive discount codes are marked as invalid"""
+        inactive_code = DiscountCode.objects.create(
+            code="INACTIVE50",
+            description="Inactive discount",
+            discount_percent=50,
+            active=False,
+            valid_from=datetime.datetime(2023, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+            valid_to=datetime.datetime(2028, 12, 31, 23, 59, 59, tzinfo=pytz.UTC)
+        )
+
+        url = reverse('discount_codes:discount_code_detail', kwargs={'code': inactive_code.code})
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['code'] == inactive_code.code
+        assert response.data['active'] is False
+        assert response.data['is_valid'] is False
+
+    def test_expired_discount_code_is_invalid(self, api_client):
+        """Test that expired discount codes are marked as invalid"""
+        expired_code = DiscountCode.objects.create(
+            code="EXPIRED50",
+            description="Expired discount",
+            discount_percent=50,
+            active=True,
+            valid_from=datetime.datetime(2020, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+            valid_to=datetime.datetime(2021, 12, 31, 23, 59, 59, tzinfo=pytz.UTC)
+        )
+
+        url = reverse('discount_codes:discount_code_detail', kwargs={'code': expired_code.code})
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['code'] == expired_code.code
+        assert response.data['active'] is True
+        assert response.data['is_valid'] is False
+
+    def test_not_yet_valid_discount_code_is_invalid(self, api_client):
+        """Test that discount codes not yet valid are marked as invalid"""
+        future_code = DiscountCode.objects.create(
+            code="FUTURE50",
+            description="Future discount",
+            discount_percent=50,
+            active=True,
+            valid_from=datetime.datetime(2030, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+            valid_to=datetime.datetime(2031, 12, 31, 23, 59, 59, tzinfo=pytz.UTC)
+        )
+
+        url = reverse('discount_codes:discount_code_detail', kwargs={'code': future_code.code})
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['code'] == future_code.code
+        assert response.data['active'] is True
+        assert response.data['is_valid'] is False
+
+    def test_valid_discount_code_within_date_range(self, api_client):
+        """Test that active discount codes within valid date range are marked as valid"""
+        now = timezone.now()
+        valid_code = DiscountCode.objects.create(
+            code="VALID50",
+            description="Valid discount",
+            discount_percent=50,
+            active=True,
+            valid_from=now - datetime.timedelta(days=10),
+            valid_to=now + datetime.timedelta(days=10)
+        )
+
+        url = reverse('discount_codes:discount_code_detail', kwargs={'code': valid_code.code})
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['code'] == valid_code.code
+        assert response.data['active'] is True
+        assert response.data['is_valid'] is True
+
+    def test_discount_code_apply_discount_only_if_valid(self):
+        """Test that apply_discount only applies discount if code is valid"""
+        # Valid code
+        now = timezone.now()
+        valid_code = DiscountCode.objects.create(
+            code="VALID50",
+            discount_percent=50,
+            active=True,
+            valid_from=now - datetime.timedelta(days=10),
+            valid_to=now + datetime.timedelta(days=10)
+        )
+        assert valid_code.apply_discount(100) == 50
+
+        # Invalid code (inactive)
+        inactive_code = DiscountCode.objects.create(
+            code="INACTIVE50",
+            discount_percent=50,
+            active=False,
+            valid_from=now - datetime.timedelta(days=10),
+            valid_to=now + datetime.timedelta(days=10)
+        )
+        assert inactive_code.apply_discount(100) == 100  # No discount applied
+
+        # Invalid code (expired)
+        expired_code = DiscountCode.objects.create(
+            code="EXPIRED50",
+            discount_percent=50,
+            active=True,
+            valid_from=datetime.datetime(2020, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+            valid_to=datetime.datetime(2021, 12, 31, 23, 59, 59, tzinfo=pytz.UTC)
+        )
+        assert expired_code.apply_discount(100) == 100  # No discount applied

@@ -2,16 +2,20 @@ from decimal import Decimal
 from unittest.mock import patch
 
 from django.urls import reverse
+from django.utils import timezone
 
 from rest_framework import status
 
 from apps.basket.models import Basket, BasketItem
+from apps.discount_codes.models import DiscountCode
 from apps.orders.models import Order, OrderPosition
 from apps.products.models import Product
 from apps.supplies.models import Supply
 from apps.users.models import UserModel, UserProfileModel
 
+import datetime
 import pytest
+import pytz
 
 
 @pytest.mark.django_db
@@ -36,7 +40,7 @@ class TestCreateOrderView:
                 "country": "US",
                 "phone_number": "+380985755044"
             },
-            "discount_code": discount_code.id
+            "discount_code": "SAVE50"
         }
 
         response = api_client.post(url, data, format="json")
@@ -272,6 +276,149 @@ class TestOrderValidation:
         response = api_client.post(url, data, format='json')
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_order_with_nonexistent_discount_code(self, api_client, user, basket, product, supply):
+        """Test that order creation fails with non-existent discount code"""
+        api_client.force_authenticate(user=user)
+        BasketItem.objects.create(basket=basket, product=product, supply=supply, quantity=2)
+        
+        url = reverse('orders:create_order')
+        data = {
+            'billing_details': {
+                'first_name': 'John',
+                'last_name': 'Doe',
+                'country': 'US',
+                'phone_number': '+380991234567'
+            },
+            'discount_code': 'NONEXISTENT'
+        }
+        
+        response = api_client.post(url, data, format='json')
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_order_with_inactive_discount_code(self, api_client, user, basket, product, supply):
+        """Test that order creation fails with inactive discount code"""
+        api_client.force_authenticate(user=user)
+        BasketItem.objects.create(basket=basket, product=product, supply=supply, quantity=2)
+        
+        # Create inactive discount code
+        inactive_code = DiscountCode.objects.create(
+            code="INACTIVE20",
+            discount_percent=20,
+            active=False,
+            valid_from=datetime.datetime(2023, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+            valid_to=datetime.datetime(2028, 12, 31, 23, 59, 59, tzinfo=pytz.UTC)
+        )
+        
+        url = reverse('orders:create_order')
+        data = {
+            'billing_details': {
+                'first_name': 'John',
+                'last_name': 'Doe',
+                'country': 'US',
+                'phone_number': '+380991234567'
+            },
+            'discount_code': 'INACTIVE20'
+        }
+        
+        response = api_client.post(url, data, format='json')
+        
+        # Should fail because discount code is inactive
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_order_with_expired_discount_code(self, api_client, user, basket, product, supply):
+        """Test that order creation fails with expired discount code"""
+        api_client.force_authenticate(user=user)
+        BasketItem.objects.create(basket=basket, product=product, supply=supply, quantity=2)
+        
+        # Create expired discount code
+        expired_code = DiscountCode.objects.create(
+            code="EXPIRED20",
+            discount_percent=20,
+            active=True,
+            valid_from=datetime.datetime(2020, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+            valid_to=datetime.datetime(2021, 12, 31, 23, 59, 59, tzinfo=pytz.UTC)
+        )
+        
+        url = reverse('orders:create_order')
+        data = {
+            'billing_details': {
+                'first_name': 'John',
+                'last_name': 'Doe',
+                'country': 'US',
+                'phone_number': '+380991234567'
+            },
+            'discount_code': 'EXPIRED20'
+        }
+        
+        response = api_client.post(url, data, format='json')
+        
+        # Should fail because discount code is expired
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_order_with_future_discount_code(self, api_client, user, basket, product, supply):
+        """Test that order creation fails with not-yet-valid discount code"""
+        api_client.force_authenticate(user=user)
+        BasketItem.objects.create(basket=basket, product=product, supply=supply, quantity=2)
+        
+        # Create future discount code
+        future_code = DiscountCode.objects.create(
+            code="FUTURE20",
+            discount_percent=20,
+            active=True,
+            valid_from=datetime.datetime(2030, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+            valid_to=datetime.datetime(2031, 12, 31, 23, 59, 59, tzinfo=pytz.UTC)
+        )
+        
+        url = reverse('orders:create_order')
+        data = {
+            'billing_details': {
+                'first_name': 'John',
+                'last_name': 'Doe',
+                'country': 'US',
+                'phone_number': '+380991234567'
+            },
+            'discount_code': 'FUTURE20'
+        }
+        
+        response = api_client.post(url, data, format='json')
+        
+        # Should fail because discount code is not yet valid
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_order_with_valid_discount_code(self, api_client, user, basket, product, supply):
+        """Test that order creation succeeds with valid discount code"""
+        api_client.force_authenticate(user=user)
+        BasketItem.objects.create(basket=basket, product=product, supply=supply, quantity=2)
+        
+        # Create valid discount code
+        now = timezone.now()
+        valid_code = DiscountCode.objects.create(
+            code="VALID20",
+            discount_percent=20,
+            active=True,
+            valid_from=now - datetime.timedelta(days=10),
+            valid_to=now + datetime.timedelta(days=10)
+        )
+        
+        url = reverse('orders:create_order')
+        data = {
+            'billing_details': {
+                'first_name': 'John',
+                'last_name': 'Doe',
+                'country': 'US',
+                'phone_number': '+380991234567'
+            },
+            'discount_code': 'VALID20'
+        }
+        
+        response = api_client.post(url, data, format='json')
+        
+        # Should succeed with valid discount code
+        assert response.status_code == status.HTTP_201_CREATED
+        order = Order.objects.get(id=response.data['id'])
+        assert order.discount_code.code == 'VALID20'
 
 
 @pytest.mark.django_db
