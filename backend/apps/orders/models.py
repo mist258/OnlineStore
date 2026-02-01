@@ -28,8 +28,15 @@ class Order(models.Model):
         ('delivered', 'Delivered'),
     ]
 
+    CURRENCY_CHOICES = [
+        ('USD', 'US Dollar'),
+        ('EUR', 'Euro'),
+        ('UAH', 'Ukrainian Hryvnia'),
+    ]
+
     order_notes = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='processing')
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='USD')
     customer = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE, 

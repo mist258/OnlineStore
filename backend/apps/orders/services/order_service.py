@@ -8,11 +8,12 @@ from apps.users.models import UserModel
 
 
 @transaction.atomic
-def create_order_from_basket(*, customer, basket, billing_data, discount_code, notes=None) -> Order:
+def create_order_from_basket(*, customer, basket, billing_data, discount_code, currency='USD', notes=None) -> Order:
         order = Order.objects.create(
             customer=customer,
             order_notes=notes,
             discount_code=discount_code,
+            currency=currency,
             **billing_data,
         )
 

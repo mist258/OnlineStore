@@ -9,6 +9,8 @@ from apps.orders.models import Order, OrderPosition
 from apps.orders.services.order_service import create_order_from_basket
 from apps.users.models import UserProfileModel
 
+from core.services.convert_currency_service import CurrencyService
+
 
 class OrderPositionWriteSerializer(serializers.Serializer):
     """
@@ -98,6 +100,11 @@ class OrderWriteSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
     order_amount = serializers.SerializerMethodField(read_only=True)
     discount_code = serializers.CharField(required=False)
+    currency = serializers.ChoiceField(
+        choices=Order.CURRENCY_CHOICES,
+        required=False,
+        default='USD'
+    )
 
     class Meta:
         model = Order
@@ -109,6 +116,7 @@ class OrderWriteSerializer(serializers.ModelSerializer):
             "positions",
             "ttn",
             "discount_code",
+            "currency",
             "created_at",
             "order_amount",
         ]
@@ -149,6 +157,7 @@ class OrderWriteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
         billing_data = validated_data.pop("billing_details", None)
+        currency = validated_data.get("currency", "USD")
 
         try:
             return create_order_from_basket(
@@ -157,6 +166,7 @@ class OrderWriteSerializer(serializers.ModelSerializer):
                 billing_data=billing_data,
                 discount_code=self._discount_code,
                 notes=validated_data.get("order_notes"),
+                currency=currency,
             )
         except DjangoValidationError as e:
             # Convert Django ValidationError to DRF ValidationError for proper 400 response
@@ -176,7 +186,14 @@ class OrderWriteSerializer(serializers.ModelSerializer):
         return instance
     
     def get_order_amount(self, obj):
-        return obj.get_order_amount()
+        amount_usd = obj.get_order_amount()
+        if obj.currency == 'USD':
+            return amount_usd
+        
+        try:
+            return CurrencyService.convert(amount_usd, obj.currency)
+        except Exception:
+            return amount_usd
 
 
 class OrderReadSerializer(serializers.ModelSerializer):
@@ -198,6 +215,7 @@ class OrderReadSerializer(serializers.ModelSerializer):
             "positions",
             "ttn",
             "discount_code",
+            "currency",
             "created_at",
             "updated_at",
             "first_name",
@@ -220,6 +238,7 @@ class OrderReadSerializer(serializers.ModelSerializer):
             "positions",
             "ttn",
             "discount_code",
+            "currency",
             "created_at",
             "updated_at",
             "first_name",
@@ -240,7 +259,14 @@ class OrderReadSerializer(serializers.ModelSerializer):
         return OrderPositionReadSerializer(positions, many=True).data
     
     def get_order_amount(self, obj):
-        return obj.get_order_amount()
+        amount_usd = obj.get_order_amount()
+        if obj.currency == 'USD':
+            return amount_usd
+        
+        try:
+            return CurrencyService.convert(amount_usd, obj.currency)
+        except Exception:
+            return amount_usd
     
     def get_discount_code(self, obj):
         """
