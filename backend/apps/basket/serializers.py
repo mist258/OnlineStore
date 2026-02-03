@@ -7,6 +7,7 @@ from apps.products.models import Product
 from apps.supplies.models import Supply
 
 
+
 class BasketItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.name", read_only=True)
     accessory_name = serializers.CharField(source="accessory.name", read_only=True)

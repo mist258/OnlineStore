@@ -1,10 +1,15 @@
-import pytest
 from decimal import Decimal
 from unittest.mock import patch
+
 from django.urls import reverse
+
 from rest_framework import status
+
 from apps.basket.models import BasketItem
 from apps.orders.models import Order
+
+import pytest
+
 
 @pytest.mark.django_db
 class TestOrderCurrency:
@@ -96,19 +101,17 @@ class TestOrderCurrency:
             results = results['results']
 
         import json
+
         # It's possible results is still a dictionary (OrderedDict) if not paginated and returning single object or something unexpected
         # But serializer (many=True) should return list.
         # If viewset uses pagination, it returns { count: ..., results: [...] }
         # Let's handle the case where results is a list of OrderedDicts
-        
         # Debug print
         # print(f"DEBUG: Type of results: {type(results)}") 
         # print(f"DEBUG: Content: {results}")
-
         # The error "TypeError: string indices must be integers, not 'str'" suggests that 'results' might be iterating over keys of a dict?
         # If response.data is a dict (OrderedDict) and has NO 'results' key, then 'results' = response.data
         # Then iterating over 'results' iterates over KEYS (strings). So o is a string key. o['id'] fails.
-        
         # So likely pagination is OFF or different structure.
         
         if isinstance(results, dict):
