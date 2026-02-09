@@ -18,7 +18,7 @@ class AccessoryPhotoSerializer(serializers.ModelSerializer):
 
 class AccessorySerializer(serializers.ModelSerializer):
     accessory_photos = AccessoryPhotoSerializer(many=True, read_only=True)
-    converted_price = serializers.SerializerMethodField()
+    converted_price = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Accessory
@@ -35,11 +35,14 @@ class AccessorySerializer(serializers.ModelSerializer):
                   "is_special"
                   )
 
-        read_only_fields = ("id",)
+        read_only_fields = ("id","converted_price")
 
     def get_converted_price(self, obj):
         request = self.context.get("request")
-        currency = request.query_params.get("currency", "USD")
+
+        currency = "USD"
+        if request:
+            currency = request.query_params.get("currency", "USD")
 
         return CurrencyService.convert(
             price_usd=obj.price,
