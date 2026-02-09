@@ -4,10 +4,11 @@ from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.accessories.models import Accessory
 from apps.accessories.serializers import AccessorySerializer
-from apps.products.models import FlavorProfile, Product, ProductPhotosModel
+from apps.products.models import Photo, Product, ProductPhotosModel
 
 from core.pagination import PagePagination
 
@@ -15,7 +16,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 
 from .filters import CoffeeProductFilter
-from .serializers import FlavourProfileSerializer, ProductPhotoSerializer, ProductSerializer
+from .serializers import ProductPhotoSerializer, ProductSerializer
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -155,21 +156,27 @@ class AddPhotoToProduct(generics.GenericAPIView):
 @method_decorator(name="delete", decorator=swagger_auto_schema(
     operation_id='delete_photo_from_product',
 ))
-class DeletePhotoFromProduct(generics.GenericAPIView):
+class DeletePhotoFromProduct(APIView):
     """
         delete a photo from the product by id
         (available to superuser)
     """
-    queryset = ProductPhotosModel.objects.all()
-
-    def delete(self, request, *args, **kwargs):
-        photo = self.get_object()
+    def delete(self, request, pk):
+        photo = ProductPhotosModel.objects.filter(pk=pk).first()
 
         if photo:
             photo.delete()
-
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+        photo = Photo.objects.filter(pk=pk).first()
+
+        if photo:
+            photo.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"Details": "Photo not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
