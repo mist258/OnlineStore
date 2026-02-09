@@ -35,6 +35,8 @@ whoosh = "^2.7.4"
 drf-haystack = "^1.9.1"
 djangorestframework-stubs = "^3.16.6"
 celery-types = "^0.24.0"
+django-cloudinary-storage = "^0.3.0"
+cloudinary = "^1.44.1"
 
 
 

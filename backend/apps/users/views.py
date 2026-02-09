@@ -5,6 +5,7 @@ from rest_framework import generics, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+import cloudinary.uploader
 from drf_yasg.utils import swagger_auto_schema
 
 from .serializers import UpdateUserInfoSerializer, UserAvatarSerializer, UserOwnProfileInformationSerializer, UserSerializer
@@ -158,6 +159,9 @@ class AddProfileAvatarView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         user = self.get_object()
-        user.avatar.delete()
+
+        if user.avatar:
+            cloudinary.uploader.destroy(user.avatar.public_id)
+
         super().perform_update(serializer)
 

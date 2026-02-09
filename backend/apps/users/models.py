@@ -4,8 +4,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import BaseModel
-from core.services.photo_service import PhotoService
 
+from cloudinary.models import CloudinaryField
 from phonenumber_field.modelfields import PhoneNumberField
 
 from.managers import UserManager, UserProfileManager
@@ -19,7 +19,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         ordering = ("id",)
 
     email = models.EmailField(_("Enter your email"), max_length=50, unique=True, db_index=True)
-    avatar = models.ImageField(upload_to=PhotoService.upload_avatar, blank=True)
+    avatar = CloudinaryField(resource_type="image", blank=True, null=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

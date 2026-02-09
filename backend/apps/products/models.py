@@ -4,7 +4,8 @@ from apps.accessories.models import Accessory
 from apps.utils import get_timenow
 
 from core.models import BaseModel
-from core.services.photo_service import PhotoService
+
+from cloudinary.models import CloudinaryField
 
 from .choices.product_choices import CaffeineLevelChoices, CoffeeBeanTypeChoices, RoastLevelChoices
 
@@ -89,7 +90,7 @@ class ProductPhotosModel(BaseModel):
         db_table = "products_photo"
         ordering = ("id",)
 
-    photo = models.ImageField(upload_to=PhotoService.upload_product_photo, blank=True)
+    photo = CloudinaryField( resource_type="image", blank=True, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_photos")
 
     

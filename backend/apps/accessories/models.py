@@ -6,6 +6,8 @@ from django.db import models
 from core.models import BaseModel
 from core.services.photo_service import PhotoService
 
+from cloudinary.models import CloudinaryField
+
 
 class Accessory(models.Model):
     class Meta:
@@ -37,4 +39,4 @@ class AccessoryPhotosModel(BaseModel):
         ordering = ("id",)
 
     photo = models.ImageField(upload_to=PhotoService.upload_product_photo, blank=True)
-    accessory = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name="accessory_photos")
+    accessory = CloudinaryField(resource_type="image", blank=True, null=True)

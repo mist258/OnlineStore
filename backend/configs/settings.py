@@ -63,7 +63,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
      
     # installed modules
     "django_filters",
@@ -78,6 +77,8 @@ INSTALLED_APPS = [
     "django_password_validators",
     "haystack",
     "whoosh",
+    "cloudinary",
+    "cloudinary_storage",
 
     # my apps
     "core",
@@ -171,6 +172,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "storage")
 MEDIA_URL = "/media/"
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
