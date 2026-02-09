@@ -119,7 +119,7 @@ class AccessoryUpdateView(generics.GenericAPIView):
         accessory = self.get_object()
         serializer = AccessorySerializer(accessory, data=data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(accessory=accessory)
+        serializer.save()
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
 
@@ -128,6 +128,6 @@ class AccessoryUpdateView(generics.GenericAPIView):
         accessory = self.get_object()
         serializer = AccessorySerializer(accessory, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save(accessory=accessory)
+        serializer.save()
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
