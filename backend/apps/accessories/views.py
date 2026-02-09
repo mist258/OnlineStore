@@ -98,3 +98,36 @@ class AccessoryRemovePhotoView(generics.DestroyAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+
+@method_decorator(name='put', decorator=swagger_auto_schema(
+    operation_id='full_update_accessory',
+    responses={200: AccessorySerializer()},
+))
+@method_decorator(name='patch', decorator=swagger_auto_schema(
+    operation_id='partial_update_accessory',
+    responses={200: AccessorySerializer()},
+))
+class AccessoryUpdateView(generics.GenericAPIView):
+    """
+        update an accessory by id
+    """
+    serializer_class = AccessorySerializer
+    queryset = Accessory.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        data = request.data
+        accessory = self.get_object()
+        serializer = AccessorySerializer(accessory, data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(accessory=accessory)
+        return Response(serializer.data,
+                        status=status.HTTP_200_OK)
+
+    def patch(self, request, *args, **kwargs):
+        data = request.data
+        accessory = self.get_object()
+        serializer = AccessorySerializer(accessory, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(accessory=accessory)
+        return Response(serializer.data,
+                        status=status.HTTP_200_OK)

@@ -1,6 +1,13 @@
 from django.urls import path
 
-from .views import AccessoryAddPhotoView, AccessoryByIdView, AccessoryCreateView, AccessoryListView, AccessoryRemovePhotoView
+from .views import (
+    AccessoryAddPhotoView,
+    AccessoryByIdView,
+    AccessoryCreateView,
+    AccessoryListView,
+    AccessoryRemovePhotoView,
+    AccessoryUpdateView,
+)
 
 urlpatterns = [
     path(
@@ -18,5 +25,8 @@ urlpatterns = [
     path(
         "/<int:pk>/remove_photo", AccessoryRemovePhotoView.as_view(), name='remove_photo'
     ), # allow remove photo from accessory
+    path(
+            "/<int:pk>/update", AccessoryUpdateView.as_view(), name='update_accessory'
+    ), # update accessory by id
 
 ]
