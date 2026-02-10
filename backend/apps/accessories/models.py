@@ -26,7 +26,7 @@ class Accessory(models.Model):
                                            validators=[v.MinValueValidator(0)])
 
     def __str__(self):
-        return f"{self.name} by {self.brand or 'Unknown Brand'}"
+        return f"{self.name} by {self.brand or "Unknown Brand"}"
 
 
 class AccessoryPhotosModel(BaseModel):
@@ -38,5 +38,5 @@ class AccessoryPhotosModel(BaseModel):
         db_table = "accessory_photo"
         ordering = ("id",)
 
-    photo = models.ImageField(upload_to=PhotoService.upload_product_photo, blank=True)
-    accessory = CloudinaryField(resource_type="image", blank=True, null=True)
+    photo = CloudinaryField(resource_type="image", blank=True, null=True)
+    accessory = models.ForeignKey(Accessory, on_delete=models.CASCADE, related_name="accessory_photos")
