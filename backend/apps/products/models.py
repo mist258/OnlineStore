@@ -78,7 +78,11 @@ class Photo(models.Model):
        blank=True
    )
    def __str__(self):
-       return f"{self.url} (Product: {self.product.name})"
+       if self.product:
+           return f"{self.url} (Product: {self.product.name})"
+       if self.accessory:
+           return f"{self.url} (Accessory: {self.accessory.name})"
+       return f"{self.url}"
 
 
 class ProductPhotosModel(BaseModel):
