@@ -90,12 +90,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
         if supplies:
             for item_supply in supplies:
-                print(el for el in supplies)
-                Supply.objects.update(**item_supply)
+                supply_id = item_supply.pop("id", None)
+                if supply_id:
+                    Supply.objects.filter(id=supply_id, product=instance).update(**item_supply)
+                else:
+                    Supply.objects.create(product=instance, **item_supply)
 
         if flavor_profiles:
+            flavor_profile_instance = []
             for item_flavor_profile in flavor_profiles:
-                FlavorProfile.objects.update(**item_flavor_profile)
+                obj, _ = FlavorProfile.objects.get_or_create(name=item_flavor_profile["name"])
+                flavor_profile_instance.append(obj)
+            instance.flavor_profiles.set(flavor_profile_instance)
 
         instance.save()
         return instance

@@ -18,7 +18,10 @@ class SupplySerializer(serializers.ModelSerializer):
                   "weight",
                   "converted_price",)
 
-        read_only_fields = ("id", "converted_price")
+        read_only_fields = ("converted_price",)
+        extra_kwargs = {
+            'id': {'read_only': False, 'required': False}
+        }
 
     def get_converted_price(self, obj):
         request = self.context.get("request")
