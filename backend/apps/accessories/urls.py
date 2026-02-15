@@ -23,7 +23,7 @@ urlpatterns = [
         "/<int:pk>/photo", AccessoryAddPhotoView.as_view(), name='add_photo'
     ), # allow add photo to accessory from local machine
     path(
-        "/<int:pk>/remove_photo", AccessoryRemovePhotoView.as_view(), name='remove_photo'
+        "/<int:accessory_id>/photos/<int:pk>", AccessoryRemovePhotoView.as_view(), name='remove_photo'
     ), # allow remove photo from accessory
     path(
             "/<int:pk>/update", AccessoryUpdateView.as_view(), name='update_accessory'

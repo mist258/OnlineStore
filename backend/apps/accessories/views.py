@@ -87,16 +87,13 @@ class AccessoryRemovePhotoView(generics.DestroyAPIView):
         (available to superuser)
     """
 
+    serializer_class = AccessoryPhotoSerializer
     queryset = AccessoryPhotosModel.objects.all()
 
-    def delete(self, request, *args, **kwargs):
-        photo = self.get_object()
+    def get_queryset(self):
+        accessory_id = self.kwargs.get('accessory_id')
+        return AccessoryPhotosModel.objects.filter(accessory_id=accessory_id)
 
-        if photo:
-            photo.delete()
-
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 @method_decorator(name='put', decorator=swagger_auto_schema(

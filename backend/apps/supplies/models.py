@@ -11,7 +11,7 @@ class Supply(models.Model):
         db_table = "supplies"
         ordering = ("id",)
 
-    serving_type = models.CharField(choices=ServingTypeChoices.choices, blank=True, null=True,)
+    serving_type = models.CharField(max_length=50, choices=ServingTypeChoices.choices, blank=True, null=True,)
     price = models.DecimalField(
         max_digits=8, decimal_places=2,
         default=0.00, null=True, blank=True
